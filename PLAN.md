@@ -9,6 +9,14 @@
 - [ ] P0.6 supervised clean-machine `whittle setup` run (needs operator)
 - [ ] P0.7 10k hook-cap: document limitation + upstream feature request; engineering options doc
 
+## Publish-ready order (2026-07-04, supersedes queue below)
+1. [ ] v0.2.1 release (contains snippet-misroute fix)
+2. [ ] bench/ harness — corpus + runner + fidelity-verify + report; CI-wired
+3. [ ] launch post draft (founder edits)
+4. [ ] sweep: cost_api port, review nits (O2/O7/O9), README stale-claim pass, brew rehearsal post-flip
+5. [ ] dogfood week closes clean (fidelity incidents 0; retrieval rate sane)
+6. [ ] FOUNDER: README pass · 2-3 design partners · flip public · Show HN
+
 ## Active queue (maintainer order, 2026-07-04)
 - [ ] Q1 adversarial review of retrieval/hint surface (in flight) -> pinned tests
 - [x] Q2 debt sweep: port comment, MCP visibility in status, GUARANTEES store entry, README thesis fix
