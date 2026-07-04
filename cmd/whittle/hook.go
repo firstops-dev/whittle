@@ -15,6 +15,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -53,8 +54,11 @@ func cmdHook(_ []string) {
 	}
 	defer resp.Body.Close()
 	var out struct {
-		Compressed string `json:"compressed"`
-		Action     string `json:"action"`
+		Compressed       string `json:"compressed"`
+		Action           string `json:"action"`
+		Strategy         string `json:"strategy"`
+		OriginalTokens   int    `json:"original_tokens"`
+		CompressedTokens int    `json:"compressed_tokens"`
 	}
 	if json.NewDecoder(io.LimitReader(resp.Body, 16<<20)).Decode(&out) != nil ||
 		out.Action != "compressed" || out.Compressed == "" || len(out.Compressed) >= len(text) {
@@ -67,7 +71,26 @@ func cmdHook(_ []string) {
 		return
 	}
 
+	logStat(ev.ToolName, out.Strategy, out.OriginalTokens, out.CompressedTokens)
 	emitReplacement(out.Compressed)
+}
+
+// logStat appends one compression event to ~/.whittle/stats.jsonl — LOCAL ONLY,
+// never transmitted. This powers `whittle stats`. Best-effort: failures are
+// ignored (the hook must never fail because bookkeeping did).
+func logStat(tool, strategy string, inTok, outTok int) {
+	_ = os.MkdirAll(whittleHome(), 0o755)
+	f, err := os.OpenFile(filepath.Join(whittleHome(), "stats.jsonl"),
+		os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	b, _ := json.Marshal(map[string]any{
+		"ts": time.Now().Unix(), "tool": tool, "strategy": strategy,
+		"in_tokens": inTok, "out_tokens": outTok,
+	})
+	f.Write(append(b, '\n'))
 }
 
 // extractText pulls the compressible text out of the tool_response, which may be

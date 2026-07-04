@@ -1,0 +1,19 @@
+version: 2
+project_name: whittle
+builds:
+  - main: ./cmd/whittle
+    env: [CGO_ENABLED=0]
+    goos: [darwin, linux]
+    goarch: [amd64, arm64]
+    ldflags: ["-s -w"]
+archives:
+  - formats: [tar.gz]
+checksum:
+  name_template: checksums.txt
+brews:
+  - repository: {owner: firstops-dev, name: homebrew-tap}
+    homepage: https://github.com/firstops-dev/whittle
+    description: "Carves your agent's tool outputs down to what matters. Never cuts what doesn't come back."
+    license: Apache-2.0
+release:
+  draft: true

@@ -39,6 +39,8 @@ func main() {
 		cmdCleanup(os.Args[2:])
 	case "status":
 		cmdStatus(os.Args[2:])
+	case "stats":
+		cmdStats(os.Args[2:])
 	case "hook":
 		cmdHook(os.Args[2:])
 	case "version":
@@ -56,6 +58,7 @@ usage:
   whittle setup                     install: model sidecar, Claude Code hook,
                                     background service (launchd) — one command
   whittle status                    health of router, sidecar, hook
+  whittle stats [-days 7]           local savings report (tokens whittled)
   whittle stop                      stop background services
   whittle cleanup                   stop + remove hook + unregister service
   whittle compress [flags] [file]   compress a file (or stdin) to stdout
