@@ -146,3 +146,13 @@ func max(a, b int) int {
 	}
 	return b
 }
+
+func humanInt(n int) string {
+	switch {
+	case n >= 1e6:
+		return fmt.Sprintf("%.1fM", float64(n)/1e6)
+	case n >= 1e3:
+		return fmt.Sprintf("%.1fk", float64(n)/1e3)
+	}
+	return fmt.Sprint(n)
+}
