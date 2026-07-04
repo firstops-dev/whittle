@@ -264,14 +264,18 @@ func installClaudeHook() error {
 		hooks = map[string]any{}
 	}
 	entries, _ := hooks["PostToolUse"].([]any)
+	kept := entries[:0] // migrate: drop any older whittle entry (command-type era)
 	for _, e := range entries {
-		if strings.Contains(fmt.Sprint(e), "whittle hook") {
-			return nil // already installed
+		if !strings.Contains(fmt.Sprint(e), "whittle") {
+			kept = append(kept, e)
 		}
 	}
-	entries = append(entries, map[string]any{
+	entries = append(kept, map[string]any{
 		"matcher": "*",
-		"hooks":   []any{map[string]any{"type": "command", "command": hookCommand(), "timeout": 5}},
+		"hooks": []any{map[string]any{
+			"type": "http", "url": "http://127.0.0.1:8095/hook", "timeout": 10,
+			"statusMessage": "whittling tool output…",
+		}},
 	})
 	hooks["PostToolUse"] = entries
 	s["hooks"] = hooks
@@ -290,7 +294,7 @@ func removeClaudeHook() error {
 	}
 	kept := entries[:0]
 	for _, e := range entries {
-		if !strings.Contains(fmt.Sprint(e), "whittle hook") {
+		if !strings.Contains(fmt.Sprint(e), "whittle") {
 			kept = append(kept, e)
 		}
 	}
@@ -304,7 +308,7 @@ func hookInstalled() bool {
 		return false
 	}
 	hooks, _ := s["hooks"].(map[string]any)
-	return strings.Contains(fmt.Sprint(hooks["PostToolUse"]), "whittle hook")
+	return strings.Contains(fmt.Sprint(hooks["PostToolUse"]), "whittle")
 }
 
 func must(err error) {

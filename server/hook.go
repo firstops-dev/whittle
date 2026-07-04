@@ -2,8 +2,7 @@ package server
 
 // POST /hook — Claude Code PostToolUse over HTTP: receives the hook event,
 // returns hookSpecificOutput.updatedToolOutput when compression wins, or an
-// empty 200 body (fail-open: Claude Code proceeds with the original). No
-// stdout-capture size cap applies on this path, unlike command hooks.
+// empty 200 body (fail-open: Claude Code proceeds with the original).
 
 import (
 	"context"
@@ -39,6 +38,12 @@ func hookHandler(p *compress.Pipeline) http.HandlerFunc {
 		defer cancel()
 		out := p.Compress(ctx, compress.Input{Content: text, ToolName: ev.ToolName, MinTokens: -1})
 		if out.Action != "compressed" || len(out.Output) >= len(text) {
+			return
+		}
+		// Docs-verified: the 10,000-char cap on updatedToolOutput applies to HTTP
+		// hooks as well as command hooks. Fail open above ~9.5k until the content
+		// store + retrieval pointer lands (PLAN P2).
+		if len(out.Output) > 9500 {
 			return
 		}
 		_ = json.NewEncoder(w).Encode(map[string]any{
