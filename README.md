@@ -112,9 +112,10 @@ conversation history. Everything else follows from that choice:
   agent proceeds with the original output. A gateway outage is an agent outage.
 - **The loss budget is honest.** A read-time proxy can afford recoverable lossy
   compression — its resident runtime serves dropped content back when the model
-  asks. A hook has no runtime standing by: the compressed output is the agent's
-  *only* copy. That is why whittle is lossless-or-marked by construction — not a
-  preference, but what the position demands.
+  asks. Whittle keeps no runtime in your request path; reduced outputs carry a tiny
+  retrieval pointer served by the local daemon (`whittle_get`), and lossless
+  transforms carry nothing at all — lossless-or-marked stays the construction,
+  recovery is the safety net, never the license.
 
 The hook is whittle's default surface, not its only one: **library**
 (`whittle.New`) → **HTTP service** (`whittle serve`) → **hook adapters**

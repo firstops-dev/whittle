@@ -9,6 +9,15 @@
 - [ ] P0.6 supervised clean-machine `whittle setup` run (needs operator)
 - [ ] P0.7 10k hook-cap: document limitation + upstream feature request; engineering options doc
 
+## Active queue (maintainer order, 2026-07-04)
+- [ ] Q1 adversarial review of retrieval/hint surface (in flight) -> pinned tests
+- [x] Q2 debt sweep: port comment, MCP visibility in status, GUARANTEES store entry, README thesis fix
+- [ ] Q3 tag v0.2.0 once Q1 clean; dogfood week concludes (watch retrieval rate + incidents)
+- [ ] Q4 benchmark harness (bench/: corpus, runner, fidelity verify, report)
+- [ ] Q5 launch post draft for founder edit
+- [ ] Q6 founder: README pass + 2-3 design partners
+- [ ] Q7 flip public + Show HN
+
 ## Phase 1 — launch
 - [ ] P1.1 reproducible benchmark harness in-repo
 - [ ] P1.2 launch post draft ("the compressor that can't lie") from measured session material

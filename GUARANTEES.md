@@ -15,6 +15,7 @@ violated guarantee become pinned regression tests before they are closed.
 | output is never larger than input — in bytes AND estimated tokens | pipeline guardrail tests incl. `TestPipelineTokenGuardrail` |
 | every failure fails open: original bytes, never an error, never partial output | pipeline fail-open/empty-output/panic-recovery contract tests; hook exits 0 silently on any problem |
 | the Claude Code hook can never break a tool call | `cmd/whittle` hook: fail-open on malformed events, router downtime, oversized output (Claude Code's 10k hook-stdout cap) |
+| retrieval store is local-only, bounded (256MB/24h TTL), and honest on miss ("expired — re-run the tool"); aliases are never reissued across restarts | `server`: `TestStoreRoundtripDedupEvict` |
 | stats are local-only | `whittle stats` reads `~/.whittle/stats.jsonl`; nothing is transmitted, ever (see PLAN.md non-goals) |
 
 Known, documented limitations: compressed outputs larger than ~9.5k chars are

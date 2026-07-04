@@ -26,7 +26,7 @@ const (
 )
 
 // ListenAndServe builds the pipeline from the environment and serves the HTTP
-// API on addr (":8095" if empty). Env: WHITTLE_MODEL_URL (enables the ML prose
+// API on addr (":45871" if empty). Env: WHITTLE_MODEL_URL (enables the ML prose
 // path), WHITTLE_MAX_CHARS (global ceiling), WHITTLE_PROSE_MAX_CHARS (prose
 // latency ceiling).
 func ListenAndServe(addr string) error {

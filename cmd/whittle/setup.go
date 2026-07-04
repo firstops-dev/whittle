@@ -215,6 +215,11 @@ func cmdStatus(_ []string) {
 	} else {
 		fmt.Println("  ✗ Claude Code hook not installed (run `whittle setup`)")
 	}
+	if out, err := exec.Command("claude", "mcp", "get", "whittle").CombinedOutput(); err == nil && len(out) > 0 {
+		fmt.Println("  ✓ whittle_get MCP tool registered")
+	} else {
+		fmt.Println("  ✗ whittle_get MCP tool not registered (retrieval hints degrade gracefully)")
+	}
 }
 
 func waitHealthy(url string, d time.Duration, name string) {
