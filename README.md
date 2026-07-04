@@ -75,12 +75,15 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:8096
 
 ## Why whittle — compress at write-time, not read-time
 
-Most context compressors are **gateways**: they sit in the model-request path
-and rewrite conversation history at *read time*, on every LLM call. That
-position forces hard problems — prompt-cache stabilization (mutating history
-invalidates cached prefixes), per-call re-compression, terminating your API
-traffic (keys, system prompts and all), and a runtime that must stay up or your
-agent goes down with it.
+Context compressors typically integrate with coding agents as **request-path
+proxies**: your agent's base URL is redirected through a local server that
+rewrites conversation history at *read time*, on every LLM call. That position
+forces hard problems — prompt-cache stabilization (mutating history invalidates
+cached prefixes), per-call re-compression, terminating your API traffic (keys,
+system prompts and all), and a resident runtime that must stay up or your agent
+goes down with it. It also makes lossy compression the default, backed by a
+retrieval loop: the runtime is guaranteed present, so dropped content can be
+served back on demand.
 
 Whittle takes the other position: it is a **PostToolUse hook**. Each tool output
 is compressed **once, at the moment it is born**, before it ever enters
@@ -93,17 +96,18 @@ conversation history. Everything else follows from that choice:
   zero credentials. Nothing terminates your API traffic.
 - **Failure is free.** The hook fails open; if whittle is down or declines, the
   agent proceeds with the original output. A gateway outage is an agent outage.
-- **The loss budget is honest.** A read-time gateway can afford recoverable
-  lossy compression — its runtime is present to serve dropped content back. A
-  hook has no runtime standing by: the compressed output is the agent's *only*
-  copy. That is why whittle is lossless-or-marked by construction — it is not a
-  preference, it is what the architecture demands.
+- **The loss budget is honest.** A read-time proxy can afford recoverable lossy
+  compression — its resident runtime serves dropped content back when the model
+  asks. A hook has no runtime standing by: the compressed output is the agent's
+  *only* copy. That is why whittle is lossless-or-marked by construction — not a
+  preference, but what the position demands.
 
-Whittle is layered so the hook is the default surface, not the only one:
-**library** (`whittle.New`) → **HTTP service** (`whittle serve`) → **hook
-adapters** (Claude Code PostToolUse today; Cursor, Codex, OpenCode adapters on
-the roadmap) → and the same library can be embedded in gateways or pipelines if
-that is where you need it.
+The hook is whittle's default surface, not its only one: **library**
+(`whittle.New`) → **HTTP service** (`whittle serve`) → **hook adapters**
+(Claude Code PostToolUse today; Cursor, Codex, OpenCode adapters on the
+roadmap) — and the same library embeds in gateways or pipelines if that is
+where you need it. The position is the point: compression happens where output
+is born, whatever surface delivers it there.
 
 ## Performance
 
@@ -137,9 +141,9 @@ beyond it.
 Whittle's log-selection strategy, several content-detection heuristics, and the
 tabular parser were adapted from [Headroom](https://github.com/headroomlabs-ai/headroom)
 (Apache-2.0) — adapted portions are marked in source comments, and we think
-their compaction work is excellent. Whittle exists because we wanted the
-opposite architecture: write-time hook instead of request-path gateway, with
-the stricter fidelity contract that position requires. See NOTICE.
+their compaction work is excellent. Whittle exists because we wanted the other
+position: a write-time PostToolUse hook instead of a read-time request-path
+proxy, with the stricter fidelity contract that position requires. See NOTICE.
 
 ## License
 
