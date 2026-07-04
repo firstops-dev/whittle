@@ -61,6 +61,7 @@ func ListenAndServe(addr string) error {
 func NewMux(p *compress.Pipeline) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/v1/compress", compressHandler(p))
+	mux.HandleFunc("/hook", hookHandler(p))
 	mux.HandleFunc("/health", healthHandler)
 	mux.HandleFunc("/v1/info", infoHandler)
 	return mux

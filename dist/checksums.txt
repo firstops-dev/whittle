@@ -1,0 +1,4 @@
+104fb15cd7fc01ffb4b51d991fe9f9a6529a4d565266f95d33353304a6027020  whittle_0.1.0_darwin_amd64.tar.gz
+2723620304dbe39242f9d53b0b7af47f6d9f2cef47b5ae35fa113c74c7d4658f  whittle_0.1.0_darwin_arm64.tar.gz
+9acb64486e12aa70fd5f1b7acbcd5575f41fe530a1461b245ef7ab0e8278808a  whittle_0.1.0_linux_amd64.tar.gz
+aabcb1dec2e64b030585b1fe758d45a9a48c27340d0eb3d0130bc22ff2828877  whittle_0.1.0_linux_arm64.tar.gz
