@@ -21,7 +21,8 @@ import (
 type hookEvent struct {
 	HookEventName string          `json:"hook_event_name"`
 	ToolName      string          `json:"tool_name"`
-	ToolResponse  json.RawMessage `json:"tool_response"`
+	ToolOutput    string          `json:"tool_output"`   // documented shape (string)
+	ToolResponse  json.RawMessage `json:"tool_response"` // fallback: older/object shapes
 }
 
 func cmdHook(_ []string) {
@@ -36,8 +37,11 @@ func cmdHook(_ []string) {
 	if json.Unmarshal(raw, &ev) != nil || ev.HookEventName != "PostToolUse" {
 		return
 	}
-	text, ok := extractText(ev.ToolResponse)
-	if !ok || len(text) < 256 { // tiny outputs are never worth the round-trip
+	text := ev.ToolOutput
+	if text == "" {
+		text, _ = extractText(ev.ToolResponse)
+	}
+	if len(text) < 256 { // tiny outputs are never worth the round-trip
 		return
 	}
 
@@ -54,6 +58,12 @@ func cmdHook(_ []string) {
 	}
 	if json.NewDecoder(io.LimitReader(resp.Body, 16<<20)).Decode(&out) != nil ||
 		out.Action != "compressed" || out.Compressed == "" || len(out.Compressed) >= len(text) {
+		return
+	}
+	// Claude Code caps hook stdout at 10,000 chars — larger output is diverted to
+	// a file and replaced with a preview, which would corrupt the result. Fail
+	// open instead of emitting a replacement that cannot land intact.
+	if len(out.Compressed) > 9500 {
 		return
 	}
 
@@ -89,12 +99,12 @@ func extractText(raw json.RawMessage) (string, bool) {
 }
 
 // emitReplacement prints the PostToolUse hook output that replaces the persisted
-// tool output (hookSpecificOutput contract; see README "Claude Code hook").
+// tool output (docs-verified contract: hookSpecificOutput.updatedToolOutput).
 func emitReplacement(compressed string) {
 	out := map[string]any{
 		"hookSpecificOutput": map[string]any{
-			"hookEventName": "PostToolUse",
-			"updatedOutput": compressed,
+			"hookEventName":     "PostToolUse",
+			"updatedToolOutput": compressed,
 		},
 	}
 	b, _ := json.Marshal(out)
