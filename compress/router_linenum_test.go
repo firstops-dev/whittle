@@ -333,3 +333,33 @@ str = str
 		t.Fatalf("small python snippet detected as %q, want code (would be paraphrased)", ct)
 	}
 }
+
+// Bench-corpus regression: RAW (non-line-numbered) YAML/config must never route
+// prose — sample_deploy.yaml reached llmlingua and lost 40% of its tokens.
+func TestDetect_RawYAMLIsNotProse(t *testing.T) {
+	y := `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    spec:
+      containers:
+        - name: web
+          image: registry.example.com/web:1.2.3
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: mysql://db:3306/app
+`
+	if ct, _ := Detect(y); ct == TypeProse || ct == TypeDocRead {
+		t.Fatalf("raw YAML detected as %q — would reach the lossy model", ct)
+	}
+}

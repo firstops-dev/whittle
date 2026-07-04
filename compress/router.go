@@ -603,7 +603,13 @@ func detectCode(lines []string) (ContentType, float64, bool) {
 	}
 	hits := 0
 	for _, ln := range lines {
-		if codeKeywordRe.MatchString(ln) || codeCallRe.MatchString(ln) || codeSnippetRe.MatchString(ln) {
+		if codeKeywordRe.MatchString(ln) || codeCallRe.MatchString(ln) || codeSnippetRe.MatchString(ln) ||
+			kvLineRe.MatchString(ln) || dockerDirectiveRe.MatchString(ln) {
+			// kv/config lines (yaml `key: value`, `- name: x`, Dockerfile directives)
+			// count as code evidence: raw YAML slipped to prose and was lossily
+			// compressed (bench corpus caught sample_deploy.yaml at 40% loss).
+			// Prose crosses the 25%% hit ratio only if kv-shaped lines dominate —
+			// and then passthrough is the safe direction anyway.
 			hits++
 		}
 	}
