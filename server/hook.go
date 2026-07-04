@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -34,6 +36,7 @@ func hookHandler(p *compress.Pipeline, store *Store) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK) // ALWAYS 200: a hook must never error a tool call
 		var ev struct {
 			HookEventName string          `json:"hook_event_name"`
+			SessionID     string          `json:"session_id"`
 			ToolName      string          `json:"tool_name"`
 			ToolOutput    string          `json:"tool_output"`
 			ToolResponse  json.RawMessage `json:"tool_response"`
@@ -62,13 +65,16 @@ func hookHandler(p *compress.Pipeline, store *Store) http.HandlerFunc {
 		// Retrieval hint — ONLY where content was actually reduced. Copy is
 		// deliberately discouraging: the summary is complete; raw is for
 		// byte-exact needs. Alias integers cost ~2 tokens (measured).
+		var storeID int64
 		if store != nil && lossyStrategy(out.Strategy) {
-			id := store.Put(text)
-			final += fmt.Sprintf("\n… [trimmed; content above is complete in substance. Raw original only if strictly required: whittle_get(%d)]", id)
+			storeID = store.Put(text)
+			final += fmt.Sprintf("\n… [trimmed; content above is complete in substance. Raw original only if strictly required: whittle_get(%d)]", storeID)
 		}
 		if len(final) > 9500 {
 			return
 		}
+		logEvent(ev.SessionID, ev.ToolName, out.Strategy, storeID,
+			compress.EstimateTokens(text), compress.EstimateTokens(final))
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"hookSpecificOutput": map[string]any{
 				"hookEventName":     "PostToolUse",
@@ -120,4 +126,27 @@ func getHandler(store *Store) http.HandlerFunc {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		io.WriteString(w, content)
 	}
+}
+
+// logEvent appends one compression record to ~/.whittle/stats.jsonl — the local,
+// never-transmitted audit trail behind `whittle stats`. One line per whittled
+// output: when, which session, which tool, which strategy, token delta, and the
+// retrieval id (0 = lossless, nothing stored). Users can inspect it directly;
+// originals of reduced outputs are retrievable via whittle_get(id) while cached.
+func logEvent(session, tool, strategy string, storeID int64, inTok, outTok int) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return
+	}
+	f, err := os.OpenFile(filepath.Join(home, ".whittle", "stats.jsonl"),
+		os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	b, _ := json.Marshal(map[string]any{
+		"ts": time.Now().Unix(), "session": session, "tool": tool,
+		"strategy": strategy, "id": storeID, "in_tokens": inTok, "out_tokens": outTok,
+	})
+	f.Write(append(b, '\n'))
 }
