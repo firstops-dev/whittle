@@ -1,0 +1,173 @@
+2024-07-04T08:00:00Z [INFO] Starting build process for version 2.5.1
+2024-07-04T08:00:01Z [INFO] Loading configuration from /opt/config/build.yaml
+2024-07-04T08:00:02Z [INFO] Pulling base image: ubuntu:22.04
+2024-07-04T08:00:03Z [INFO] Initializing build workspace
+2024-07-04T08:00:04Z [INFO] Running pre-flight checks
+2024-07-04T08:00:05Z [INFO] Checking disk space: 450GB available
+2024-07-04T08:00:06Z [INFO] Checking available memory: 32GB
+2024-07-04T08:00:07Z [INFO] Registering build stages
+2024-07-04T08:00:08Z [INFO] Stage 1/5: Dependencies
+2024-07-04T08:00:09Z [INFO] Running apt-get update
+2024-07-04T08:00:10Z [INFO] Caching dependency layer
+2024-07-04T08:00:15Z [INFO] Installing build-essential
+2024-07-04T08:00:20Z [INFO] Installing git
+2024-07-04T08:00:25Z [INFO] Installing wget
+2024-07-04T08:00:30Z [INFO] Dependency installation complete
+2024-07-04T08:00:31Z [INFO] Stage 2/5: Source Code
+2024-07-04T08:00:32Z [INFO] Cloning repository github.com/myorg/myrepo.git
+2024-07-04T08:00:45Z [INFO] Checking out commit abc123def456
+2024-07-04T08:00:46Z [INFO] Retrieving 847 files
+2024-07-04T08:00:50Z [INFO] Running git submodule update
+2024-07-04T08:00:55Z [INFO] Source code checkout complete
+2024-07-04T08:00:56Z [INFO] Stage 3/5: Compilation
+2024-07-04T08:00:57Z [INFO] Running configure script
+2024-07-04T08:01:00Z [INFO] Detected CPU cores: 8
+2024-07-04T08:01:01Z [INFO] Parallel build with -j8
+2024-07-04T08:01:02Z [INFO] Compiling object files
+2024-07-04T08:01:03Z [INFO] Compiling src/main.c
+2024-07-04T08:01:04Z [INFO] Compiling src/util.c
+2024-07-04T08:01:05Z [INFO] Compiling src/handler.c
+2024-07-04T08:01:06Z [INFO] Compiling src/config.c
+2024-07-04T08:01:07Z [INFO] Compiling src/network.c
+2024-07-04T08:01:08Z [INFO] Compiling src/auth.c
+2024-07-04T08:01:09Z [INFO] Compiling src/database.c
+2024-07-04T08:01:10Z [INFO] Compiling src/cache.c
+2024-07-04T08:01:11Z [INFO] Compiling src/logging.c
+2024-07-04T08:01:12Z [INFO] Compiling src/metrics.c
+2024-07-04T08:01:13Z [INFO] Compiling src/error.c
+2024-07-04T08:01:14Z [INFO] Object compilation complete: 185 files
+2024-07-04T08:01:15Z [INFO] Running linker
+2024-07-04T08:01:20Z [INFO] Linking complete: 2.8 MB executable
+2024-07-04T08:01:21Z [INFO] Stage 4/5: Testing
+2024-07-04T08:01:22Z [INFO] Running unit tests
+2024-07-04T08:01:23Z [INFO] Test suite: unit_main
+2024-07-04T08:01:24Z [INFO] Running test_config.c
+2024-07-04T08:01:25Z [INFO] PASS: test_config_load
+2024-07-04T08:01:26Z [INFO] PASS: test_config_parse
+2024-07-04T08:01:27Z [INFO] PASS: test_config_validate
+2024-07-04T08:01:28Z [INFO] Running test_network.c
+2024-07-04T08:01:29Z [INFO] PASS: test_socket_create
+2024-07-04T08:01:30Z [INFO] PASS: test_socket_bind
+2024-07-04T08:01:31Z [INFO] PASS: test_socket_listen
+2024-07-04T08:01:32Z [INFO] PASS: test_socket_accept
+2024-07-04T08:01:33Z [INFO] Running test_auth.c
+2024-07-04T08:01:34Z [INFO] PASS: test_auth_init
+2024-07-04T08:01:35Z [INFO] PASS: test_auth_verify_token
+2024-07-04T08:01:36Z [INFO] PASS: test_auth_revoke
+2024-07-04T08:01:37Z [INFO] Running test_database.c
+2024-07-04T08:01:38Z [INFO] PASS: test_db_connect
+2024-07-04T08:01:39Z [INFO] PASS: test_db_query
+2024-07-04T08:01:40Z [INFO] PASS: test_db_transaction
+2024-07-04T08:01:41Z [INFO] Running test_cache.c
+2024-07-04T08:01:42Z [INFO] PASS: test_cache_set
+2024-07-04T08:01:43Z [INFO] PASS: test_cache_get
+2024-07-04T08:01:44Z [INFO] PASS: test_cache_evict
+2024-07-04T08:01:45Z [INFO] PASS: test_cache_ttl
+2024-07-04T08:01:46Z [INFO] Running test_logging.c
+2024-07-04T08:01:47Z [INFO] PASS: test_log_init
+2024-07-04T08:01:48Z [INFO] PASS: test_log_write
+2024-07-04T08:01:49Z [INFO] PASS: test_log_rotation
+2024-07-04T08:01:50Z [INFO] Running test_metrics.c
+2024-07-04T08:01:51Z [INFO] PASS: test_metrics_counter
+2024-07-04T08:01:52Z [INFO] PASS: test_metrics_histogram
+2024-07-04T08:01:53Z [INFO] PASS: test_metrics_gauge
+2024-07-04T08:01:54Z [INFO] Running test_util.c
+2024-07-04T08:01:55Z [INFO] PASS: test_string_utils
+2024-07-04T08:01:56Z [INFO] PASS: test_math_utils
+2024-07-04T08:01:57Z [INFO] PASS: test_array_utils
+2024-07-04T08:01:58Z [INFO] Unit tests complete: 28/28 passed
+2024-07-04T08:01:59Z [INFO] Running integration tests
+2024-07-04T08:02:00Z [INFO] Starting test server on port 9876
+2024-07-04T08:02:01Z [INFO] Connecting test client
+2024-07-04T08:02:02Z [INFO] Test: basic_request_response
+2024-07-04T08:02:03Z [INFO] PASS: basic_request_response (234ms)
+2024-07-04T08:02:04Z [INFO] Test: concurrent_requests
+2024-07-04T08:02:10Z [INFO] PASS: concurrent_requests (6125ms)
+2024-07-04T08:02:11Z [INFO] Test: error_handling
+2024-07-04T08:02:12Z [INFO] PASS: error_handling (456ms)
+2024-07-04T08:02:13Z [INFO] Test: timeout_scenario
+2024-07-04T08:02:20Z [INFO] PASS: timeout_scenario (7234ms)
+2024-07-04T08:02:21Z [INFO] Integration tests complete: 4/4 passed
+2024-07-04T08:02:22Z [INFO] Running performance benchmarks
+2024-07-04T08:02:23Z [INFO] Benchmark: request_latency_p50
+2024-07-04T08:02:30Z [INFO] Result: 1.23ms (target: <5ms) PASS
+2024-07-04T08:02:31Z [INFO] Benchmark: request_latency_p99
+2024-07-04T08:02:40Z [INFO] Result: 8.45ms (target: <50ms) PASS
+2024-07-04T08:02:41Z [INFO] Benchmark: throughput
+2024-07-04T08:02:50Z [INFO] Result: 12547 req/sec (target: >10000) PASS
+2024-07-04T08:02:51Z [INFO] Stage 5/5: Packaging
+2024-07-04T08:02:52Z [INFO] Creating distribution package
+2024-07-04T08:02:53Z [INFO] Compressing binary
+2024-07-04T08:02:55Z [INFO] Creating tarball: myapp-2.5.1-linux-amd64.tar.gz
+2024-07-04T08:02:57Z [INFO] Computing checksum
+2024-07-04T08:02:58Z [INFO] SHA256: 8f3c9e2a1b4d5e7f6a8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0
+2024-07-04T08:02:59Z [INFO] Creating metadata file
+2024-07-04T08:03:00Z [INFO] Package creation complete
+2024-07-04T08:03:01Z [WARN] Skipping optional feature: experimental_turbo_mode
+2024-07-04T08:03:02Z [INFO] Uploading artifact to S3
+2024-07-04T08:03:05Z [INFO] Upload complete to s3://builds/myapp/2.5.1/
+2024-07-04T08:03:06Z [INFO] Generating build report
+2024-07-04T08:03:07Z [INFO] Build report saved to /tmp/build_report_20240704_080307.json
+2024-07-04T08:03:08Z [INFO] Cleaning up temporary files
+2024-07-04T08:03:10Z [INFO] Build cleanup complete
+2024-07-04T08:03:11Z [INFO] Initializing post-build hooks
+2024-07-04T08:03:12Z [INFO] Executing hook: notify_slack
+2024-07-04T08:03:13Z [INFO] Sending Slack notification
+2024-07-04T08:03:14Z [INFO] Hook notification sent successfully
+2024-07-04T08:03:15Z [INFO] Executing hook: trigger_deployment_check
+2024-07-04T08:03:16Z [INFO] Triggering deployment validation pipeline
+2024-07-04T08:03:17Z [INFO] Deployment check started
+2024-07-04T08:03:18Z [INFO] Generating documentation
+2024-07-04T08:03:20Z [INFO] Documentation generation complete
+2024-07-04T08:03:21Z [INFO] Running static analysis on output
+2024-07-04T08:03:25Z [INFO] Static analysis passed: 0 issues found
+2024-07-04T08:03:26Z [INFO] Creating build metadata
+2024-07-04T08:03:27Z [INFO] Build time: 207 seconds
+2024-07-04T08:03:28Z [INFO] Build size: 2.8 MB executable + 512 MB deps
+2024-07-04T08:03:29Z [INFO] Tests passed: 32/32
+2024-07-04T08:03:30Z [INFO] Code coverage: 87.3%
+2024-07-04T08:03:31Z [ERROR] Failed to upload documentation to docs server at docs.internal.company.com:443
+2024-07-04T08:03:32Z [ERROR] Error: Connection timeout after 30 seconds
+2024-07-04T08:03:33Z [ERROR] Stack trace:
+  File "/usr/lib/python3.10/dist-packages/urllib/request.py", line 342, in urlopen
+    response = _open(http_conn, method)
+  File "/usr/lib/python3.10/dist-packages/urllib/request.py", line 350, in _open_unknown
+    req = _request_class(full_url, data, headers, origin_req_host)
+  File "/usr/lib/python3.10/dist-packages/http/client.py", line 1192, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/usr/lib/python3.10/dist-packages/http/client.py", line 1238, in _send_request
+    encode_chunked=encode_chunked)
+  File "/usr/lib/python3.10/dist-packages/http/client.py", line 881, in send
+    self.sock.sendall(data)
+  File "/usr/lib/python3.10/dist-packages/socket.py", line 609, in sendall
+    raise timeout('_ssl_error_socket_timeout')
+  socket.timeout: _ssl_error_socket_timeout
+  Context: uploading documentation to remote server
+2024-07-04T08:03:40Z [WARN] Documentation upload failed but build succeeded, continuing
+2024-07-04T08:03:41Z [WARN] Recommend manual retry: make publish-docs
+2024-07-04T08:03:42Z [INFO] Archiving build logs
+2024-07-04T08:03:43Z [INFO] Logs archived to /archive/builds/2024/07/04/build_20240704_080000.tar.gz
+2024-07-04T08:03:44Z [INFO] Checking for deprecated APIs in binary
+2024-07-04T08:03:50Z [INFO] Deprecated API scan complete: 0 warnings
+2024-07-04T08:03:51Z [INFO] Verifying binary signature
+2024-07-04T08:03:52Z [INFO] Signature verification: PASSED
+2024-07-04T08:03:53Z [INFO] Running security scanner
+2024-07-04T08:03:58Z [INFO] Security scan complete: 0 critical issues, 1 warning
+2024-07-04T08:03:59Z [ERROR] Critical: Dependency 'openssl' version 1.1.1 has CVE-2023-5678
+2024-07-04T08:04:00Z [ERROR] Please update openssl to version 3.0.0 or later
+2024-07-04T08:04:01Z [INFO] Searching for build artifacts
+2024-07-04T08:04:02Z [INFO] Found artifacts: 3 files (2.8 MB total)
+2024-07-04T08:04:03Z [INFO] Registering artifacts in build system
+2024-07-04T08:04:04Z [INFO] Artifact registration complete
+2024-07-04T08:04:05Z [INFO] Creating build summary report
+2024-07-04T08:04:06Z [INFO] Generating test report
+2024-07-04T08:04:07Z [INFO] Test Summary:
+2024-07-04T08:04:08Z [INFO] ===================================================
+2024-07-04T08:04:09Z [INFO] Unit Tests:       28 passed, 0 failed (100%)
+2024-07-04T08:04:10Z [INFO] Integration Tests: 4 passed, 0 failed (100%)
+2024-07-04T08:04:11Z [INFO] Performance Tests: 3 passed, 0 failed (100%)
+2024-07-04T08:04:12Z [INFO] Total Tests:      35 passed, 0 failed (100%)
+2024-07-04T08:04:13Z [INFO] Code Coverage:    87.3%
+2024-07-04T08:04:14Z [INFO] Build Duration:   207 seconds
+2024-07-04T08:04:15Z [INFO] ===================================================
+2024-07-04T08:04:16Z [INFO] Build status: SUCCESS

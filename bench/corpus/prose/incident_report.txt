@@ -1,0 +1,116 @@
+Incident Postmortem: Database Failover Cascade on July 2, 2024
+
+Summary
+
+On July 2, 2024, between 14:23 UTC and 14:47 UTC, the customer-service database experienced a failover that triggered a cascading failure across dependent services. The incident resulted in 24 minutes of partial service degradation affecting approximately 12% of customer tenants. Root cause was identified as a resource exhaustion condition on the primary database replica that was not properly monitored.
+
+Timeline
+
+14:23 UTC: Monitoring system detects high CPU utilization on customer-service primary database (95% for 2 minutes). Initial alert triggered but not escalated due to alert fatigue threshold being too high.
+
+14:25 UTC: Database connection pool in the primary replica becomes exhausted due to long-running query. New connections are rejected and queued. First wave of API errors begins appearing in the edge-server logs.
+
+14:27 UTC: Circuit breaker in the API gateway detects sustained error rate and begins shedding traffic. Downstream services including arbiter and sentinel begin receiving reduced traffic. This causes work queue buildup in these services.
+
+14:31 UTC: Database administrator (on-call) receives alert but misses the initial severity due to similarly-named informational alerts firing simultaneously. Admin begins investigating only after second page arrives at 14:31.
+
+14:33 UTC: Kubernetes liveness probe on customer-service times out due to database unavailability. Pods are killed and replaced. This adds additional load to the already-overloaded database.
+
+14:35 UTC: New customer-service pods fail to start because the database remains overloaded. Cascading pod churn ensues. At this point, 12% of tenants are experiencing complete service unavailability.
+
+14:38 UTC: On-call database administrator connects to the database and identifies the problematic query (a customer report generation query that was manually triggered by a tenant and had not been cancelled). The query is terminated.
+
+14:42 UTC: Connection pool recovers. customer-service pods stabilize and begin serving traffic successfully. Circuit breakers in edge-server begin restoring traffic to the service.
+
+14:47 UTC: All services fully recovered. Error rate returns to baseline levels and customer-visible impact ceases.
+
+Root Causes
+
+1. Insufficient monitoring specificity: The database CPU alert fired for both normal load spikes and resource exhaustion conditions. Alert fatigue caused the initial alert at 14:23 to be ignored.
+
+2. Missing long-running query protection: No mechanism existed to automatically terminate long-running queries. The customer-triggered report query was allowed to consume unbounded resources.
+
+3. Circuit breaker aggressiveness: The circuit breaker in the API gateway was too aggressive in shedding traffic, causing work queue buildup in downstream services rather than gracefully degrading.
+
+4. Ineffective liveness probes: The Kubernetes liveness probe attempted to check database connectivity, which fails during database failover and causes unnecessary pod churn instead of gracefully degrading.
+
+5. Cascading failure by design: The system did not have sufficient bulkheads to prevent a single component failure from affecting all customers. The database was a shared resource without per-tenant resource isolation.
+
+Impact
+
+During the 24-minute window, the following metrics were observed:
+
+- Total API requests impacted: 2.3 million
+- Error rate: 89% for affected tenants, 0% for unaffected tenants
+- Customer tenants affected: 142 out of 1,200
+- Revenue impact: Estimated 120,000 USD based on SLA credits
+- Team pages: 3 (initial page, escalation page, all-hands page)
+
+Corrective Actions
+
+Immediate (completed within 2 hours):
+
+1. Increase database CPU alert threshold specificity. Split into two alerts: one for sustained CPU above 85% for more than 10 minutes (escalates immediately), and one for momentary spikes (informational only).
+
+2. Deploy automatic long-running query termination. Queries running longer than 15 minutes are automatically cancelled with a detailed error message returned to the client.
+
+3. Adjust circuit breaker parameters. Reduce the error rate threshold from 50% to 20% to trigger circuit breaking earlier, but reduce the traffic shedding rate from 100% to 30% per step.
+
+4. Remove database connectivity check from Kubernetes liveness probe. Replace with application-level health check that gracefully handles database unavailability.
+
+Short-term (target: within 2 weeks):
+
+1. Implement per-tenant resource quotas on the database. Each tenant is allocated a maximum percentage of database resources. Tenants exceeding their quota receive errors instead of blocking other tenants' queries.
+
+2. Add distributed tracing to track request flow across services. This will help identify which service is causing failures during cascade scenarios.
+
+3. Implement graceful degradation mode for API gateway. When upstream services are unavailable, return cached responses or degraded functionality instead of errors.
+
+Medium-term (target: within 8 weeks):
+
+1. Implement database read replicas. Distribute read traffic across multiple replicas to reduce the likelihood of resource exhaustion on the primary.
+
+2. Add request-level timeout enforcement at the API gateway level. Long-running requests are terminated at the gateway before they reach backend services.
+
+3. Implement chaos engineering tests. Regular failure injection tests to verify the system degrades gracefully when components fail.
+
+Long-term (target: roadmap):
+
+1. Migrate to fully isolated customer databases. Each customer has a dedicated database instance for complete resource isolation.
+
+2. Implement API quota management system. Customers can configure quota limits for their usage to prevent accidental overages.
+
+3. Add machine learning-based anomaly detection. Detect unusual query patterns or customer behavior before they cause failures.
+
+Lessons Learned
+
+1. Alert fatigue is a systemic problem that can mask real issues. Invest time in tuning alert thresholds and being aggressive about suppressing low-signal alerts.
+
+2. Long-running queries are a common source of cascading failures. Implement automatic query termination as a baseline safety mechanism.
+
+3. Cascading failures are inevitable in microservice architectures. Design systems with explicit bulkheads and graceful degradation in mind.
+
+4. Distributed liveness checks are fragile. Use application-level health checks that understand the specific failure modes of your system.
+
+5. Customer communication during incidents is critical. Had this incident lasted longer, proactive customer communication would have been necessary.
+
+Follow-up Actions
+
+1. Review alerting strategy for all monitoring systems. Identify and suppress low-signal alerts. (Owner: Monitoring team, deadline: 1 week)
+
+2. Implement per-tenant database quotas. (Owner: Database team, deadline: 3 weeks)
+
+3. Update runbooks for database failover scenarios. (Owner: Ops team, deadline: 1 week)
+
+4. Schedule regular incident response drills. (Owner: Engineering management, deadline: ongoing)
+
+5. Review all Kubernetes liveness probes system-wide. (Owner: Platform team, deadline: 2 weeks)
+
+Approval
+
+This postmortem was reviewed and approved by the incident commander, engineering leadership, and the on-call team.
+
+Date: July 3, 2024
+Incident Commander: Sarah Chen
+Engineering Lead: Michael Rodriguez
+Database Team Lead: James Park

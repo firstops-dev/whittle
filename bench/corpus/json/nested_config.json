@@ -1,0 +1,282 @@
+[
+  {
+    "id": "config_001",
+    "name": "us-west-2-primary",
+    "enabled": true,
+    "meta": {
+      "region": "us-west-2",
+      "tier": "standard"
+    },
+    "replicas": 3
+  },
+  {
+    "id": "config_002",
+    "name": "us-west-2-backup",
+    "enabled": true,
+    "meta": {
+      "region": "us-west-2",
+      "tier": "standard"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_003",
+    "name": "us-east-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "us-east-1",
+      "tier": "premium"
+    },
+    "replicas": 5
+  },
+  {
+    "id": "config_004",
+    "name": "eu-central-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "eu-central-1",
+      "tier": "standard"
+    },
+    "replicas": 3
+  },
+  {
+    "id": "config_005",
+    "name": "eu-central-1-backup",
+    "enabled": false,
+    "meta": {
+      "region": "eu-central-1",
+      "tier": "standard"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_006",
+    "name": "ap-southeast-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "ap-southeast-1",
+      "tier": "basic"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_007",
+    "name": "us-west-2-dr",
+    "enabled": true,
+    "meta": {
+      "region": "us-west-2",
+      "tier": "standard"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_008",
+    "name": "ca-central-1-edge",
+    "enabled": true,
+    "meta": {
+      "region": "ca-central-1",
+      "tier": "edge"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_009",
+    "name": "us-east-1-secondary",
+    "enabled": true,
+    "meta": {
+      "region": "us-east-1",
+      "tier": "premium"
+    },
+    "replicas": 3
+  },
+  {
+    "id": "config_010",
+    "name": "ap-northeast-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "ap-northeast-1",
+      "tier": "standard"
+    },
+    "replicas": 3
+  },
+  {
+    "id": "config_011",
+    "name": "sa-east-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "sa-east-1",
+      "tier": "basic"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_012",
+    "name": "us-west-2-archive",
+    "enabled": false,
+    "meta": {
+      "region": "us-west-2",
+      "tier": "standard"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_013",
+    "name": "eu-west-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "eu-west-1",
+      "tier": "premium"
+    },
+    "replicas": 4
+  },
+  {
+    "id": "config_014",
+    "name": "us-east-1-archive",
+    "enabled": false,
+    "meta": {
+      "region": "us-east-1",
+      "tier": "premium"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_015",
+    "name": "ap-south-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "ap-south-1",
+      "tier": "standard"
+    },
+    "replicas": 3
+  },
+  {
+    "id": "config_016",
+    "name": "us-west-2-gamma",
+    "enabled": true,
+    "meta": {
+      "region": "us-west-2",
+      "tier": "standard"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_017",
+    "name": "eu-central-1-secondary",
+    "enabled": true,
+    "meta": {
+      "region": "eu-central-1",
+      "tier": "standard"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_018",
+    "name": "me-south-1-edge",
+    "enabled": true,
+    "meta": {
+      "region": "me-south-1",
+      "tier": "edge"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_019",
+    "name": "ap-southeast-1-secondary",
+    "enabled": true,
+    "meta": {
+      "region": "ap-southeast-1",
+      "tier": "basic"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_020",
+    "name": "us-east-1-gamma",
+    "enabled": true,
+    "meta": {
+      "region": "us-east-1",
+      "tier": "premium"
+    },
+    "replicas": 4
+  },
+  {
+    "id": "config_021",
+    "name": "ap-northeast-1-secondary",
+    "enabled": false,
+    "meta": {
+      "region": "ap-northeast-1",
+      "tier": "standard"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_022",
+    "name": "eu-west-1-secondary",
+    "enabled": true,
+    "meta": {
+      "region": "eu-west-1",
+      "tier": "premium"
+    },
+    "replicas": 3
+  },
+  {
+    "id": "config_023",
+    "name": "ca-central-1-primary",
+    "enabled": true,
+    "meta": {
+      "region": "ca-central-1",
+      "tier": "standard"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_024",
+    "name": "sa-east-1-secondary",
+    "enabled": true,
+    "meta": {
+      "region": "sa-east-1",
+      "tier": "basic"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_025",
+    "name": "ap-south-1-secondary",
+    "enabled": true,
+    "meta": {
+      "region": "ap-south-1",
+      "tier": "standard"
+    },
+    "replicas": 2
+  },
+  {
+    "id": "config_026",
+    "name": "us-west-2-cold",
+    "enabled": false,
+    "meta": {
+      "region": "us-west-2",
+      "tier": "standard"
+    },
+    "replicas": 0
+  },
+  {
+    "id": "config_027",
+    "name": "eu-central-1-edge",
+    "enabled": true,
+    "meta": {
+      "region": "eu-central-1",
+      "tier": "edge"
+    },
+    "replicas": 1
+  },
+  {
+    "id": "config_028",
+    "name": "af-south-1-edge",
+    "enabled": true,
+    "meta": {
+      "region": "af-south-1",
+      "tier": "edge"
+    },
+    "replicas": 1
+  }
+]

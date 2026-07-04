@@ -1,0 +1,223 @@
+[
+  {
+    "id": "user_001",
+    "name": "Alice Johnson",
+    "email": "alice@example.com",
+    "role": "admin",
+    "active": true,
+    "note": "Team lead for backend services"
+  },
+  {
+    "id": "user_002",
+    "name": "Bob Smith",
+    "email": "bob@example.com",
+    "role": "developer",
+    "active": true
+  },
+  {
+    "id": "user_003",
+    "name": "Carol Davis",
+    "role": "developer",
+    "active": true,
+    "note": "Frontend specialist, 3 years experience"
+  },
+  {
+    "id": "user_004",
+    "name": "David Wilson",
+    "email": "david@example.com",
+    "role": "engineer",
+    "active": false,
+    "note": null
+  },
+  {
+    "id": "user_005",
+    "name": "Emma Brown",
+    "email": "emma@example.com",
+    "role": "senior_engineer",
+    "active": true,
+    "note": "Platform architect"
+  },
+  {
+    "id": "user_006",
+    "name": "Frank Miller",
+    "role": "developer",
+    "active": true
+  },
+  {
+    "id": "user_007",
+    "name": "Grace Lee",
+    "email": "grace@example.com",
+    "role": "manager",
+    "active": true,
+    "note": "Engineering manager, 5 reports"
+  },
+  {
+    "id": "user_008",
+    "name": "Henry Taylor",
+    "email": "henry@example.com",
+    "role": "developer",
+    "active": true,
+    "note": null
+  },
+  {
+    "id": "user_009",
+    "name": "Iris Martinez",
+    "role": "engineer",
+    "active": false
+  },
+  {
+    "id": "user_010",
+    "name": "Jack Anderson",
+    "email": "jack@example.com",
+    "role": "intern",
+    "active": true,
+    "note": "Summer internship 2024"
+  },
+  {
+    "id": "user_011",
+    "name": "Karen White",
+    "email": "karen@example.com",
+    "role": "principal_engineer",
+    "active": true
+  },
+  {
+    "id": "user_012",
+    "name": "Leo Thompson",
+    "email": "leo@example.com",
+    "role": "developer",
+    "active": true,
+    "note": "Kubernetes expert, on-call rotation"
+  },
+  {
+    "id": "user_013",
+    "name": "Monica Clark",
+    "role": "designer",
+    "active": true,
+    "note": "Product design lead"
+  },
+  {
+    "id": "user_014",
+    "name": "Nathan Garcia",
+    "email": "nathan@example.com",
+    "role": "engineer",
+    "active": true
+  },
+  {
+    "id": "user_015",
+    "name": "Olivia Jackson",
+    "email": "olivia@example.com",
+    "role": "developer",
+    "active": false,
+    "note": "On leave until Q4"
+  },
+  {
+    "id": "user_016",
+    "name": "Paul Rodriguez",
+    "role": "engineer",
+    "active": true,
+    "note": null
+  },
+  {
+    "id": "user_017",
+    "name": "Quinn Lewis",
+    "email": "quinn@example.com",
+    "role": "developer",
+    "active": true,
+    "note": "Security focused, does threat modeling"
+  },
+  {
+    "id": "user_018",
+    "name": "Rachel Walker",
+    "email": "rachel@example.com",
+    "role": "qa_engineer",
+    "active": true
+  },
+  {
+    "id": "user_019",
+    "name": "Samuel Hall",
+    "role": "developer",
+    "active": true,
+    "note": "Database performance tuning specialist"
+  },
+  {
+    "id": "user_020",
+    "name": "Tanya Young",
+    "email": "tanya@example.com",
+    "role": "engineer",
+    "active": false
+  },
+  {
+    "id": "user_021",
+    "name": "Uma Patel",
+    "email": "uma@example.com",
+    "role": "senior_engineer",
+    "active": true,
+    "note": "ML systems, on tech steering committee"
+  },
+  {
+    "id": "user_022",
+    "name": "Victor King",
+    "role": "developer",
+    "active": true
+  },
+  {
+    "id": "user_023",
+    "name": "Wendy Scott",
+    "email": "wendy@example.com",
+    "role": "engineer",
+    "active": true,
+    "note": null
+  },
+  {
+    "id": "user_024",
+    "name": "Xavier Green",
+    "email": "xavier@example.com",
+    "role": "developer",
+    "active": true,
+    "note": "Golang expert, leads compiler optimization"
+  },
+  {
+    "id": "user_025",
+    "name": "Yara Adams",
+    "role": "engineer",
+    "active": false,
+    "note": "Transitioning to contractor"
+  },
+  {
+    "id": "user_026",
+    "name": "Zachary Nelson",
+    "email": "zachary@example.com",
+    "role": "developer",
+    "active": true
+  },
+  {
+    "id": "user_027",
+    "name": "Amelia Carter",
+    "email": "amelia@example.com",
+    "role": "qa_engineer",
+    "active": true,
+    "note": "Test automation lead"
+  },
+  {
+    "id": "user_028",
+    "name": "Benjamin Mitchell",
+    "role": "developer",
+    "active": true,
+    "note": "Microservices architecture"
+  },
+  {
+    "id": "user_029",
+    "name": "Chloe Roberts",
+    "email": "chloe@example.com",
+    "role": "engineer",
+    "active": true
+  },
+  {
+    "id": "user_030",
+    "name": "Daniel Phillips",
+    "email": "daniel@example.com",
+    "role": "developer",
+    "active": false,
+    "note": null
+  }
+]

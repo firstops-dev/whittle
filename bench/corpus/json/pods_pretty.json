@@ -1,0 +1,482 @@
+[
+  {
+    "name": "nginx-deployment-5d59d67564-abcde",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "nginx:1.25.3"
+  },
+  {
+    "name": "nginx-deployment-5d59d67564-fghij",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "nginx:1.25.3"
+  },
+  {
+    "name": "postgres-db-0",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-3",
+    "image": "postgres:15.2"
+  },
+  {
+    "name": "redis-cache-7bd8h",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "redis:7.0.11"
+  },
+  {
+    "name": "api-service-xyz123",
+    "namespace": "staging",
+    "status": "Running",
+    "restarts": 2,
+    "node": "worker-2",
+    "image": "myregistry.azurecr.io/api-service:v2.1.0"
+  },
+  {
+    "name": "api-service-xyz124",
+    "namespace": "staging",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-3",
+    "image": "myregistry.azurecr.io/api-service:v2.1.0"
+  },
+  {
+    "name": "worker-job-batch-1",
+    "namespace": "production",
+    "status": "Completed",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "myregistry.azurecr.io/worker:v1.5.2"
+  },
+  {
+    "name": "logger-sidecar-abc1",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "fluent-bit:2.1.0"
+  },
+  {
+    "name": "monitoring-prometheus-server",
+    "namespace": "monitoring",
+    "status": "Running",
+    "restarts": 3,
+    "node": "worker-1",
+    "image": "prom/prometheus:v2.46.0"
+  },
+  {
+    "name": "monitoring-grafana-0",
+    "namespace": "monitoring",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "grafana/grafana:10.0.0"
+  },
+  {
+    "name": "webhook-processor-def456",
+    "namespace": "staging",
+    "status": "Running",
+    "restarts": 4,
+    "node": "worker-2",
+    "image": "myregistry.azurecr.io/webhook-processor:v3.2.1"
+  },
+  {
+    "name": "webhook-processor-def457",
+    "namespace": "staging",
+    "status": "CrashLoopBackOff",
+    "restarts": 12,
+    "node": "worker-1",
+    "image": "myregistry.azurecr.io/webhook-processor:v3.2.1"
+  },
+  {
+    "name": "nginx-deployment-5d59d67564-klmno",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "nginx:1.25.3"
+  },
+  {
+    "name": "cert-manager-webhook",
+    "namespace": "cert-manager",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "quay.io/jetstack/cert-manager-webhook:v1.13.0"
+  },
+  {
+    "name": "cert-manager-controller",
+    "namespace": "cert-manager",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-1",
+    "image": "quay.io/jetstack/cert-manager-controller:v1.13.0"
+  },
+  {
+    "name": "coredns-56666f979b-pqrst",
+    "namespace": "kube-system",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "coredns/coredns:1.10.0"
+  },
+  {
+    "name": "coredns-56666f979b-uvwxy",
+    "namespace": "kube-system",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "coredns/coredns:1.10.0"
+  },
+  {
+    "name": "etcd-backup-job",
+    "namespace": "kube-system",
+    "status": "Completed",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "etcd:v3.5.9"
+  },
+  {
+    "name": "kube-proxy-node-1",
+    "namespace": "kube-system",
+    "status": "Running",
+    "restarts": 2,
+    "node": "worker-1",
+    "image": "k8s.gcr.io/kube-proxy:v1.27.3"
+  },
+  {
+    "name": "kube-proxy-node-2",
+    "namespace": "kube-system",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-2",
+    "image": "k8s.gcr.io/kube-proxy:v1.27.3"
+  },
+  {
+    "name": "kube-proxy-node-3",
+    "namespace": "kube-system",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "k8s.gcr.io/kube-proxy:v1.27.3"
+  },
+  {
+    "name": "flannel-node-1",
+    "namespace": "kube-flannel",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "flannelcni/flannel:v0.22.2"
+  },
+  {
+    "name": "flannel-node-2",
+    "namespace": "kube-flannel",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "flannelcni/flannel:v0.22.2"
+  },
+  {
+    "name": "flannel-node-3",
+    "namespace": "kube-flannel",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "flannelcni/flannel:v0.22.2"
+  },
+  {
+    "name": "ingress-nginx-controller-abc",
+    "namespace": "ingress-nginx",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "registry.k8s.io/ingress-nginx/controller:v1.9.0"
+  },
+  {
+    "name": "api-service-xyz125",
+    "namespace": "staging",
+    "status": "Pending",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "myregistry.azurecr.io/api-service:v2.1.0"
+  },
+  {
+    "name": "queue-worker-1",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 5,
+    "node": "worker-3",
+    "image": "myregistry.azurecr.io/queue-worker:v1.3.0"
+  },
+  {
+    "name": "queue-worker-2",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 3,
+    "node": "worker-1",
+    "image": "myregistry.azurecr.io/queue-worker:v1.3.0"
+  },
+  {
+    "name": "queue-worker-3",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 2,
+    "node": "worker-2",
+    "image": "myregistry.azurecr.io/queue-worker:v1.3.0"
+  },
+  {
+    "name": "cache-warmer-init",
+    "namespace": "production",
+    "status": "Completed",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "myregistry.azurecr.io/cache-warmer:v2.0.0"
+  },
+  {
+    "name": "postgres-replica-0",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "postgres:15.2"
+  },
+  {
+    "name": "postgres-replica-1",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "postgres:15.2"
+  },
+  {
+    "name": "backup-retention-job",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "myregistry.azurecr.io/backup-tool:v1.2.0"
+  },
+  {
+    "name": "nginx-deployment-5d59d67564-zzabc",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "nginx:1.25.3"
+  },
+  {
+    "name": "api-gateway-prod-1",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-2",
+    "image": "myregistry.azurecr.io/api-gateway:v4.1.0"
+  },
+  {
+    "name": "api-gateway-prod-2",
+    "namespace": "production",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "myregistry.azurecr.io/api-gateway:v4.1.0"
+  },
+  {
+    "name": "telemetry-collector-1",
+    "namespace": "monitoring",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "otel/opentelemetry-collector:0.87.0"
+  },
+  {
+    "name": "telemetry-collector-2",
+    "namespace": "monitoring",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "otel/opentelemetry-collector:0.87.0"
+  },
+  {
+    "name": "vault-unseal-job",
+    "namespace": "vault",
+    "status": "Completed",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "vault:1.15.1"
+  },
+  {
+    "name": "vault-server-0",
+    "namespace": "vault",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-1",
+    "image": "vault:1.15.1"
+  },
+  {
+    "name": "elasticsearch-master-0",
+    "namespace": "logging",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "docker.elastic.co/elasticsearch/elasticsearch:8.10.0"
+  },
+  {
+    "name": "elasticsearch-data-0",
+    "namespace": "logging",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "docker.elastic.co/elasticsearch/elasticsearch:8.10.0"
+  },
+  {
+    "name": "kibana-0",
+    "namespace": "logging",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "docker.elastic.co/kibana/kibana:8.10.0"
+  },
+  {
+    "name": "logstash-processor-1",
+    "namespace": "logging",
+    "status": "Running",
+    "restarts": 2,
+    "node": "worker-2",
+    "image": "docker.elastic.co/logstash/logstash:8.10.0"
+  },
+  {
+    "name": "logstash-processor-2",
+    "namespace": "logging",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-3",
+    "image": "docker.elastic.co/logstash/logstash:8.10.0"
+  },
+  {
+    "name": "schema-registry-0",
+    "namespace": "kafka",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "confluentinc/cp-schema-registry:7.5.0"
+  },
+  {
+    "name": "kafka-broker-0",
+    "namespace": "kafka",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "confluentinc/cp-kafka:7.5.0"
+  },
+  {
+    "name": "kafka-broker-1",
+    "namespace": "kafka",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "confluentinc/cp-kafka:7.5.0"
+  },
+  {
+    "name": "zookeeper-0",
+    "namespace": "kafka",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-1",
+    "image": "confluentinc/cp-zookeeper:7.5.0"
+  },
+  {
+    "name": "minio-server-0",
+    "namespace": "storage",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "minio/minio:latest"
+  },
+  {
+    "name": "minio-mc-setup",
+    "namespace": "storage",
+    "status": "Completed",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "minio/mc:latest"
+  },
+  {
+    "name": "nats-server-0",
+    "namespace": "messaging",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "nats:2.10.0"
+  },
+  {
+    "name": "nats-server-1",
+    "namespace": "messaging",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "nats:2.10.0"
+  },
+  {
+    "name": "rabbitmq-0",
+    "namespace": "messaging",
+    "status": "Running",
+    "restarts": 3,
+    "node": "worker-3",
+    "image": "rabbitmq:3.12.0-management"
+  },
+  {
+    "name": "mongodb-0",
+    "namespace": "databases",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "mongo:7.0"
+  },
+  {
+    "name": "mongodb-1",
+    "namespace": "databases",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-2",
+    "image": "mongo:7.0"
+  },
+  {
+    "name": "mongodb-arbiter-0",
+    "namespace": "databases",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-3",
+    "image": "mongo:7.0"
+  },
+  {
+    "name": "mysql-0",
+    "namespace": "databases",
+    "status": "Running",
+    "restarts": 0,
+    "node": "worker-1",
+    "image": "mysql:8.0.34"
+  },
+  {
+    "name": "mariadb-galera-0",
+    "namespace": "databases",
+    "status": "Running",
+    "restarts": 2,
+    "node": "worker-2",
+    "image": "mariadb:10.11"
+  },
+  {
+    "name": "mariadb-galera-1",
+    "namespace": "databases",
+    "status": "Running",
+    "restarts": 1,
+    "node": "worker-3",
+    "image": "mariadb:10.11"
+  }
+]
