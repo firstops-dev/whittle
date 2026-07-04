@@ -72,6 +72,55 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:8096
 | `WHITTLE_MAX_CHARS` | 262144 | global size ceiling (skip before classify) |
 | `WHITTLE_PROSE_MAX_CHARS` | 4500 | prose-path latency ceiling |
 
+
+## Why whittle — compress at write-time, not read-time
+
+Most context compressors are **gateways**: they sit in the model-request path
+and rewrite conversation history at *read time*, on every LLM call. That
+position forces hard problems — prompt-cache stabilization (mutating history
+invalidates cached prefixes), per-call re-compression, terminating your API
+traffic (keys, system prompts and all), and a runtime that must stay up or your
+agent goes down with it.
+
+Whittle takes the other position: it is a **PostToolUse hook**. Each tool output
+is compressed **once, at the moment it is born**, before it ever enters
+conversation history. Everything else follows from that choice:
+
+- **Savings compound.** A tool output lives in context for every subsequent
+  turn. Tokens removed at write-time are removed from *every* later call —
+  no per-call rework, no cache surgery, because history is never mutated.
+- **No trust expansion.** A hook sees one tool output at a time, locally, with
+  zero credentials. Nothing terminates your API traffic.
+- **Failure is free.** The hook fails open; if whittle is down or declines, the
+  agent proceeds with the original output. A gateway outage is an agent outage.
+- **The loss budget is honest.** A read-time gateway can afford recoverable
+  lossy compression — its runtime is present to serve dropped content back. A
+  hook has no runtime standing by: the compressed output is the agent's *only*
+  copy. That is why whittle is lossless-or-marked by construction — it is not a
+  preference, it is what the architecture demands.
+
+Whittle is layered so the hook is the default surface, not the only one:
+**library** (`whittle.New`) → **HTTP service** (`whittle serve`) → **hook
+adapters** (Claude Code PostToolUse today; Cursor, Codex, OpenCode adapters on
+the roadmap) → and the same library can be embedded in gateways or pipelines if
+that is where you need it.
+
+## Performance
+
+Deterministic strategies are pure CPU, single static binary, zero allocatable
+model state (Apple M-series, `go test -bench`):
+
+| input | size | latency |
+|---|---|---|
+| JSON array, 200 rows, pretty-printed | ~21 KB | ~1.0 ms |
+| terminal progress stream | ~12 KB | ~3.9 ms |
+| build log, 800 lines | ~66 KB | ~21 ms |
+
+The hook runs after the tool call completes, so this cost is **off the LLM
+request path entirely** — model-call latency is unchanged. The optional ML
+prose path is capped by a fail-open budget (default 1.5 s) and never blocks
+beyond it.
+
 ## Design principles
 
 1. **Fail open.** A compressor that breaks your agent is worse than no compressor.
@@ -81,6 +130,16 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:8096
    estimates (MAE ~8% vs `o200k_base`), not bytes.
 5. **Adversarially tested.** The invariants above are pinned by reconstruction
    fuzzing, per-language routing suites, and fail-open contract tests.
+
+
+## Acknowledgments
+
+Whittle's log-selection strategy, several content-detection heuristics, and the
+tabular parser were adapted from [Headroom](https://github.com/headroomlabs-ai/headroom)
+(Apache-2.0) — adapted portions are marked in source comments, and we think
+their compaction work is excellent. Whittle exists because we wanted the
+opposite architecture: write-time hook instead of request-path gateway, with
+the stricter fidelity contract that position requires. See NOTICE.
 
 ## License
 

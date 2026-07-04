@@ -1,0 +1,12 @@
+whittle
+Copyright 2026 FirstOps
+
+This product includes software developed at FirstOps (https://firstops.dev).
+
+Portions of the log-selection strategy, content-detection heuristics, and
+tabular parsing were adapted from Headroom
+(https://github.com/headroomlabs-ai/headroom), licensed under the Apache
+License, Version 2.0. Adapted portions are marked in source comments.
+Whittle is an independent implementation with a different architecture
+(write-time hook rather than request-path gateway) and substantial original
+functionality; see README "Acknowledgments".
