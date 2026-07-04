@@ -49,7 +49,7 @@ func ListenAndServe(addr string) error {
 		log.Default(),
 	)
 	if addr == "" {
-		addr = ":8095"
+		addr = ":45871"
 	}
 	store, _ := OpenStore(storeDir(), 256<<20, 24*time.Hour) // nil on error: hints just don't emit
 	srv := &http.Server{

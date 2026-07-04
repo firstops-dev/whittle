@@ -31,8 +31,8 @@ import (
 )
 
 const (
-	routerAddr = "127.0.0.1:8095"
-	modelAddr  = "127.0.0.1:8096"
+	routerAddr = "127.0.0.1:45871"
+	modelAddr  = "127.0.0.1:45872"
 	agentLabel = "dev.firstops.whittle"
 )
 
@@ -276,14 +276,14 @@ func installClaudeHook() error {
 	entries, _ := hooks["PostToolUse"].([]any)
 	kept := entries[:0] // migrate: drop any older whittle entry (command-type era)
 	for _, e := range entries {
-		if !strings.Contains(fmt.Sprint(e), ":8095/hook") && !strings.Contains(fmt.Sprint(e), "whittle") {
+		if !strings.Contains(fmt.Sprint(e), "/hook") && !strings.Contains(fmt.Sprint(e), "whittle") {
 			kept = append(kept, e)
 		}
 	}
 	entries = append(kept, map[string]any{
 		"matcher": "*",
 		"hooks": []any{map[string]any{
-			"type": "http", "url": "http://127.0.0.1:8095/hook", "timeout": 10,
+			"type": "http", "url": "http://127.0.0.1:45871/hook", "timeout": 10,
 			"statusMessage": "whittle: compressing tool output…",
 		}},
 	})
@@ -304,7 +304,7 @@ func removeClaudeHook() error {
 	}
 	kept := entries[:0]
 	for _, e := range entries {
-		if !strings.Contains(fmt.Sprint(e), ":8095/hook") && !strings.Contains(fmt.Sprint(e), "whittle") {
+		if !strings.Contains(fmt.Sprint(e), "/hook") && !strings.Contains(fmt.Sprint(e), "whittle") {
 			kept = append(kept, e)
 		}
 	}
@@ -318,7 +318,7 @@ func hookInstalled() bool {
 		return false
 	}
 	hooks, _ := s["hooks"].(map[string]any)
-	return strings.Contains(fmt.Sprint(hooks["PostToolUse"]), ":8095/hook")
+	return strings.Contains(fmt.Sprint(hooks["PostToolUse"]), "/hook")
 }
 
 func must(err error) {

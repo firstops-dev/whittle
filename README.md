@@ -39,7 +39,7 @@ your agent sees original outputs, never an error.
 ```
 whittle compress output.json                 # compressed to stdout
 cat build.log | whittle compress -stats      # stats to stderr
-whittle serve -addr :8095                    # HTTP: POST /v1/compress
+whittle serve -addr :45871                    # HTTP: POST /v1/compress
 ```
 
 As a library:
@@ -74,8 +74,8 @@ run the model sidecar (LLMLingua-2 + whittle's fidelity guards — see
 
 ```
 cd model && python -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/uvicorn app:app --port 8096
-export WHITTLE_MODEL_URL=http://127.0.0.1:8096
+.venv/bin/uvicorn app:app --port 45872
+export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 ```
 
 ## Configuration

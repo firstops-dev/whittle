@@ -2,7 +2,7 @@
 //
 //	whittle compress output.json          # compressed text to stdout
 //	cat tool-output.txt | whittle compress -stats
-//	whittle serve -addr :8095             # POST /v1/compress
+//	whittle serve -addr :45871             # POST /v1/compress
 package main
 
 import (
@@ -73,7 +73,7 @@ compress flags:
   -stats           print action/strategy/token stats to stderr
 
 serve flags:
-  -addr string     listen address (default ":8095")
+  -addr string     listen address (default ":45871")
 
 env:
   WHITTLE_MODEL_URL        enable the ML prose path (model sidecar URL)
@@ -121,7 +121,7 @@ func cmdCompress(args []string) {
 
 func cmdServe(args []string) {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
-	addr := fs.String("addr", ":8095", "listen address")
+	addr := fs.String("addr", ":45871", "listen address")
 	_ = fs.Parse(args)
 	if err := server.ListenAndServe(*addr); err != nil {
 		fmt.Fprintln(os.Stderr, "whittle:", err)
