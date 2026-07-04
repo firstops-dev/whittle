@@ -266,7 +266,7 @@ func installClaudeHook() error {
 	entries, _ := hooks["PostToolUse"].([]any)
 	kept := entries[:0] // migrate: drop any older whittle entry (command-type era)
 	for _, e := range entries {
-		if !strings.Contains(fmt.Sprint(e), "whittle") {
+		if !strings.Contains(fmt.Sprint(e), ":8095/hook") && !strings.Contains(fmt.Sprint(e), "whittle") {
 			kept = append(kept, e)
 		}
 	}
@@ -274,7 +274,7 @@ func installClaudeHook() error {
 		"matcher": "*",
 		"hooks": []any{map[string]any{
 			"type": "http", "url": "http://127.0.0.1:8095/hook", "timeout": 10,
-			"statusMessage": "whittling tool output…",
+			"statusMessage": "whittle: compressing tool output…",
 		}},
 	})
 	hooks["PostToolUse"] = entries
@@ -294,7 +294,7 @@ func removeClaudeHook() error {
 	}
 	kept := entries[:0]
 	for _, e := range entries {
-		if !strings.Contains(fmt.Sprint(e), "whittle") {
+		if !strings.Contains(fmt.Sprint(e), ":8095/hook") && !strings.Contains(fmt.Sprint(e), "whittle") {
 			kept = append(kept, e)
 		}
 	}
@@ -308,7 +308,7 @@ func hookInstalled() bool {
 		return false
 	}
 	hooks, _ := s["hooks"].(map[string]any)
-	return strings.Contains(fmt.Sprint(hooks["PostToolUse"]), "whittle")
+	return strings.Contains(fmt.Sprint(hooks["PostToolUse"]), ":8095/hook")
 }
 
 func must(err error) {
