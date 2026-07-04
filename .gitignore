@@ -2,3 +2,4 @@
 /whittle
 model/.venv/
 model/__pycache__/
+dist/
