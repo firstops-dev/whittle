@@ -29,6 +29,18 @@ func main() {
 		cmdCompress(os.Args[2:])
 	case "serve":
 		cmdServe(os.Args[2:])
+	case "setup":
+		cmdSetup(os.Args[2:])
+	case "daemon":
+		cmdDaemon(os.Args[2:])
+	case "stop":
+		cmdStop(os.Args[2:])
+	case "cleanup":
+		cmdCleanup(os.Args[2:])
+	case "status":
+		cmdStatus(os.Args[2:])
+	case "hook":
+		cmdHook(os.Args[2:])
 	case "version":
 		fmt.Println("whittle", version)
 	default:
@@ -41,8 +53,13 @@ func usage() {
 	fmt.Fprintln(os.Stderr, `whittle — carves agent tool outputs down to what matters
 
 usage:
+  whittle setup                     install: model sidecar, Claude Code hook,
+                                    background service (launchd) — one command
+  whittle status                    health of router, sidecar, hook
+  whittle stop                      stop background services
+  whittle cleanup                   stop + remove hook + unregister service
   whittle compress [flags] [file]   compress a file (or stdin) to stdout
-  whittle serve    [flags]          run the HTTP API (POST /v1/compress)
+  whittle serve    [flags]          run the HTTP API in the foreground
   whittle version
 
 compress flags:

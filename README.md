@@ -16,9 +16,23 @@ tokenizer counts — not byte counts that overstate savings by up to 4×.
 
 ```
 go install github.com/firstops-dev/whittle/cmd/whittle@latest
+whittle setup
 ```
 
-Zero dependencies. Works immediately — the optional ML prose path is opt-in (below).
+That's the whole thing. `setup`:
+
+- installs the **Claude Code PostToolUse hook** — every tool output your agent
+  reads is whittled from now on (Claude Code is the supported agent today;
+  Cursor, Codex and OpenCode adapters are on the roadmap);
+- materializes the ML prose sidecar (embedded in the binary) into `~/.whittle`,
+  builds its venv, and uses your GPU automatically (CUDA > Apple MPS > CPU) —
+  if `python3` is missing, whittle simply runs deterministic-only;
+- registers a **launchd agent** (macOS) so the service starts at login and is
+  kept alive.
+
+Manage it with `whittle status`, `whittle stop`, and `whittle cleanup` (stops
+the service and removes the hook). Everything fails open: if whittle is down,
+your agent sees original outputs, never an error.
 
 ## Use
 
