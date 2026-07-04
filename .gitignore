@@ -1,0 +1,4 @@
+*.test
+/whittle
+model/.venv/
+model/__pycache__/

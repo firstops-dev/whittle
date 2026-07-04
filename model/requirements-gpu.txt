@@ -1,0 +1,7 @@
+torch==2.5.1+cu121
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.4
+tiktoken==0.8.0
+llmlingua==0.2.2
+huggingface_hub==0.27.0
