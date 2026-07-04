@@ -119,6 +119,7 @@ func getHandler(store *Store) http.HandlerFunc {
 			return
 		}
 		content, ok := store.Get(id)
+		logEvent("", "whittle_get", "retrieve", id, 0, 0)
 		if !ok {
 			http.Error(w, "expired — re-run the tool for fresh output", http.StatusNotFound)
 			return
