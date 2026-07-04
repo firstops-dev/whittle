@@ -99,7 +99,7 @@ func cmdStats(args []string) {
 		if i == 4 {
 			break
 		}
-		bar := strings.Repeat("█", 1+e.v*22/max(1, maxV))
+		bar := strings.Repeat("█", 1+max(0, e.v)*22/max(1, maxV))
 		fmt.Printf("  %-12s %s%s%s %s\n", e.k, green, bar, reset, humanInt(e.v))
 	}
 	rate := 0.0
@@ -120,7 +120,7 @@ func sparkline(daily []int) string {
 	}
 	var b strings.Builder
 	for _, v := range daily {
-		b.WriteRune(blocks[v*(len(blocks)-1)/maxV])
+		b.WriteRune(blocks[max(0, v)*(len(blocks)-1)/maxV])
 		b.WriteRune(' ')
 	}
 	return b.String()

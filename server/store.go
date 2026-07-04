@@ -42,6 +42,11 @@ func OpenStore(dir string, maxBytes int64, ttl time.Duration) (*Store, error) {
 			if s.ids == nil {
 				s.ids = map[int64]string{}
 			}
+		} else {
+			// Index unreadable but present: aliases may be outstanding in old
+			// transcripts. NEVER reissue — jump the counter far past anything a
+			// small sequence could have reached (review B3).
+			s.next = time.Now().Unix()
 		}
 	}
 	return s, nil
@@ -52,7 +57,12 @@ func (s *Store) persist() {
 		Next int64            `json:"next"`
 		IDs  map[int64]string `json:"ids"`
 	}{s.next, s.ids})
-	_ = os.WriteFile(filepath.Join(s.dir, "index.json"), b, 0o644)
+	// Atomic: temp + rename (review B3 — a torn index.json reset the alias
+	// counter, and a stale hint then retrieved the WRONG content).
+	tmp := filepath.Join(s.dir, "index.json.tmp")
+	if os.WriteFile(tmp, b, 0o644) == nil {
+		_ = os.Rename(tmp, filepath.Join(s.dir, "index.json"))
+	}
 }
 
 // Put stores content and returns its alias id (deduped by content hash).

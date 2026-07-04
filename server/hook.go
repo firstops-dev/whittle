@@ -65,13 +65,9 @@ func hookHandler(p *compress.Pipeline, store *Store) http.HandlerFunc {
 		// Retrieval hint — ONLY where content was actually reduced. Copy is
 		// deliberately discouraging: the summary is complete; raw is for
 		// byte-exact needs. Alias integers cost ~2 tokens (measured).
-		var storeID int64
-		if store != nil && lossyStrategy(out.Strategy) {
-			storeID = store.Put(text)
-			final += fmt.Sprintf("\n… [trimmed; content above is complete in substance. Raw original only if strictly required: whittle_get(%d)]", storeID)
-		}
-		if len(final) > 9500 {
-			return
+		final, storeID := finalizeReplacement(text, out.Output, out.Strategy, store)
+		if final == "" {
+			return // no honest win once all costs are counted: fail open
 		}
 		logEvent(ev.SessionID, ev.ToolName, out.Strategy, storeID,
 			compress.EstimateTokens(text), compress.EstimateTokens(final))
@@ -119,7 +115,9 @@ func getHandler(store *Store) http.HandlerFunc {
 			return
 		}
 		content, ok := store.Get(id)
-		logEvent("", "whittle_get", "retrieve", id, 0, 0)
+		if ok {
+			logEvent("", "whittle_get", "retrieve", id, 0, 0)
+		}
 		if !ok {
 			http.Error(w, "expired — re-run the tool for fresh output", http.StatusNotFound)
 			return
@@ -150,4 +148,33 @@ func logEvent(session, tool, strategy string, storeID int64, inTok, outTok int) 
 		"strategy": strategy, "id": storeID, "in_tokens": inTok, "out_tokens": outTok,
 	})
 	f.Write(append(b, '\n'))
+}
+
+const hintFmt = "\n… [trimmed; content above is complete in substance. Raw original only if strictly required: whittle_get(%d)]"
+
+// finalizeReplacement enforces the POST-HINT invariant (review B1): whatever is
+// emitted — with hint or without — must be strictly smaller than the original in
+// BOTH bytes and estimated tokens, and within Claude Code's 10k output cap.
+// Order of preference: compressed+hint; compressed alone (marginal wins keep the
+// win, just without retrieval); nothing (fail open). The store alias is only
+// spent when the hint actually emits (review O6).
+func finalizeReplacement(text, output, strategy string, store *Store) (string, int64) {
+	fits := func(s string) bool {
+		return len(s) < len(text) && len(s) <= 9500 &&
+			compress.EstimateTokens(s) < compress.EstimateTokens(text)
+	}
+	if store != nil && lossyStrategy(strategy) {
+		// probe with a worst-case-width alias before spending one
+		if probe := output + fmt.Sprintf(hintFmt, int64(99999999)); fits(probe) {
+			id := store.Put(text)
+			final := output + fmt.Sprintf(hintFmt, id)
+			if fits(final) {
+				return final, id
+			}
+		}
+	}
+	if fits(output) {
+		return output, 0
+	}
+	return "", 0
 }

@@ -11,6 +11,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -48,13 +50,11 @@ func cmdMCP(_ []string) {
 			}}})
 		case "tools/call":
 			var p struct {
-				Name string `json:"name"`
-				Args struct {
-					ID int64 `json:"id"`
-				} `json:"arguments"`
+				Name string                     `json:"name"`
+				Args map[string]json.RawMessage `json:"arguments"`
 			}
 			_ = json.Unmarshal(req.Params, &p)
-			text, isErr := fetchOriginal(p.Args.ID)
+			text, isErr := fetchOriginal(coerceID(p.Args["id"]))
 			reply(map[string]any{"content": []any{map[string]any{"type": "text", "text": text}}, "isError": isErr})
 		case "notifications/initialized", "ping":
 			if req.ID != nil {
@@ -76,4 +76,21 @@ func fetchOriginal(id int64) (string, bool) {
 		return string(b), true
 	}
 	return string(b), false
+}
+
+// coerceID accepts the id as a JSON number OR a numeric string — models pass
+// integer-looking arguments as strings often enough that a silent 0 would turn
+// valid retrievals into phantom "expired" misses (review C2).
+func coerceID(raw json.RawMessage) int64 {
+	var n int64
+	if json.Unmarshal(raw, &n) == nil {
+		return n
+	}
+	var s string
+	if json.Unmarshal(raw, &s) == nil {
+		if v, err := strconv.ParseInt(strings.TrimSpace(s), 10, 64); err == nil {
+			return v
+		}
+	}
+	return 0
 }
