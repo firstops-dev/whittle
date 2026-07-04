@@ -108,10 +108,12 @@ strategy and its guarantees. Full table: [`bench/REPORT.md`](bench/REPORT.md).
 
 ### 2. Side-by-side on headroom's data
 
-Vendored, unmodified, Apache-2.0-attributed inputs from
-[headroom](https://github.com/headroomlabs-ai/headroom)'s own benchmark corpus
-(`bench/corpus_headroom/`, see PROVENANCE.md) — run through whittle with the
-same harness. *Section in progress: data vendoring underway.*
+[headroom](https://github.com/headroomlabs-ai/headroom) (Apache-2.0) checks in
+no benchmark corpora — its published numbers come from synthetic generators run
+at benchmark time and datasets fetched on demand. For a faithful side-by-side we
+therefore freeze the outputs of **their own generators** (fixed seed, pinned
+commit, full provenance) into `bench/corpus_headroom/` and run both tools on
+those identical bytes through this harness. *Section in progress.*
 
 ### 3. Real-world datasets
 
