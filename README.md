@@ -87,6 +87,37 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 | `WHITTLE_PROSE_MAX_CHARS` | 4500 | prose-path latency ceiling |
 
 
+
+## Benchmarks
+
+Three tiers, in increasing order of realism — every number regenerable from
+this repo (`go run ./bench`), reductions on an estimated-token basis (labeled).
+
+### 1. Synthetic corpus (ours — headline per content class)
+
+Authored fixtures in [`bench/corpus/`](bench/corpus/), designed to exercise each
+strategy and its guarantees. Full table: [`bench/REPORT.md`](bench/REPORT.md).
+
+| class | representative result |
+|---|---|
+| JSON (uniform/sparse/nested) | 57% — lossless, byte-exact reconstruction |
+| repetitive logs | 97% — omissions marked and exactly accounted |
+| terminal progress streams | 99% — final frame, rune-safe |
+| code / config (py, go, yaml) | **0% by design — skipped, never touched** |
+| prose (needs ML sidecar) | 30-40% — extractive, fidelity-guarded |
+
+### 2. Side-by-side on headroom's data
+
+Vendored, unmodified, Apache-2.0-attributed inputs from
+[headroom](https://github.com/headroomlabs-ai/headroom)'s own benchmark corpus
+(`bench/corpus_headroom/`, see PROVENANCE.md) — run through whittle with the
+same harness. *Section in progress: data vendoring underway.*
+
+### 3. Real-world datasets
+
+Results on real agent-session tool outputs. *Coming — measured on production
+traces; stats to be published with methodology.*
+
 ## Why whittle — compress at write-time, not read-time
 
 Context compressors typically integrate with coding agents as **request-path
