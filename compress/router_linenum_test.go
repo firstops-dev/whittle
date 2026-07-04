@@ -305,3 +305,31 @@ On-call engineers should consult the runbook before restarting any worker.`
 		t.Fatalf("genuine markdown doc read detected as %q, want doc_read", ct)
 	}
 }
+
+// Auditor regression: SMALL/PARTIAL code reads (snippet-shaped Python: dotted
+// from-imports, bare assignments, try/except headers) were routed prose and
+// lossily compressed — "from .packages import chardet" was deleted. Must be code.
+func TestDetect_SmallPythonSnippetIsCode(t *testing.T) {
+	snippet := `"""Module compatibility layer."""
+
+import sys
+
+from .packages import chardet
+
+_ver = sys.version_info
+is_py2 = _ver[0] == 2
+is_py3 = _ver[0] == 3
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
+
+builtin_str = str
+bytes = bytes
+str = str
+`
+	if ct, _ := Detect(snippet); ct != TypeCode {
+		t.Fatalf("small python snippet detected as %q, want code (would be paraphrased)", ct)
+	}
+}

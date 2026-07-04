@@ -108,6 +108,12 @@ var (
 	// codeCallRe matches keyword-light code: `lhs = call(...)` assignments and bare
 	// `call(...)` statements that carry no func/def/class keyword.
 	codeCallRe = regexp.MustCompile(`^\s*[\w.\[\]]+\s*=\s*[\w.]+\s*\(|^\s*[\w.]+\([^)]*\)\s*;?\s*$`)
+	// codeSnippetRe: evidence shapes that dominate SMALL/PARTIAL code reads, which
+	// the keyword/call regexes miss (auditor: 200-900-token Python snippets routed
+	// to prose and lossily compressed — deleted "from .packages import chardet",
+	// "_ver = sys.version_info"). Dotted-from imports, block headers ending in ":",
+	// decorators, bare assignments, and flow statements.
+	codeSnippetRe = regexp.MustCompile(`^\s*from\s+[.\w]+\s+import\b|^\s*(try|except|finally|elif|else|with|for|while|if)\b[^\n]*:\s*$|^\s*@\w|^\s*(pass|raise|return|yield)\b|^\s*[\w.\[\]]+\s*[+\-*/|&]?=\s*\S`)
 
 	// lineNumberedRe matches a file read rendered with a leading line-number column
 	// (`   42\t<line>`, from the Read tool / `cat -n`). Exactly one tab per line makes
@@ -597,7 +603,7 @@ func detectCode(lines []string) (ContentType, float64, bool) {
 	}
 	hits := 0
 	for _, ln := range lines {
-		if codeKeywordRe.MatchString(ln) || codeCallRe.MatchString(ln) {
+		if codeKeywordRe.MatchString(ln) || codeCallRe.MatchString(ln) || codeSnippetRe.MatchString(ln) {
 			hits++
 		}
 	}
