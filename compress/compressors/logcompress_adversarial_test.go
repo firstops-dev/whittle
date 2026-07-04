@@ -201,3 +201,21 @@ func TestLogCompressor_InterleavedLevels(t *testing.T) {
 		t.Errorf("interleaved log did not shrink: in=%d out=%d", len(in), len(out))
 	}
 }
+
+// Bench-corpus regression: "HTTP 200 OK" matched the \d+\s+ok summary form, so
+// EVERY line of a health-check log was kept as a "summary" (0.15% reduction on
+// 200 near-identical lines). Status phrases are not test summaries.
+func TestLogCompressor_HTTPStatusIsNotASummary(t *testing.T) {
+	var b strings.Builder
+	for i := 0; i < 200; i++ {
+		fmt.Fprintf(&b, "2024-07-04T08:00:%02dZ [INFO] GET /health -> 200 OK in 3ms\n", i%60)
+	}
+	b.WriteString("2024-07-04T08:03:21Z [ERROR] GET /health -> 503 upstream timeout\n")
+	out := runLog(t, DefaultLogConfig(), b.String())
+	if !strings.Contains(out, "503 upstream timeout") {
+		t.Fatal("the one real error must survive")
+	}
+	if len(out) > len(b.String())/3 {
+		t.Fatalf("repetitive health-check log barely compressed: %d of %d bytes kept", len(out), b.Len())
+	}
+}

@@ -20,7 +20,7 @@ var (
 	reDebug   = regexp.MustCompile(`(?i)\b(debug)\b`)
 	reTrace   = regexp.MustCompile(`(?i)\b(trace)\b`)
 	reStack   = regexp.MustCompile(`(?i)(^\s+at\s|^\s+file "|^\s*goroutine\s|^\s+\.\.\.|^\s+[\w./$-]+\.(go|py|js|java|rb|rs):\d+|^traceback|^panic:)`)
-	reSummary = regexp.MustCompile(`(?i)(\b\d+\s+(passed|failed|error|errors|warning|warnings|tests?|ok|skipped)\b|tests?\s+run|test\s+summary|^=+$|^-{3,}\s|build (succeeded|failed|successful)|\bsummary\b|\d+\s+of\s+\d+)`)
+	reSummary = regexp.MustCompile(`(?i)(\b\d+\s+(passed|failed|error|errors|warning|warnings|tests?|skipped)\b|tests?\s+run|test\s+summary|^=+$|^-{3,}\s|build (succeeded|failed|successful)|\bsummary\b|\d+\s+of\s+\d+)`)
 
 	// Stack-trace CONTINUATION frames that sit at column 0 (so reStack, which is
 	// indentation-anchored, misses them): Go function frames like
