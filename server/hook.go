@@ -7,14 +7,29 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/firstops-dev/whittle/compress"
 )
 
-func hookHandler(p *compress.Pipeline) http.HandlerFunc {
+// lossyStrategy: strategies that REDUCE content (marked or model-lossy) get a
+// retrieval hint; lossless transforms (json columnar, ansi strip) get NONE —
+// nothing was lost, so nothing is offered (and no hint tokens are spent).
+func lossyStrategy(strategy string) bool {
+	for _, m := range []string{"llmlingua", "log_compressor", "md_structured"} {
+		if strings.Contains(strategy, m) {
+			return true
+		}
+	}
+	return false
+}
+
+func hookHandler(p *compress.Pipeline, store *Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK) // ALWAYS 200: a hook must never error a tool call
 		var ev struct {
@@ -43,13 +58,21 @@ func hookHandler(p *compress.Pipeline) http.HandlerFunc {
 		// Docs-verified: the 10,000-char cap on updatedToolOutput applies to HTTP
 		// hooks as well as command hooks. Fail open above ~9.5k until the content
 		// store + retrieval pointer lands (PLAN P2).
-		if len(out.Output) > 9500 {
+		final := out.Output
+		// Retrieval hint — ONLY where content was actually reduced. Copy is
+		// deliberately discouraging: the summary is complete; raw is for
+		// byte-exact needs. Alias integers cost ~2 tokens (measured).
+		if store != nil && lossyStrategy(out.Strategy) {
+			id := store.Put(text)
+			final += fmt.Sprintf("\n… [trimmed; content above is complete in substance. Raw original only if strictly required: whittle_get(%d)]", id)
+		}
+		if len(final) > 9500 {
 			return
 		}
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"hookSpecificOutput": map[string]any{
 				"hookEventName":     "PostToolUse",
-				"updatedToolOutput": out.Output,
+				"updatedToolOutput": final,
 			},
 		})
 	}
@@ -78,4 +101,23 @@ func extractHookText(raw json.RawMessage) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+// getHandler serves originals back to the whittle_get MCP tool. Misses are
+// honest 404s ("expired") — the agent can re-run the tool.
+func getHandler(store *Store) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
+		if err != nil || store == nil {
+			http.Error(w, "bad id", http.StatusBadRequest)
+			return
+		}
+		content, ok := store.Get(id)
+		if !ok {
+			http.Error(w, "expired — re-run the tool for fresh output", http.StatusNotFound)
+			return
+		}
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		io.WriteString(w, content)
+	}
 }

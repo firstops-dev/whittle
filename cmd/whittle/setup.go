@@ -58,6 +58,15 @@ func cmdSetup(_ []string) {
 		fmt.Println("  ✓ Claude Code PostToolUse hook installed (~/.claude/settings.json)")
 	}
 
+	// 2b. MCP retrieval tool (whittle_get) — best-effort via the claude CLI
+	if self, err := os.Executable(); err == nil {
+		if err := exec.Command("claude", "mcp", "add", "--scope", "user", "whittle", "--", self, "mcp").Run(); err == nil {
+			fmt.Println("  ✓ whittle_get MCP tool registered (claude mcp)")
+		} else {
+			fmt.Println("  ! whittle_get MCP not registered (claude CLI unavailable?) — retrieval hints will still degrade gracefully")
+		}
+	}
+
 	// 3. background services via launchd (macOS) — always-on
 	if runtime.GOOS == "darwin" {
 		if err := installLaunchAgent(dir); err != nil {
@@ -185,6 +194,7 @@ func cmdCleanup(_ []string) {
 	} else {
 		fmt.Println("whittle: Claude Code hook removed")
 	}
+	_ = exec.Command("claude", "mcp", "remove", "--scope", "user", "whittle").Run()
 	_ = os.Remove(launchPlistPath())
 	fmt.Println("whittle: launchd agent unregistered. (~/.whittle kept; delete it to remove the venv/model)")
 }

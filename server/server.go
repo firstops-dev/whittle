@@ -6,6 +6,8 @@
 package server
 
 import (
+	"path/filepath"
+
 	"encoding/json"
 	"log"
 	"math"
@@ -49,19 +51,23 @@ func ListenAndServe(addr string) error {
 	if addr == "" {
 		addr = ":8095"
 	}
+	store, _ := OpenStore(storeDir(), 256<<20, 24*time.Hour) // nil on error: hints just don't emit
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           NewMux(p),
+		Handler:           NewMuxWithStore(p, store),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	log.Printf("whittle %s listening on %s", version, addr)
 	return srv.ListenAndServe()
 }
 
-func NewMux(p *compress.Pipeline) http.Handler {
+func NewMux(p *compress.Pipeline) http.Handler { return NewMuxWithStore(p, nil) }
+
+func NewMuxWithStore(p *compress.Pipeline, store *Store) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/v1/compress", compressHandler(p))
-	mux.HandleFunc("/hook", hookHandler(p))
+	mux.HandleFunc("/hook", hookHandler(p, store))
+	mux.HandleFunc("/get", getHandler(store))
 	mux.HandleFunc("/health", healthHandler)
 	mux.HandleFunc("/v1/info", infoHandler)
 	return mux
@@ -212,3 +218,8 @@ func clampRate(r float64) float64 {
 }
 
 func round4(f float64) float64 { return math.Round(f*10000) / 10000 }
+
+func storeDir() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".whittle", "cache")
+}

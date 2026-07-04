@@ -41,6 +41,8 @@ func main() {
 		cmdStatus(os.Args[2:])
 	case "stats":
 		cmdStats(os.Args[2:])
+	case "mcp":
+		cmdMCP(os.Args[2:])
 	case "hook":
 		cmdHook(os.Args[2:])
 	case "version":
