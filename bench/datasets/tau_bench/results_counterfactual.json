@@ -1,0 +1,26 @@
+[
+ {
+  "domain": "retail",
+  "tasks": 49,
+  "prefix_tok": 4054,
+  "tool_outputs": 383,
+  "lossless": 246,
+  "raw_tool_tok_orig": 119347,
+  "raw_tool_tok_comp": 93047,
+  "raw_reduction_pct": 22.0,
+  "session_cost_reduction_pct": 6.9,
+  "median_tool_calls": 7
+ },
+ {
+  "domain": "airline",
+  "tasks": 43,
+  "prefix_tok": 3685,
+  "tool_outputs": 158,
+  "lossless": 145,
+  "raw_tool_tok_orig": 41107,
+  "raw_tool_tok_comp": 31539,
+  "raw_reduction_pct": 23.3,
+  "session_cost_reduction_pct": 4.7,
+  "median_tool_calls": 2
+ }
+]

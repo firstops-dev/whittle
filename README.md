@@ -175,30 +175,37 @@ outputs actually take) whittle leads while staying lossless; on bulk data
 arrays headroom-ai's lossy sampling buys its margin. Latency is near parity.
 Which trade you want is the whole point of this project.
 
-### 3. Real-world dataset (Salesforce customer-support agents)
+### 3. Real-world: customer-service agents (two independent evaluations)
 
-On the public [Salesforce APIGen-MT-5k](https://huggingface.co/datasets/Salesforce/APIGen-MT-5k)
-corpus - 5,000 verified multi-turn customer-support agent sessions - whittle's
-compression engine cut **22% of tool-output tokens (o200k) at zero measured
-information loss**, verified two independent ways:
+Customer-service agents are whittle's strong-fit workload - their tool outputs
+are structured JSON on essentially every call, so the compressor engages on
+**100% of tool outputs**, all losslessly. Two evaluations, corroborating at
+different scales:
 
-- **structural path** (100% of compressed tool outputs, all JSON): mechanically
-  lossless on **15,846 / 15,846** items - every data value recoverable, no
-  sampling;
-- **lossy prose path** (user inputs): a blinded 4-judge panel found **0 / 120**
-  material loss (honeypot-validated, Gwet AC2 0.96-1.00).
+**Breadth** - [Salesforce APIGen-MT-5k](https://huggingface.co/datasets/Salesforce/APIGen-MT-5k),
+5,000 verified multi-turn sessions: **22% tool-output reduction (o200k) at zero
+measured information loss**, verified two ways - mechanically lossless on
+**15,846 / 15,846** compressed items, and a blinded 4-judge panel finding
+**0 / 120** material loss on the lossy prose path (honeypot-validated, Gwet AC2
+0.96-1.00). [`bench/datasets/salesforce_customer_support/`](bench/datasets/salesforce_customer_support/)
 
-The product metric is the **token/context reduction**: 22% fewer tool-output
-tokens, removed from every later turn's context - and because a tool output is
-re-read on each subsequent turn, that saving compounds as the session grows.
-Dollar impact is a separate, caching-dependent question we also publish in full:
-under prompt caching the same cut is ~3% of session cost (cheap cache-reads
-dominate the bill), so token savings and dollar savings are not the same thing.
-Full report, dataset card, cost model, and annotation methodology:
-[`bench/datasets/salesforce_customer_support/`](bench/datasets/salesforce_customer_support/).
+**Depth** - Sierra's [τ-bench](bench/datasets/tau_bench/) (retail + airline),
+counterfactual replay of reference trajectories: **22.0% / 23.3% reduction, every
+record reconstructed field-for-field** (all 16 flight-search results recovered
+exactly). This eval isolates whittle's real structural value-add - on
+**multi-record results the columnar re-encoding goes beyond compact JSON: +24%
+on small flight searches, +45% on an 80-row result**, and the advantage grows
+with result size. [`bench/datasets/tau_bench/`](bench/datasets/tau_bench/)
 
-*(Measured on the shared compression engine `content-aware-router` v0.1.0; see the
-report's provenance note. whittle's `json_crusher` is lossless-only.)*
+The product metric is **token/context reduction**: fewer tool-output tokens,
+removed from every later turn's context, compounding as the session grows.
+Dollar impact is a separate, caching-dependent question both reports publish in
+full: under prompt caching the same cut is ~3-5% of session cost (cheap
+cache-reads dominate the bill), so token savings and dollar savings are not the
+same thing.
+
+*(Both measured on the shared compression engine `content-aware-router` v0.1.0;
+whittle's `json_crusher` is lossless-only. See each report's provenance note.)*
 
 ## Why whittle - compress at write-time, not read-time
 
