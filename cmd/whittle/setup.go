@@ -79,7 +79,33 @@ func cmdSetup(_ []string) {
 	}
 
 	waitHealthy("http://"+routerAddr+"/health", 30*time.Second, "router")
+	warnIfNotOnPath()
 	fmt.Println("whittle is running. Try: whittle status")
+}
+
+// warnIfNotOnPath tells go-install users to add the binary's directory to PATH.
+// go install drops the binary in ~/go/bin, which is not on PATH by default, so a
+// bare `whittle` command fails right after setup with no explanation. Brew users
+// are unaffected (the brew prefix is already on PATH). We never edit the user's
+// shell config silently; we print the exact one-liner instead.
+func warnIfNotOnPath() {
+	self, err := os.Executable()
+	if err != nil {
+		return
+	}
+	binDir := filepath.Dir(self)
+	for _, p := range filepath.SplitList(os.Getenv("PATH")) {
+		if p == binDir {
+			return // already reachable as a bare command
+		}
+	}
+	rc := "~/.zshrc"
+	if sh := os.Getenv("SHELL"); strings.HasSuffix(sh, "bash") {
+		rc = "~/.bashrc"
+	}
+	fmt.Printf("  ! %s is not on your PATH - `whittle` won't run as a bare command yet.\n"+
+		"    Add it:  echo 'export PATH=\"%s:$PATH\"' >> %s  &&  source %s\n",
+		binDir, binDir, rc, rc)
 }
 
 func setupSidecar(dir string) error {

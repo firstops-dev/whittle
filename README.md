@@ -44,6 +44,10 @@ go install github.com/firstops-dev/whittle/cmd/whittle@latest
 whittle setup
 ```
 
+> `go install` places the binary in `~/go/bin`, which may not be on your `PATH`.
+> If `whittle` isn't found, add it: `echo 'export PATH="$HOME/go/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc`.
+> (Homebrew users can skip this - `brew install firstops-dev/tap/whittle` puts it on `PATH` automatically.)
+
 That's the whole thing. `setup`:
 
 - installs the **Claude Code PostToolUse hook** - tool outputs your agent reads
