@@ -117,13 +117,17 @@ the same tokenizer. Full table + methodology: [`bench/SIDEBYSIDE.md`](bench/SIDE
 | | headroom-ai 0.30.0 | whittle 0.2.1 |
 |---|---|---|
 | aggregate token reduction (10 files, 116.5k tokens) | **41.8%** | 36.5% |
-| fidelity of that reduction | includes lossy row-dropping (recoverable via their resident runtime) | **byte-exact lossless** on every file |
-| rows won | 6/10 (plain JSON data arrays) | 4/10 (conversation-shaped + api_responses) |
+| — conversation / agent-transcript JSON (3 files) | 2.1% | **5.4%** |
+| — bulk data arrays (7 files) | **48.3%** | 41.6% |
+| fidelity of that reduction | includes lossy row-dropping (recoverable via headroom's resident runtime) | **byte-exact lossless** on every file |
+| median latency, in-process (same files) | 2.93 ms | 2.36 ms |
 
-Read it straight: on their data, their defaults compress ~5 points more — by
-dropping content whittle refuses to drop. Whittle stays within reach of a lossy
-compressor while returning outputs that reconstruct exactly. Which trade you
-want is the whole point of this project.
+Read it straight: on the aggregate, headroom-ai's defaults compress ~5 points
+more — by dropping rows whittle refuses to drop. The category split shows where
+each position pays: on conversation-shaped content (the shape agent tool
+outputs actually take) whittle leads while staying lossless; on bulk data
+arrays headroom-ai's lossy sampling buys its margin. Latency is near parity.
+Which trade you want is the whole point of this project.
 
 ### 3. Real-world datasets
 

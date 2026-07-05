@@ -143,6 +143,105 @@ directly comparable per row.
   every message) — reported as 0.00% reduction, not omitted, per the
   honesty rule against silently dropping unfavorable rows.
 
+## Latency
+
+Both tools measured **in-process, as libraries** — no HTTP, no daemon, no
+subprocess — on the same 10 frozen files, same machine, 1 warmup call + 5
+timed calls per file, median wall-clock reported.
+
+| file | input_tokens | headroom-ai 0.30.0 median ms | whittle 0.2.1 median ms |
+|---|---:|---:|---:|
+| agentic_conversation_anthropic.json | 5,336 | 0.225 | 1.358 |
+| agentic_conversation_openai.json | 8,306 | 0.167 | 1.666 |
+| api_responses.json | 11,084 | 2.702 | 2.727 |
+| database_rows_mixed.json | 12,953 | 3.001 | 2.732 |
+| file_search_data.json | 14,968 | 3.202 | 2.782 |
+| log_data.json | 16,183 | 3.188 | 2.623 |
+| log_entries.json | 14,255 | 2.921 | 2.115 |
+| metrics_data.json | 17,874 | 2.947 | 2.308 |
+| rag_conversation.json | 2,780 | 0.063 | 0.331 |
+| search_results.json | 12,769 | 3.074 | 2.409 |
+| **SUM (10 files)** | **116,508** | **21.490** | **21.051** |
+| **MEDIAN-of-medians** | — | **2.934** | **2.359** |
+| **MEAN** | — | **2.149** | **2.105** |
+
+Aggregate latency is close to parity — whittle's sum across all 10 files
+(21.051 ms) is about 2% lower than headroom's (21.490 ms) — but the shape
+differs by file class:
+
+- On the 3 already-conversation-shaped files (both `agentic_conversation_*`
+  and `rag_conversation`), **headroom is faster**, often by an order of
+  magnitude (e.g. 0.063 ms vs 0.331 ms on `rag_conversation.json`). These are
+  the same files where headroom's router hits its `protected:*` fast path at
+  default config (see Results above) and does little or no transform work —
+  the low latency and the near-zero reduction on these files are the same
+  phenomenon. whittle's per-call floor (JSON detection + gate + strategy
+  dispatch) does not have an equivalently cheap early-exit for small inputs,
+  so it pays roughly the same ~1.3–1.7 ms on these small files as on inputs
+  several times their size.
+- On the 7 plain-JSON tool-output files, **whittle is faster** on 6 of 7
+  (all but `api_responses.json`, which is a near-tie: 2.702 ms vs 2.727 ms).
+  Both tools land in the same 2–3.2 ms band on these files; whittle's
+  per-file cost stays flatter across the 11k–18k token range (2.1–2.8 ms)
+  than headroom's (2.7–3.2 ms).
+
+No file failed or was skipped by either tool during latency measurement.
+
+### Latency methodology
+
+**Machine:** Apple M-series (macOS 15.7.2, arm64). Same machine, same corpus
+files, same run session as the reduction benchmark above.
+
+**What was timed:** only the compress call itself — file reads, venv/module
+import, and (for whittle) `Engine` construction happen once, outside the
+timed loop, and are excluded. For each file: 1 untimed warmup call, then 5
+timed calls; median of the 5 is reported. No HTTP was used on either side —
+this differs from the reduction benchmark above, which called whittle over
+its `/v1/compress` daemon endpoint; for latency, whittle was measured as a
+Go library instead, to compare compute cost against compute cost rather than
+compute cost against compute-plus-network-plus-daemon.
+
+**headroom side (`headroom-ai==0.30.0`, reused venv at `/tmp/hr-bench`):**
+same API and same message-wrapping rule as the reduction benchmark —
+`headroom.compress(messages, model="claude-sonnet-4-5-20250929")`, default
+`CompressConfig`. The 3 conversation-shaped files
+(`agentic_conversation_anthropic.json`, `agentic_conversation_openai.json`,
+`rag_conversation.json`) were passed as parsed message arrays directly; the
+other 7 plain-JSON data files were wrapped as
+`messages=[{"role": "tool", "content": <raw file bytes>}]`. Timed with
+`time.perf_counter()`.
+
+**whittle side (`v0.2.1`, git describe `v0.2.1-4-gb5b419f`):** a standalone
+Go program at `/tmp/wbench/main.go` (module `wbench`, `go.mod` with
+`replace github.com/firstops-dev/whittle => /Users/anshal/dev/whittle`,
+built with `GOPATH=$HOME/go`) imports `github.com/firstops-dev/whittle`,
+constructs **one** `whittle.Engine` via
+`whittle.New(whittle.Options{ModelURL: "", MinTokens: 0})` (empty
+`ModelURL` — no ML prose sidecar; `MinTokens: 0` disables the length floor,
+matching the daemon call's `min_tokens: 0` in the reduction benchmark), and
+reuses that single engine across every file and every call. Each file's raw
+bytes are read once (`os.ReadFile`) and passed directly to
+`eng.Compress(ctx, string(content))` — no proto/JSON envelope, no daemon
+round trip. Timed with `time.Now()` / `time.Since()`.
+
+**Honesty notes:**
+- Both benchmarks completed with zero errors on all 10 files; every cell in
+  the table above and in `sidebyside.json`'s `latency_ms` field is a
+  measured value, not estimated or backfilled.
+- A second full pass of both benchmarks (not the recorded run) showed
+  run-to-run variance: headroom's medians shifted by roughly ±0.2 ms;
+  whittle's shifted more on the two smallest, conversation-shaped files
+  (down to ~0.7–1.1 ms on a second pass, vs 1.358–1.666 ms on the recorded
+  pass) and one individual timed run (not the median) hit a ~6.6 ms outlier,
+  almost certainly Go GC-related, on `agentic_conversation_anthropic.json`.
+  The table above reports one designated run per tool (1 warmup + 5 timed,
+  median of the 5) as specified, not the best or an average of repeated
+  passes.
+- Where headroom is faster, that is reported as-is (see the 3
+  conversation-shaped files above); where whittle is faster, that is also
+  reported as-is (6 of the 7 plain-JSON files). Neither tool wins across the
+  board.
+
 ## Reproduce
 
 ```bash

@@ -12,7 +12,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=3986, after=3890, compression_ratio=0.0241. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=5613 compressed_tokens=4910."
+    "notes": "headroom internal token count (its own tokenizer): before=3986, after=3890, compression_ratio=0.0241. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=5613 compressed_tokens=4910.",
+    "latency_ms": {
+      "headroom": 0.225,
+      "whittle": 1.358
+    }
   },
   "agentic_conversation_openai.json": {
     "input_tokens": 8306,
@@ -27,7 +31,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=7405, after=7405, compression_ratio=0.0000. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=8772 compressed_tokens=8212."
+    "notes": "headroom internal token count (its own tokenizer): before=7405, after=7405, compression_ratio=0.0000. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=8772 compressed_tokens=8212.",
+    "latency_ms": {
+      "headroom": 0.167,
+      "whittle": 1.666
+    }
   },
   "api_responses.json": {
     "input_tokens": 11084,
@@ -41,7 +49,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=8728, after=4494, compression_ratio=0.4851. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=13025 compressed_tokens=5781."
+    "notes": "headroom internal token count (its own tokenizer): before=8728, after=4494, compression_ratio=0.4851. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=13025 compressed_tokens=5781.",
+    "latency_ms": {
+      "headroom": 2.702,
+      "whittle": 2.727
+    }
   },
   "database_rows_mixed.json": {
     "input_tokens": 12953,
@@ -55,7 +67,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=9591, after=3994, compression_ratio=0.5836. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=14743 compressed_tokens=9512."
+    "notes": "headroom internal token count (its own tokenizer): before=9591, after=3994, compression_ratio=0.5836. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=14743 compressed_tokens=9512.",
+    "latency_ms": {
+      "headroom": 3.001,
+      "whittle": 2.732
+    }
   },
   "file_search_data.json": {
     "input_tokens": 14968,
@@ -69,7 +85,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=12448, after=5004, compression_ratio=0.5980. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=17834 compressed_tokens=7956."
+    "notes": "headroom internal token count (its own tokenizer): before=12448, after=5004, compression_ratio=0.5980. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=17834 compressed_tokens=7956.",
+    "latency_ms": {
+      "headroom": 3.202,
+      "whittle": 2.782
+    }
   },
   "log_data.json": {
     "input_tokens": 16183,
@@ -83,7 +103,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=13299, after=6072, compression_ratio=0.5434. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=18842 compressed_tokens=10247."
+    "notes": "headroom internal token count (its own tokenizer): before=13299, after=6072, compression_ratio=0.5434. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=18842 compressed_tokens=10247.",
+    "latency_ms": {
+      "headroom": 3.188,
+      "whittle": 2.623
+    }
   },
   "log_entries.json": {
     "input_tokens": 14255,
@@ -97,7 +121,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=12052, after=6304, compression_ratio=0.4769. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=16110 compressed_tokens=8675."
+    "notes": "headroom internal token count (its own tokenizer): before=12052, after=6304, compression_ratio=0.4769. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=16110 compressed_tokens=8675.",
+    "latency_ms": {
+      "headroom": 2.921,
+      "whittle": 2.115
+    }
   },
   "metrics_data.json": {
     "input_tokens": 17874,
@@ -111,7 +139,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=13016, after=3524, compression_ratio=0.7293. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=20577 compressed_tokens=9504."
+    "notes": "headroom internal token count (its own tokenizer): before=13016, after=3524, compression_ratio=0.7293. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=20577 compressed_tokens=9504.",
+    "latency_ms": {
+      "headroom": 2.947,
+      "whittle": 2.308
+    }
   },
   "rag_conversation.json": {
     "input_tokens": 2780,
@@ -125,7 +157,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=2739, after=2739, compression_ratio=0.0000. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=3105 compressed_tokens=2950."
+    "notes": "headroom internal token count (its own tokenizer): before=2739, after=2739, compression_ratio=0.0000. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=3105 compressed_tokens=2950.",
+    "latency_ms": {
+      "headroom": 0.063,
+      "whittle": 0.331
+    }
   },
   "search_results.json": {
     "input_tokens": 12769,
@@ -139,6 +175,11 @@
     ],
     "whittle_action": "compressed",
     "whittle_skip_reason": null,
-    "notes": "headroom internal token count (its own tokenizer): before=12998, after=7247, compression_ratio=0.4425. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=14962 compressed_tokens=8604."
-  }
+    "notes": "headroom internal token count (its own tokenizer): before=12998, after=7247, compression_ratio=0.4425. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=14962 compressed_tokens=8604.",
+    "latency_ms": {
+      "headroom": 3.074,
+      "whittle": 2.409
+    }
+  },
+  "latency_methodology": "Both tools measured in-process as libraries (no HTTP), on the same 10 frozen files in bench/corpus_headroom/*.json, same machine (Apple M-series, macOS 15.7.2 arm64). Per file: 1 untimed warmup call + 5 timed calls, wall-clock time.perf_counter() (Python) / time.Now()-time.Since() (Go), median of the 5 reported. headroom-ai==0.30.0, headroom.compress(messages, model='claude-sonnet-4-5-20250929'), default CompressConfig, same message-wrapping rule as the reduction benchmark above (3 conversation-shaped files passed as message arrays: agentic_conversation_anthropic.json, agentic_conversation_openai.json, rag_conversation.json; the other 7 plain-JSON data files wrapped as messages=[{'role':'tool','content':<raw file bytes>}]). whittle v0.2.1 (git describe: v0.2.1-4-gb5b419f), one whittle.Engine built via whittle.New(whittle.Options{ModelURL: \"\", MinTokens: 0}) reused across all files and calls, eng.Compress(ctx, string(rawFileBytes)) timed directly (no HTTP daemon, no JSON request/response marshaling). Both measurements exclude process startup, model/venv import, and file I/O -- only the compress call itself is timed. A second full pass of both benchmarks showed run-to-run variance (headroom mostly +/-0.2ms; whittle up to ~1ms on the two smallest conversation-shaped files, including one GC-driven outlier run of ~6.6ms that was NOT the run selected as median) -- the numbers below are from one designated run per tool (1 warmup + 5 timed), not cherry-picked across repeated passes."
 }
