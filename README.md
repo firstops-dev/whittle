@@ -2,6 +2,11 @@
 
 **Carves your agent's tool outputs down to what matters. Never cuts what doesn't come back.**
 
+[![CI](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml/badge.svg)](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/firstops-dev/whittle)](https://github.com/firstops-dev/whittle/releases)
+[![Go Reference](https://pkg.go.dev/badge/github.com/firstops-dev/whittle.svg)](https://pkg.go.dev/github.com/firstops-dev/whittle)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
 Whittle is a content-aware compressor for the text AI agents read: tool outputs,
 file reads, logs, JSON, terminal streams. Long agent sessions drown in tokens -
 but most compressors buy their ratio by silently destroying things agents need:
@@ -11,6 +16,22 @@ Whittle holds one hard line: **structural compression is lossless or clearly
 marked, code never reaches a lossy model, and every anomaly fails open to the
 original bytes.** The reduction number it reports is calibrated to real
 tokenizer counts - not byte counts that overstate savings by up to 4×.
+
+## See it
+
+```
+$ tail -n 6 build.log | whittle compress -stats
+ERROR migrate failed: relation "users" does not exist
+... [118 lines omitted]
+2026-07-04 INFO  worker drained cleanly
+ERROR shutdown: connection reset by peer
+
+whittle: action=compressed detected=log strategy=log_compressor tokens=1904->47
+```
+
+Errors and the summary survive; 118 lines of INFO noise become one honest
+marker. JSON reshapes losslessly, code passes through untouched, terminal
+progress bars collapse to their final frame - see [Benchmarks](#benchmarks).
 
 ## Install
 
@@ -192,6 +213,21 @@ roadmap) - and the same library embeds in gateways or pipelines if that is
 where you need it. The position is the point: compression happens where output
 is born, whatever surface delivers it there.
 
+## Architecture
+
+```
+Claude Code ──PostToolUse (HTTP)──▶ whittle daemon  (:45871, launchd-kept)
+                                       │
+                                       ├─ router ─▶ json · log · terminal · markdown
+                                       │            (deterministic, in-process)
+                                       └─ prose ─▶ model sidecar (:45872, optional GPU)
+                                       │
+   whittle_get(id) ◀──MCP tool────────┘  reduced originals, retrievable on demand
+```
+
+One resident daemon, three surfaces (hook · HTTP · MCP). Compression happens
+where output is born, off the model-request path entirely.
+
 ## Performance
 
 Deterministic strategies are pure CPU, single static binary, zero allocatable
@@ -230,6 +266,37 @@ tabular parser were adapted from [Headroom](https://github.com/headroomlabs-ai/h
 their compaction work is excellent. Whittle exists because we wanted the other
 position: a write-time PostToolUse hook instead of a read-time request-path
 proxy, with the stricter fidelity contract that position requires. See NOTICE.
+
+## Verify it yourself
+
+Every claim here is checkable from a clone - that is the point.
+
+```
+make test                     # guarantees as executable tests (see GUARANTEES.md)
+go run ./bench                # corpus reductions + fidelity, SHA-pinned, CI-gated
+python bench/calibrate_tokens.py   # reproduces the token-estimator MAE (needs tiktoken)
+```
+
+[GUARANTEES.md](GUARANTEES.md) maps each fidelity promise to the test that pins it.
+
+## Known limitations
+
+- **10k hook-output cap.** Claude Code caps a hook's replacement at 10,000 chars;
+  compressed results above ~9.5k pass through uncompressed today. Retrieval-backed
+  chunking is the planned fix ([docs/hook-output-cap.md](docs/hook-output-cap.md)).
+- **Prose needs the sidecar.** Without it, prose and markdown docs pass through
+  unchanged; deterministic strategies are unaffected.
+- **launchd is macOS-only.** Linux runs the daemon under systemd (unit above).
+- **Prose latency ceiling** (default 4500 chars) trades a hard cap for predictable
+  in-path latency; raise it with `WHITTLE_PROSE_MAX_CHARS`.
+
+## Contributing
+
+Whittle's bar is that guarantees are executable - see [CONTRIBUTING.md](CONTRIBUTING.md).
+The highest-severity issue class is **fidelity**: if whittle ever changed the
+meaning of an output, that is a bug we treat as urgent (use the fidelity issue
+template). Good first issues: agent adapters (Cursor/Codex/OpenCode), Linux
+packaging, detection corpus cases.
 
 ## License
 
