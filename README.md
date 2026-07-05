@@ -108,12 +108,22 @@ strategy and its guarantees. Full table: [`bench/REPORT.md`](bench/REPORT.md).
 
 ### 2. Side-by-side on headroom's data
 
-[headroom](https://github.com/headroomlabs-ai/headroom) (Apache-2.0) checks in
-no benchmark corpora — its published numbers come from synthetic generators run
-at benchmark time and datasets fetched on demand. For a faithful side-by-side we
-therefore freeze the outputs of **their own generators** (fixed seed, pinned
-commit, full provenance) into `bench/corpus_headroom/` and run both tools on
-those identical bytes through this harness. *Section in progress.*
+Inputs frozen from [headroom](https://github.com/headroomlabs-ai/headroom)'s own
+benchmark generators (Apache-2.0; pinned commit, seed 42 — they check in no
+corpora, so we froze what their numbers are computed on; `bench/corpus_headroom/`,
+PROVENANCE.md). Both tools ran on identical bytes, defaults only, measured with
+the same tokenizer. Full table + methodology: [`bench/SIDEBYSIDE.md`](bench/SIDEBYSIDE.md).
+
+| | headroom-ai 0.30.0 | whittle 0.2.1 |
+|---|---|---|
+| aggregate token reduction (10 files, 116.5k tokens) | **41.8%** | 36.5% |
+| fidelity of that reduction | includes lossy row-dropping (recoverable via their resident runtime) | **byte-exact lossless** on every file |
+| rows won | 6/10 (plain JSON data arrays) | 4/10 (conversation-shaped + api_responses) |
+
+Read it straight: on their data, their defaults compress ~5 points more — by
+dropping content whittle refuses to drop. Whittle stays within reach of a lossy
+compressor while returning outputs that reconstruct exactly. Which trade you
+want is the whole point of this project.
 
 ### 3. Real-world datasets
 

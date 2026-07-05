@@ -1,0 +1,144 @@
+{
+  "agentic_conversation_anthropic.json": {
+    "input_tokens": 5336,
+    "headroom_out_tokens": 4985,
+    "whittle_out_tokens": 4902,
+    "headroom_reduction": 0.0658,
+    "whittle_reduction": 0.0813,
+    "headroom_api_called": "headroom.compress(messages=<parsed file as message array>, model='claude-sonnet-4-5-20250929') [default CompressConfig; file already conversation-shaped list of {role, content} dicts, passed directly]",
+    "headroom_action": [
+      "router:protected:error_output",
+      "router:tool_result:smart_crusher"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=3986, after=3890, compression_ratio=0.0241. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=5613 compressed_tokens=4910."
+  },
+  "agentic_conversation_openai.json": {
+    "input_tokens": 8306,
+    "headroom_out_tokens": 8306,
+    "whittle_out_tokens": 7955,
+    "headroom_reduction": 0.0,
+    "whittle_reduction": 0.0423,
+    "headroom_api_called": "headroom.compress(messages=<parsed file as message array>, model='claude-sonnet-4-5-20250929') [default CompressConfig; file already conversation-shaped list of {role, content} dicts, passed directly]",
+    "headroom_action": [
+      "router:protected:user_message",
+      "router:protected:error_output"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=7405, after=7405, compression_ratio=0.0000. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=8772 compressed_tokens=8212."
+  },
+  "api_responses.json": {
+    "input_tokens": 11084,
+    "headroom_out_tokens": 6621,
+    "whittle_out_tokens": 5734,
+    "headroom_reduction": 0.4027,
+    "whittle_reduction": 0.4827,
+    "headroom_api_called": "headroom.compress(messages=[{'role': 'tool', 'content': <raw file bytes as text>}], model='claude-sonnet-4-5-20250929') [default CompressConfig; file is a plain JSON data array (not a message list), wrapped as a single tool-output message per headroom's own documented tool-output example in compress.py docstring]",
+    "headroom_action": [
+      "router:smart_crusher:0.01"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=8728, after=4494, compression_ratio=0.4851. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=13025 compressed_tokens=5781."
+  },
+  "database_rows_mixed.json": {
+    "input_tokens": 12953,
+    "headroom_out_tokens": 6464,
+    "whittle_out_tokens": 8738,
+    "headroom_reduction": 0.501,
+    "whittle_reduction": 0.3254,
+    "headroom_api_called": "headroom.compress(messages=[{'role': 'tool', 'content': <raw file bytes as text>}], model='claude-sonnet-4-5-20250929') [default CompressConfig; file is a plain JSON data array (not a message list), wrapped as a single tool-output message per headroom's own documented tool-output example in compress.py docstring]",
+    "headroom_action": [
+      "router:smart_crusher:0.00"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=9591, after=3994, compression_ratio=0.5836. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=14743 compressed_tokens=9512."
+  },
+  "file_search_data.json": {
+    "input_tokens": 14968,
+    "headroom_out_tokens": 6317,
+    "whittle_out_tokens": 7238,
+    "headroom_reduction": 0.578,
+    "whittle_reduction": 0.5164,
+    "headroom_api_called": "headroom.compress(messages=[{'role': 'tool', 'content': <raw file bytes as text>}], model='claude-sonnet-4-5-20250929') [default CompressConfig; file is a plain JSON data array (not a message list), wrapped as a single tool-output message per headroom's own documented tool-output example in compress.py docstring]",
+    "headroom_action": [
+      "router:smart_crusher:0.00"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=12448, after=5004, compression_ratio=0.5980. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=17834 compressed_tokens=7956."
+  },
+  "log_data.json": {
+    "input_tokens": 16183,
+    "headroom_out_tokens": 8887,
+    "whittle_out_tokens": 10454,
+    "headroom_reduction": 0.4508,
+    "whittle_reduction": 0.354,
+    "headroom_api_called": "headroom.compress(messages=[{'role': 'tool', 'content': <raw file bytes as text>}], model='claude-sonnet-4-5-20250929') [default CompressConfig; file is a plain JSON data array (not a message list), wrapped as a single tool-output message per headroom's own documented tool-output example in compress.py docstring]",
+    "headroom_action": [
+      "router:mixed:0.18"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=13299, after=6072, compression_ratio=0.5434. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=18842 compressed_tokens=10247."
+  },
+  "log_entries.json": {
+    "input_tokens": 14255,
+    "headroom_out_tokens": 8442,
+    "whittle_out_tokens": 8850,
+    "headroom_reduction": 0.4078,
+    "whittle_reduction": 0.3792,
+    "headroom_api_called": "headroom.compress(messages=[{'role': 'tool', 'content': <raw file bytes as text>}], model='claude-sonnet-4-5-20250929') [default CompressConfig; file is a plain JSON data array (not a message list), wrapped as a single tool-output message per headroom's own documented tool-output example in compress.py docstring]",
+    "headroom_action": [
+      "router:mixed:0.27"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=12052, after=6304, compression_ratio=0.4769. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=16110 compressed_tokens=8675."
+  },
+  "metrics_data.json": {
+    "input_tokens": 17874,
+    "headroom_out_tokens": 8287,
+    "whittle_out_tokens": 9501,
+    "headroom_reduction": 0.5364,
+    "whittle_reduction": 0.4684,
+    "headroom_api_called": "headroom.compress(messages=[{'role': 'tool', 'content': <raw file bytes as text>}], model='claude-sonnet-4-5-20250929') [default CompressConfig; file is a plain JSON data array (not a message list), wrapped as a single tool-output message per headroom's own documented tool-output example in compress.py docstring]",
+    "headroom_action": [
+      "router:smart_crusher:0.00"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=13016, after=3524, compression_ratio=0.7293. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=20577 compressed_tokens=9504."
+  },
+  "rag_conversation.json": {
+    "input_tokens": 2780,
+    "headroom_out_tokens": 2780,
+    "whittle_out_tokens": 2684,
+    "headroom_reduction": 0.0,
+    "whittle_reduction": 0.0345,
+    "headroom_api_called": "headroom.compress(messages=<parsed file as message array>, model='claude-sonnet-4-5-20250929') [default CompressConfig; file already conversation-shaped list of {role, content} dicts, passed directly]",
+    "headroom_action": [
+      "router:protected:user_message"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=2739, after=2739, compression_ratio=0.0000. Output text tokenized as json.dumps(result.messages, indent=2) to match the frozen input's own json.dumps(..., indent=2) formatting (verified byte-identical serialization style) so the reduction reflects real content compression, not whitespace stripping. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=3105 compressed_tokens=2950."
+  },
+  "search_results.json": {
+    "input_tokens": 12769,
+    "headroom_out_tokens": 6742,
+    "whittle_out_tokens": 7963,
+    "headroom_reduction": 0.472,
+    "whittle_reduction": 0.3764,
+    "headroom_api_called": "headroom.compress(messages=[{'role': 'tool', 'content': <raw file bytes as text>}], model='claude-sonnet-4-5-20250929') [default CompressConfig; file is a plain JSON data array (not a message list), wrapped as a single tool-output message per headroom's own documented tool-output example in compress.py docstring]",
+    "headroom_action": [
+      "router:mixed:0.46"
+    ],
+    "whittle_action": "compressed",
+    "whittle_skip_reason": null,
+    "notes": "headroom internal token count (its own tokenizer): before=12998, after=7247, compression_ratio=0.4425. whittle response: action=compressed, skip_reason=None, gate={'klass': 'code_structured', 'signal': 'content_structural'}, detected=json, strategy=ansi_strip+json_crusher, whittle_reported original_tokens=14962 compressed_tokens=8604."
+  }
+}
