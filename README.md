@@ -175,10 +175,26 @@ outputs actually take) whittle leads while staying lossless; on bulk data
 arrays headroom-ai's lossy sampling buys its margin. Latency is near parity.
 Which trade you want is the whole point of this project.
 
-### 3. Real-world datasets
+### 3. Real-world dataset (Salesforce customer-support agents)
 
-Results on real agent-session tool outputs. *Coming - measured on production
-traces; stats to be published with methodology.*
+On the public [Salesforce APIGen-MT-5k](https://huggingface.co/datasets/Salesforce/APIGen-MT-5k)
+corpus - 5,000 verified multi-turn customer-support agent sessions - whittle's
+compression engine cut **22% of tool-output tokens (o200k) at zero measured
+information loss**, verified two independent ways:
+
+- **structural path** (100% of compressed tool outputs, all JSON): mechanically
+  lossless on **15,846 / 15,846** items - every data value recoverable, no
+  sampling;
+- **lossy prose path** (user inputs): a blinded 4-judge panel found **0 / 120**
+  material loss (honeypot-validated, Gwet AC2 0.96-1.00).
+
+Honest caveat, published in full: 22% *token* reduction becomes only **~3%
+session cost** under prompt caching (cheap cache-reads dominate) - token savings
+and dollar savings are not the same thing. Full report, dataset card, cost model,
+and annotation methodology: [`bench/datasets/salesforce_customer_support/`](bench/datasets/salesforce_customer_support/).
+
+*(Measured on the shared compression engine `content-aware-router` v0.1.0; see the
+report's provenance note. whittle's `json_crusher` is lossless-only.)*
 
 ## Why whittle - compress at write-time, not read-time
 

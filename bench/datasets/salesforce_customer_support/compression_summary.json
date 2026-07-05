@@ -1,0 +1,80 @@
+{
+  "n_items": 45335,
+  "by_content_type": {
+    "tool_output": {
+      "items": 21106,
+      "total_original_tokens": 6486590,
+      "total_compressed_tokens": 5059862,
+      "token_weighted_reduction_pct": 22.0,
+      "tokens_saved": 1426728,
+      "mean_row_reduction_pct": 16.33,
+      "items_compressed": 15846,
+      "items_skipped": 5260,
+      "reduction_when_compressed_pct": 22.12,
+      "action_dist": {
+        "compressed": 15846,
+        "skipped": 5260
+      },
+      "skip_reasons": {
+        "too_short": 5260
+      },
+      "detected_dist": {
+        "json": 15846,
+        "": 5260
+      },
+      "strategy_dist": {
+        "ansi_strip+json_crusher": 15846
+      }
+    },
+    "user_input": {
+      "items": 24229,
+      "total_original_tokens": 694615,
+      "total_compressed_tokens": 679808,
+      "token_weighted_reduction_pct": 2.13,
+      "tokens_saved": 14807,
+      "mean_row_reduction_pct": 0.83,
+      "items_compressed": 562,
+      "items_skipped": 23667,
+      "reduction_when_compressed_pct": 35.5,
+      "action_dist": {
+        "skipped": 23667,
+        "compressed": 562
+      },
+      "skip_reasons": {
+        "too_short": 23666,
+        "fidelity_guard": 1
+      },
+      "detected_dist": {
+        "": 23174,
+        "prose": 1055
+      },
+      "strategy_dist": {
+        "ansi_strip+llmlingua": 562
+      }
+    }
+  },
+  "cross_check": {
+    "n_compared": 16408,
+    "mean_abs_diff_reduction": 0.1266,
+    "max_abs_diff_reduction": 0.1655,
+    "note": "abs difference between OUR tiktoken reduction and API-reported reduction"
+  },
+  "errors": 0,
+  "by_detected_type": {
+    "json": {
+      "items": 15846,
+      "token_weighted_reduction_pct": 22.12,
+      "total_original_tokens": 6449348
+    },
+    "": {
+      "items": 28434,
+      "token_weighted_reduction_pct": 0.0,
+      "total_original_tokens": 661506
+    },
+    "prose": {
+      "items": 1055,
+      "token_weighted_reduction_pct": 21.05,
+      "total_original_tokens": 70351
+    }
+  }
+}

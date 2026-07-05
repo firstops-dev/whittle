@@ -1,0 +1,152 @@
+{
+  "model": "sonnet-5",
+  "price_per_mtok": {
+    "input": 3.0,
+    "output": 15.0,
+    "cache_write": 3.75,
+    "cache_read": 0.3
+  },
+  "n_sessions": 5000,
+  "cached_scenario": {
+    "baseline_cost_usd": 215.7,
+    "compressed_cost_usd": 208.97,
+    "saved_usd": 6.74,
+    "cost_reduction_pct": 3.12,
+    "saving_by_content_type_usd": {
+      "tool_output": 6.66,
+      "user_input": 0.08
+    }
+  },
+  "no_cache_sensitivity": {
+    "baseline_cost_usd": 702.16,
+    "compressed_cost_usd": 684.53,
+    "cost_reduction_pct": 2.51
+  },
+  "compounding_by_carrying_reads": {
+    "0": {
+      "reduced_tokens": 277215,
+      "saved_usd": 1.0396,
+      "usd_per_1k_reduced_tok": 0.00375
+    },
+    "1": {
+      "reduced_tokens": 67360,
+      "saved_usd": 0.2728,
+      "usd_per_1k_reduced_tok": 0.00405
+    },
+    "2": {
+      "reduced_tokens": 360022,
+      "saved_usd": 1.5661,
+      "usd_per_1k_reduced_tok": 0.00435
+    },
+    "3": {
+      "reduced_tokens": 211427,
+      "saved_usd": 0.9831,
+      "usd_per_1k_reduced_tok": 0.00465
+    },
+    "4": {
+      "reduced_tokens": 221727,
+      "saved_usd": 1.0975,
+      "usd_per_1k_reduced_tok": 0.00495
+    },
+    "5": {
+      "reduced_tokens": 103495,
+      "saved_usd": 0.5433,
+      "usd_per_1k_reduced_tok": 0.00525
+    },
+    "6": {
+      "reduced_tokens": 70474,
+      "saved_usd": 0.3911,
+      "usd_per_1k_reduced_tok": 0.00555
+    },
+    "7": {
+      "reduced_tokens": 42204,
+      "saved_usd": 0.2469,
+      "usd_per_1k_reduced_tok": 0.00585
+    },
+    "8": {
+      "reduced_tokens": 27531,
+      "saved_usd": 0.1693,
+      "usd_per_1k_reduced_tok": 0.00615
+    },
+    "9": {
+      "reduced_tokens": 20064,
+      "saved_usd": 0.1294,
+      "usd_per_1k_reduced_tok": 0.00645
+    },
+    "10": {
+      "reduced_tokens": 13995,
+      "saved_usd": 0.0945,
+      "usd_per_1k_reduced_tok": 0.00675
+    },
+    "11": {
+      "reduced_tokens": 7091,
+      "saved_usd": 0.05,
+      "usd_per_1k_reduced_tok": 0.00705
+    },
+    "12": {
+      "reduced_tokens": 5414,
+      "saved_usd": 0.0398,
+      "usd_per_1k_reduced_tok": 0.00735
+    },
+    "13": {
+      "reduced_tokens": 3857,
+      "saved_usd": 0.0295,
+      "usd_per_1k_reduced_tok": 0.00765
+    },
+    "14": {
+      "reduced_tokens": 2375,
+      "saved_usd": 0.0189,
+      "usd_per_1k_reduced_tok": 0.00795
+    },
+    "15": {
+      "reduced_tokens": 2951,
+      "saved_usd": 0.0243,
+      "usd_per_1k_reduced_tok": 0.00825
+    },
+    "16": {
+      "reduced_tokens": 941,
+      "saved_usd": 0.008,
+      "usd_per_1k_reduced_tok": 0.00855
+    },
+    "17": {
+      "reduced_tokens": 1216,
+      "saved_usd": 0.0108,
+      "usd_per_1k_reduced_tok": 0.00885
+    },
+    "18": {
+      "reduced_tokens": 857,
+      "saved_usd": 0.0078,
+      "usd_per_1k_reduced_tok": 0.00915
+    },
+    "19": {
+      "reduced_tokens": 515,
+      "saved_usd": 0.0049,
+      "usd_per_1k_reduced_tok": 0.00945
+    },
+    "20": {
+      "reduced_tokens": 380,
+      "saved_usd": 0.0037,
+      "usd_per_1k_reduced_tok": 0.00975
+    },
+    "21": {
+      "reduced_tokens": 102,
+      "saved_usd": 0.001,
+      "usd_per_1k_reduced_tok": 0.01005
+    },
+    "22": {
+      "reduced_tokens": 107,
+      "saved_usd": 0.0011,
+      "usd_per_1k_reduced_tok": 0.01035
+    },
+    "23": {
+      "reduced_tokens": 182,
+      "saved_usd": 0.0019,
+      "usd_per_1k_reduced_tok": 0.01065
+    },
+    "24": {
+      "reduced_tokens": 33,
+      "saved_usd": 0.0004,
+      "usd_per_1k_reduced_tok": 0.01095
+    }
+  }
+}
