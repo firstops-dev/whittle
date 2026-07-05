@@ -21,14 +21,28 @@ whittle setup
 
 That's the whole thing. `setup`:
 
-- installs the **Claude Code PostToolUse hook** - every tool output your agent
-  reads is whittled from now on (Claude Code is the supported agent today;
+- installs the **Claude Code PostToolUse hook** - tool outputs your agent reads
+  are whittled from now on (known limit: compressed results larger than ~9.5k
+  chars pass through uncompressed, a Claude Code hook-output cap; see GUARANTEES.md) (Claude Code is the supported agent today;
   Cursor, Codex and OpenCode adapters are on the roadmap);
 - materializes the ML prose sidecar (embedded in the binary) into `~/.whittle`,
   builds its venv, and uses your GPU automatically (CUDA > Apple MPS > CPU) -
   if `python3` is missing, whittle simply runs deterministic-only;
 - registers a **launchd agent** (macOS) so the service starts at login and is
   kept alive.
+
+On Linux (launchd is macOS-only), run the daemon under systemd:
+
+```
+# ~/.config/systemd/user/whittle.service
+[Unit]
+Description=whittle daemon
+[Service]
+ExecStart=%h/go/bin/whittle daemon
+Restart=always
+[Install]
+WantedBy=default.target
+```
 
 Manage it with `whittle status`, `whittle stop`, and `whittle cleanup` (stops
 the service and removes the hook). Everything fails open: if whittle is down,
@@ -97,7 +111,8 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 ## Benchmarks
 
 Three tiers, in increasing order of realism - every number regenerable from
-this repo (`go run ./bench`), reductions on an estimated-token basis (labeled).
+this repo (`go run ./bench` for the deterministic rows; the prose row needs the
+model sidecar), reductions on an estimated-token basis (labeled).
 
 ### 1. Synthetic corpus (ours - headline per content class)
 
@@ -110,7 +125,7 @@ strategy and its guarantees. Full table: [`bench/REPORT.md`](bench/REPORT.md).
 | repetitive logs | 97% - omissions marked and exactly accounted |
 | terminal progress streams | 99% - final frame, rune-safe |
 | code / config (py, go, yaml) | **0% by design - skipped, never touched** |
-| prose (needs ML sidecar) | 30-40% - extractive, fidelity-guarded |
+| prose | 30-40% extractive, fidelity-guarded (needs the model sidecar; not part of the deterministic `go run ./bench` output) |
 
 ### 2. Side-by-side on headroom's data
 
@@ -186,7 +201,7 @@ model state (Apple M-series, `go test -bench`):
 |---|---|---|
 | JSON array, 200 rows, pretty-printed | ~21 KB | ~1.0 ms |
 | terminal progress stream | ~12 KB | ~3.9 ms |
-| build log, 800 lines | ~66 KB | ~21 ms |
+| build log, 800 lines | ~56 KB | ~21 ms |
 
 The hook runs after the tool call completes, so this cost is **off the LLM
 request path entirely** - model-call latency is unchanged. (These are absolute
@@ -201,7 +216,8 @@ beyond it.
 2. **Never silent loss.** Lossy paths mark what they removed and account for it exactly.
 3. **Code is sacred.** File reads, fences, identifiers: byte-exact or untouched.
 4. **Token-honest.** Accept gates and reported savings use calibrated token
-   estimates (MAE ~8% vs `o200k_base`), not bytes.
+   estimates (MAE ~8% vs `o200k_base`; regenerate with `bench/calibrate_tokens.py`),
+   not bytes.
 5. **Adversarially tested.** The invariants above are pinned by reconstruction
    fuzzing, per-language routing suites, and fail-open contract tests.
 

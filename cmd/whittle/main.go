@@ -17,7 +17,9 @@ import (
 	"github.com/firstops-dev/whittle/server"
 )
 
-const version = "0.1.0"
+// version is injected by goreleaser (-X main.version=...); dev builds show the
+// last released baseline.
+var version = "0.2.1"
 
 func main() {
 	if len(os.Args) < 2 {
