@@ -188,10 +188,14 @@ information loss**, verified two independent ways:
 - **lossy prose path** (user inputs): a blinded 4-judge panel found **0 / 120**
   material loss (honeypot-validated, Gwet AC2 0.96-1.00).
 
-Honest caveat, published in full: 22% *token* reduction becomes only **~3%
-session cost** under prompt caching (cheap cache-reads dominate) - token savings
-and dollar savings are not the same thing. Full report, dataset card, cost model,
-and annotation methodology: [`bench/datasets/salesforce_customer_support/`](bench/datasets/salesforce_customer_support/).
+The product metric is the **token/context reduction**: 22% fewer tool-output
+tokens, removed from every later turn's context - and because a tool output is
+re-read on each subsequent turn, that saving compounds as the session grows.
+Dollar impact is a separate, caching-dependent question we also publish in full:
+under prompt caching the same cut is ~3% of session cost (cheap cache-reads
+dominate the bill), so token savings and dollar savings are not the same thing.
+Full report, dataset card, cost model, and annotation methodology:
+[`bench/datasets/salesforce_customer_support/`](bench/datasets/salesforce_customer_support/).
 
 *(Measured on the shared compression engine `content-aware-router` v0.1.0; see the
 report's provenance note. whittle's `json_crusher` is lossless-only.)*
