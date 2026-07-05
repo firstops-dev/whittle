@@ -6,11 +6,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/firstops-dev/whittle"
 	"github.com/firstops-dev/whittle/compress"
@@ -70,7 +74,7 @@ usage:
   whittle version
 
 compress flags:
-  -rate float      prose keep-rate 0.1-1.0 (default 0.6; needs WHITTLE_MODEL_URL)
+  -rate float      prose keep-rate 0.1-1.0 (default 0.6; uses the running daemon)
   -min-tokens int  skip inputs shorter than this (default 64; 0 disables)
   -stats           print action/strategy/token stats to stderr
 
@@ -102,23 +106,62 @@ func cmdCompress(args []string) {
 		os.Exit(1)
 	}
 
-	eng := whittle.New(whittle.Options{
-		ModelURL:  os.Getenv("WHITTLE_MODEL_URL"),
-		MinTokens: *minTokens,
-	})
-	res := eng.CompressInput(context.Background(), compress.Input{
-		Content: string(data), Rate: *rate, MinTokens: *minTokens,
-	})
+	// Prefer the running daemon so `compress` matches what the hook actually does
+	// (the daemon has the prose sidecar wired). Fall back to an in-process engine
+	// when no daemon is up. Without this, bare `whittle compress` silently does
+	// deterministic-only and passes prose through unchanged - a real footgun.
+	res, ok := compressViaDaemon(string(data), *rate, *minTokens)
+	if !ok {
+		eng := whittle.New(whittle.Options{
+			ModelURL:  os.Getenv("WHITTLE_MODEL_URL"),
+			MinTokens: *minTokens,
+		})
+		r := eng.CompressInput(context.Background(), compress.Input{
+			Content: string(data), Rate: *rate, MinTokens: *minTokens,
+		})
+		res = cliResult{Output: r.Output, Action: r.Action, Detected: string(r.Detected),
+			Strategy: r.Strategy, SkipReason: r.SkipReason}
+	}
 	fmt.Print(res.Output)
 	if *stats {
 		in, out := whittle.EstimateTokens(string(data)), whittle.EstimateTokens(res.Output)
-		fmt.Fprintf(os.Stderr, "\nwhittle: action=%s detected=%s strategy=%s tokens=%d->%d",
-			res.Action, res.Detected, res.Strategy, in, out)
+		via := "in-process"
+		if ok {
+			via = "daemon"
+		}
+		fmt.Fprintf(os.Stderr, "\nwhittle: action=%s detected=%s strategy=%s tokens=%d->%d via=%s",
+			res.Action, res.Detected, res.Strategy, in, out, via)
 		if res.SkipReason != "" {
 			fmt.Fprintf(os.Stderr, " skip_reason=%s", res.SkipReason)
 		}
 		fmt.Fprintln(os.Stderr)
 	}
+}
+
+type cliResult struct{ Output, Action, Detected, Strategy, SkipReason string }
+
+// compressViaDaemon POSTs to a locally running whittle daemon; ok=false if none
+// is reachable (caller falls back to an in-process engine).
+func compressViaDaemon(content string, rate float64, minTokens int) (cliResult, bool) {
+	body, _ := json.Marshal(map[string]any{"content": content, "rate": rate, "min_tokens": minTokens})
+	client := http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Post("http://"+routerAddr+"/v1/compress", "application/json", bytes.NewReader(body))
+	if err != nil {
+		return cliResult{}, false
+	}
+	defer resp.Body.Close()
+	var out struct {
+		Compressed string `json:"compressed"`
+		Action     string `json:"action"`
+		Detected   string `json:"detected"`
+		Strategy   string `json:"strategy"`
+		SkipReason string `json:"skip_reason"`
+	}
+	if json.NewDecoder(io.LimitReader(resp.Body, 64<<20)).Decode(&out) != nil {
+		return cliResult{}, false
+	}
+	return cliResult{Output: out.Compressed, Action: out.Action, Detected: out.Detected,
+		Strategy: out.Strategy, SkipReason: out.SkipReason}, true
 }
 
 func cmdServe(args []string) {
