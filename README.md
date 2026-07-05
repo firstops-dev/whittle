@@ -66,10 +66,16 @@ Every path is wrapped in fail-open guardrails: empty-output, expansion (both
 byte- and token-honest), panic recovery. The worst case is always "not
 compressed", never "corrupted".
 
-## Optional: the ML prose path
+## The ML prose path (installed by `whittle setup`, optional by design)
 
-Deterministic strategies need nothing. To also compress natural-language prose,
-run the model sidecar (LLMLingua-2 + whittle's fidelity guards — see
+`whittle setup` installs and supervises the prose sidecar automatically: the
+Python source ships inside the binary, setup builds its venv, and the daemon
+keeps it running (GPU auto-selected: CUDA > Apple MPS > CPU). If `python3` is
+missing, setup says so and whittle runs deterministic-only — nothing breaks.
+
+"Optional" means the deterministic strategies never depend on it. Only if you
+use whittle as a bare library or `whittle serve` **without** running setup do
+you wire it manually (LLMLingua-2 + whittle's fidelity guards — see
 [model/](model/)):
 
 ```
