@@ -3,14 +3,14 @@
 **Carves your agent's tool outputs down to what matters. Never cuts what doesn't come back.**
 
 Whittle is a content-aware compressor for the text AI agents read: tool outputs,
-file reads, logs, JSON, terminal streams. Long agent sessions drown in tokens —
+file reads, logs, JSON, terminal streams. Long agent sessions drown in tokens -
 but most compressors buy their ratio by silently destroying things agents need:
 array rows vanish, file reads get gutted, identifiers come back mangled.
 
 Whittle holds one hard line: **structural compression is lossless or clearly
 marked, code never reaches a lossy model, and every anomaly fails open to the
 original bytes.** The reduction number it reports is calibrated to real
-tokenizer counts — not byte counts that overstate savings by up to 4×.
+tokenizer counts - not byte counts that overstate savings by up to 4×.
 
 ## Install
 
@@ -21,11 +21,11 @@ whittle setup
 
 That's the whole thing. `setup`:
 
-- installs the **Claude Code PostToolUse hook** — every tool output your agent
+- installs the **Claude Code PostToolUse hook** - every tool output your agent
   reads is whittled from now on (Claude Code is the supported agent today;
   Cursor, Codex and OpenCode adapters are on the roadmap);
 - materializes the ML prose sidecar (embedded in the binary) into `~/.whittle`,
-  builds its venv, and uses your GPU automatically (CUDA > Apple MPS > CPU) —
+  builds its venv, and uses your GPU automatically (CUDA > Apple MPS > CPU) -
   if `python3` is missing, whittle simply runs deterministic-only;
 - registers a **launchd agent** (macOS) so the service starts at login and is
   kept alive.
@@ -55,8 +55,8 @@ res := eng.Compress(ctx, toolOutput)
 
 | detected | strategy | guarantee |
 |---|---|---|
-| JSON | minify + columnar reshape (union schema, typed CSV, nested flattening, constant factoring) | **lossless** — reconstructs byte-exact; rows are never dropped |
-| logs / build output | keep errors, warnings, stack traces, summaries | lossy but **marked** — `... [N lines omitted]`, exact accounting |
+| JSON | minify + columnar reshape (union schema, typed CSV, nested flattening, constant factoring) | **lossless** - reconstructs byte-exact; rows are never dropped |
+| logs / build output | keep errors, warnings, stack traces, summaries | lossy but **marked** - `... [N lines omitted]`, exact accounting |
 | terminal | ANSI strip + CR-overwrite collapse (progress bars → final frame) | what the terminal actually displayed; rune-safe |
 | markdown file reads | structure-aware: prose compressed by the model, **code fences / tables / lists / headings passed through byte-exact** | code never reaches the model |
 | source code | untouched | routed away from every lossy path |
@@ -71,11 +71,11 @@ compressed", never "corrupted".
 `whittle setup` installs and supervises the prose sidecar automatically: the
 Python source ships inside the binary, setup builds its venv, and the daemon
 keeps it running (GPU auto-selected: CUDA > Apple MPS > CPU). If `python3` is
-missing, setup says so and whittle runs deterministic-only — nothing breaks.
+missing, setup says so and whittle runs deterministic-only - nothing breaks.
 
 "Optional" means the deterministic strategies never depend on it. Only if you
 use whittle as a bare library or `whittle serve` **without** running setup do
-you wire it manually (LLMLingua-2 + whittle's fidelity guards — see
+you wire it manually (LLMLingua-2 + whittle's fidelity guards - see
 [model/](model/)):
 
 ```
@@ -88,7 +88,7 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 
 | env | default | meaning |
 |---|---|---|
-| `WHITTLE_MODEL_URL` | *(unset — prose off)* | model sidecar URL |
+| `WHITTLE_MODEL_URL` | *(unset - prose off)* | model sidecar URL |
 | `WHITTLE_MAX_CHARS` | 262144 | global size ceiling (skip before classify) |
 | `WHITTLE_PROSE_MAX_CHARS` | 4500 | prose-path latency ceiling |
 
@@ -96,26 +96,26 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 
 ## Benchmarks
 
-Three tiers, in increasing order of realism — every number regenerable from
+Three tiers, in increasing order of realism - every number regenerable from
 this repo (`go run ./bench`), reductions on an estimated-token basis (labeled).
 
-### 1. Synthetic corpus (ours — headline per content class)
+### 1. Synthetic corpus (ours - headline per content class)
 
 Authored fixtures in [`bench/corpus/`](bench/corpus/), designed to exercise each
 strategy and its guarantees. Full table: [`bench/REPORT.md`](bench/REPORT.md).
 
 | class | representative result |
 |---|---|
-| JSON (uniform/sparse/nested) | 57% — lossless, byte-exact reconstruction |
-| repetitive logs | 97% — omissions marked and exactly accounted |
-| terminal progress streams | 99% — final frame, rune-safe |
-| code / config (py, go, yaml) | **0% by design — skipped, never touched** |
-| prose (needs ML sidecar) | 30-40% — extractive, fidelity-guarded |
+| JSON (uniform/sparse/nested) | 57% - lossless, byte-exact reconstruction |
+| repetitive logs | 97% - omissions marked and exactly accounted |
+| terminal progress streams | 99% - final frame, rune-safe |
+| code / config (py, go, yaml) | **0% by design - skipped, never touched** |
+| prose (needs ML sidecar) | 30-40% - extractive, fidelity-guarded |
 
 ### 2. Side-by-side on headroom's data
 
 Inputs frozen from [headroom](https://github.com/headroomlabs-ai/headroom)'s own
-benchmark generators (Apache-2.0; pinned commit, seed 42 — they check in no
+benchmark generators (Apache-2.0; pinned commit, seed 42 - they check in no
 corpora, so we froze what their numbers are computed on; `bench/corpus_headroom/`,
 PROVENANCE.md). Both tools ran on identical bytes, defaults only, measured with
 the same tokenizer. Full table + methodology: [`bench/SIDEBYSIDE.md`](bench/SIDEBYSIDE.md).
@@ -123,13 +123,13 @@ the same tokenizer. Full table + methodology: [`bench/SIDEBYSIDE.md`](bench/SIDE
 | | headroom-ai 0.30.0 | whittle 0.2.1 |
 |---|---|---|
 | aggregate token reduction (10 files, 116.5k tokens) | **41.8%** | 36.5% |
-| — conversation / agent-transcript JSON (3 files) | 2.1% | **5.4%** |
-| — bulk data arrays (7 files) | **48.3%** | 41.6% |
+| - conversation / agent-transcript JSON (3 files) | 2.1% | **5.4%** |
+| - bulk data arrays (7 files) | **48.3%** | 41.6% |
 | fidelity of that reduction | includes lossy row-dropping (recoverable via headroom's resident runtime) | **byte-exact lossless** on every file |
 | median latency, in-process (same files) | 2.93 ms | 2.36 ms |
 
 Read it straight: on the aggregate, headroom-ai's defaults compress ~5 points
-more — by dropping rows whittle refuses to drop. The category split shows where
+more - by dropping rows whittle refuses to drop. The category split shows where
 each position pays: on conversation-shaped content (the shape agent tool
 outputs actually take) whittle leads while staying lossless; on bulk data
 arrays headroom-ai's lossy sampling buys its margin. Latency is near parity.
@@ -137,15 +137,15 @@ Which trade you want is the whole point of this project.
 
 ### 3. Real-world datasets
 
-Results on real agent-session tool outputs. *Coming — measured on production
+Results on real agent-session tool outputs. *Coming - measured on production
 traces; stats to be published with methodology.*
 
-## Why whittle — compress at write-time, not read-time
+## Why whittle - compress at write-time, not read-time
 
 Context compressors typically integrate with coding agents as **request-path
 proxies**: your agent's base URL is redirected through a local server that
 rewrites conversation history at *read time*, on every LLM call. That position
-forces hard problems — prompt-cache stabilization (mutating history invalidates
+forces hard problems - prompt-cache stabilization (mutating history invalidates
 cached prefixes), per-call re-compression, terminating your API traffic (keys,
 system prompts and all), and a resident runtime that must stay up or your agent
 goes down with it. It also makes lossy compression the default, backed by a
@@ -157,23 +157,23 @@ is compressed **once, at the moment it is born**, before it ever enters
 conversation history. Everything else follows from that choice:
 
 - **Savings compound.** A tool output lives in context for every subsequent
-  turn. Tokens removed at write-time are removed from *every* later call —
+  turn. Tokens removed at write-time are removed from *every* later call -
   no per-call rework, no cache surgery, because history is never mutated.
 - **No trust expansion.** A hook sees one tool output at a time, locally, with
   zero credentials. Nothing terminates your API traffic.
 - **Failure is free.** The hook fails open; if whittle is down or declines, the
   agent proceeds with the original output. A gateway outage is an agent outage.
 - **The loss budget is honest.** A read-time proxy can afford recoverable lossy
-  compression — its resident runtime serves dropped content back when the model
+  compression - its resident runtime serves dropped content back when the model
   asks. Whittle keeps no runtime in your request path; reduced outputs carry a tiny
   retrieval pointer served by the local daemon (`whittle_get`), and lossless
-  transforms carry nothing at all — lossless-or-marked stays the construction,
+  transforms carry nothing at all - lossless-or-marked stays the construction,
   recovery is the safety net, never the license.
 
 The hook is whittle's default surface, not its only one: **library**
 (`whittle.New`) → **HTTP service** (`whittle serve`) → **hook adapters**
 (Claude Code PostToolUse today; Cursor, Codex, OpenCode adapters on the
-roadmap) — and the same library embeds in gateways or pipelines if that is
+roadmap) - and the same library embeds in gateways or pipelines if that is
 where you need it. The position is the point: compression happens where output
 is born, whatever surface delivers it there.
 
@@ -189,7 +189,7 @@ model state (Apple M-series, `go test -bench`):
 | build log, 800 lines | ~66 KB | ~21 ms |
 
 The hook runs after the tool call completes, so this cost is **off the LLM
-request path entirely** — model-call latency is unchanged. (These are absolute
+request path entirely** - model-call latency is unchanged. (These are absolute
 in-path budgets on whittle's own corpus; for tool-vs-tool latency on identical
 inputs see the Benchmarks side-by-side above and `bench/SIDEBYSIDE.md`.) The optional ML
 prose path is capped by a fail-open budget (default 1.5 s) and never blocks
@@ -210,7 +210,7 @@ beyond it.
 
 Whittle's log-selection strategy, several content-detection heuristics, and the
 tabular parser were adapted from [Headroom](https://github.com/headroomlabs-ai/headroom)
-(Apache-2.0) — adapted portions are marked in source comments, and we think
+(Apache-2.0) - adapted portions are marked in source comments, and we think
 their compaction work is excellent. Whittle exists because we wanted the other
 position: a write-time PostToolUse hook instead of a read-time request-path
 proxy, with the stricter fidelity contract that position requires. See NOTICE.
