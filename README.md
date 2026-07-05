@@ -183,7 +183,9 @@ model state (Apple M-series, `go test -bench`):
 | build log, 800 lines | ~66 KB | ~21 ms |
 
 The hook runs after the tool call completes, so this cost is **off the LLM
-request path entirely** — model-call latency is unchanged. The optional ML
+request path entirely** — model-call latency is unchanged. (These are absolute
+in-path budgets on whittle's own corpus; for tool-vs-tool latency on identical
+inputs see the Benchmarks side-by-side above and `bench/SIDEBYSIDE.md`.) The optional ML
 prose path is capped by a fail-open budget (default 1.5 s) and never blocks
 beyond it.
 
