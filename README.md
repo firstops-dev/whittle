@@ -19,6 +19,15 @@ marked, code never reaches a lossy model, and every anomaly fails open to the
 original bytes.** The reduction number it reports is calibrated to real
 tokenizer counts - not byte counts that overstate savings by up to 4×.
 
+**How it plugs in:** `whittle setup` installs a Claude Code **PostToolUse hook**
+backed by a small, always-on local daemon. Every tool output your agent produces
+is compressed the moment it's created - on your machine, before it enters the
+conversation, off the model-request path, with zero credentials leaving your
+box. Claude Code is the supported agent today (Cursor, Codex, OpenCode adapters
+are on the roadmap); the same daemon also exposes a Go library, an HTTP API, and
+an MCP retrieval tool. See [Why whittle](#why-whittle---compress-at-write-time-not-read-time)
+and [Architecture](#architecture) for the reasoning and the diagram.
+
 ## See it
 
 ![whittle compressing a noisy build log](demo/compress.gif)
