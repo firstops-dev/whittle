@@ -3,7 +3,7 @@ package compress
 // Registry maps a ContentType to its ordered, chainable compressors. It is a
 // pure data structure: the concrete chains are wired by the caller (see the
 // compressors package's DefaultChains) so this package never imports the
-// concrete compressors — that would be an import cycle.
+// concrete compressors - that would be an import cycle.
 type Registry struct {
 	chains map[ContentType][]Compressor
 }

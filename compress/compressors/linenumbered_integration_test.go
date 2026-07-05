@@ -41,7 +41,7 @@ func TestLineNumberedReadPassesThroughEndToEnd(t *testing.T) {
 func TestTabularLosslessOnly(t *testing.T) {
 	p := compress.NewPipeline(compress.NewRegistry(DefaultChains()), compress.DefaultGateConfig(), nil)
 
-	// plain table (>maxRows=40): must NOT be row-dropped — passes through untouched.
+	// plain table (>maxRows=40): must NOT be row-dropped - passes through untouched.
 	var b strings.Builder
 	b.WriteString("NAME       STATUS    AGE   RESTARTS\n")
 	for i := 0; i < 80; i++ {

@@ -1,11 +1,11 @@
 package main
 
-// whittle hook — the Claude Code PostToolUse hook command. Reads the hook event
+// whittle hook - the Claude Code PostToolUse hook command. Reads the hook event
 // on stdin, compresses the tool output through the local whittle router, and
 // emits the hook JSON that replaces the persisted tool output.
 //
 // FAIL-OPEN CONTRACT: on ANY problem (router down, non-text output, no win,
-// malformed event) the hook exits 0 with no stdout — Claude Code proceeds with
+// malformed event) the hook exits 0 with no stdout - Claude Code proceeds with
 // the original output. A compression hook must never break a tool call.
 
 import (
@@ -64,7 +64,7 @@ func cmdHook(_ []string) {
 		out.Action != "compressed" || out.Compressed == "" || len(out.Compressed) >= len(text) {
 		return
 	}
-	// Claude Code caps hook stdout at 10,000 chars — larger output is diverted to
+	// Claude Code caps hook stdout at 10,000 chars - larger output is diverted to
 	// a file and replaced with a preview, which would corrupt the result. Fail
 	// open instead of emitting a replacement that cannot land intact.
 	if len(out.Compressed) > 9500 {
@@ -75,7 +75,7 @@ func cmdHook(_ []string) {
 	emitReplacement(out.Compressed)
 }
 
-// logStat appends one compression event to ~/.whittle/stats.jsonl — LOCAL ONLY,
+// logStat appends one compression event to ~/.whittle/stats.jsonl - LOCAL ONLY,
 // never transmitted. This powers `whittle stats`. Best-effort: failures are
 // ignored (the hook must never fail because bookkeeping did).
 func logStat(tool, strategy string, inTok, outTok int) {

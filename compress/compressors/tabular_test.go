@@ -72,7 +72,7 @@ func TestTabular_LongTableSampled(t *testing.T) {
 }
 
 func TestTabular_AlreadyMinimalPassthrough(t *testing.T) {
-	// Compact CSV has no padding to strip — must not expand it.
+	// Compact CSV has no padding to strip - must not expand it.
 	in := "id,name,score\n1,alice,90\n2,bob,85"
 	res := crushTab(t, in)
 	if res.Output != in {

@@ -11,11 +11,11 @@ import (
 
 var (
 	// tabSepRe matches a pure ascii/markdown table separator row (---+---, |---|,
-	// :---:) — it carries no data, only draws a line.
+	// :---:) - it carries no data, only draws a line.
 	tabSepRe = regexp.MustCompile(`^[\s|:+-]*[-+][\s|:+-]*$`)
 	// tabPipeRe is the cosmetic padding around a column pipe.
 	tabPipeRe = regexp.MustCompile(`\s*\|\s*`)
-	// tabSpaceRe is a run of 2+ spaces — the alignment gap between fixed-width
+	// tabSpaceRe is a run of 2+ spaces - the alignment gap between fixed-width
 	// columns. Collapsed to a single tab so the column boundary survives but the
 	// padding does not.
 	tabSpaceRe = regexp.MustCompile(` {2,}`)
@@ -76,7 +76,7 @@ func normalizeRow(ln string) string {
 }
 
 // sampleRows keeps the header (row 0), a head and tail slice of the body, and a
-// marker for the omitted middle. Lossy but structure-preserving — for a 200-row
+// marker for the omitted middle. Lossy but structure-preserving - for a 200-row
 // kubectl dump the agent gets the schema plus a representative window.
 func sampleRows(rows []string, max int) []string {
 	if len(rows) <= max {

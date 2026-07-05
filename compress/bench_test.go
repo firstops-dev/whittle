@@ -11,7 +11,7 @@ import (
 	"github.com/firstops-dev/whittle/compress/compressors"
 )
 
-// Benchmarks for the deterministic (no-model) strategies — the in-path budget a
+// Benchmarks for the deterministic (no-model) strategies - the in-path budget a
 // PostToolUse hook pays per tool output. Run: go test -bench . -benchmem ./compress/
 
 func pipeline() *compress.Pipeline {

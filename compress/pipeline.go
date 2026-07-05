@@ -53,7 +53,7 @@ func NewPipeline(r *Registry, gate GateConfig, log Logger) *Pipeline {
 // Compress runs gate → route → chain → guardrail. It NEVER returns an error:
 // every failure is fail-open (the original content passes through, action
 // "skipped"). The contract mirrors the Python service so the edge-server caller
-// — which reads only Output(compressed) + Action — is unchanged.
+// - which reads only Output(compressed) + Action - is unchanged.
 func (p *Pipeline) Compress(ctx context.Context, in Input) (outcome Outcome) {
 	content := in.Content
 	inChars := len(content)
@@ -83,7 +83,7 @@ func (p *Pipeline) Compress(ctx context.Context, in Input) (outcome Outcome) {
 
 	// Global size gate runs BEFORE any classification/parse: an oversized body is
 	// rejected before paying for Detect / looksStructured on an unbounded input.
-	// This is a generous safety bound, NOT the prose limit — deterministic
+	// This is a generous safety bound, NOT the prose limit - deterministic
 	// structural compressors handle large output, and the prose-only ceiling is
 	// applied later (see the prose-path guards). Never compress only part of an
 	// oversized input (matches app.py): skip the whole thing, don't drop the tail.
@@ -113,10 +113,10 @@ func (p *Pipeline) Compress(ctx context.Context, in Input) (outcome Outcome) {
 	// structural compressors (json, log, ...), which route by type regardless.
 	if detected == TypeProse {
 		// (a) Safety: code/structured that fell through the router to prose (a
-		// fallback) must never reach the prose model — it would corrupt it.
+		// fallback) must never reach the prose model - it would corrupt it.
 		// Deliberately NOT applied to TypeDocRead: prose is a FALLBACK (weak
 		// evidence, so the gate's metadata vote wins), while doc_read is a
-		// POSITIVE zero-tolerance classification (isMarkdownDoc) — and every
+		// POSITIVE zero-tolerance classification (isMarkdownDoc) - and every
 		// Read-tool output carries klass=code_structured from the tool-name
 		// vote, which would otherwise veto every doc read. Downstream defense for
 		// doc_read: the adapter sends NO content_class override, so the Python
@@ -172,7 +172,7 @@ func (p *Pipeline) Compress(ctx context.Context, in Input) (outcome Outcome) {
 			base.OutChars = inChars
 			return base
 		}
-		if res.Skipped { // clean skip (e.g. sidecar shed load / gated) — NOT an error
+		if res.Skipped { // clean skip (e.g. sidecar shed load / gated) - NOT an error
 			base.Action = "skipped"
 			base.SkipReason = res.SkipReason
 			base.Output = content
@@ -194,12 +194,12 @@ func (p *Pipeline) Compress(ctx context.Context, in Input) (outcome Outcome) {
 		return base
 	}
 
-	// Expansion guardrail — token-honest AND byte-honest: the consumer pays
+	// Expansion guardrail - token-honest AND byte-honest: the consumer pays
 	// tokens (bytes diverge from tokens by up to ~4x on whitespace-heavy content,
 	// docs/compressor-opportunities.md #3), so output must be strictly smaller on
 	// BOTH axes; else passthrough. Conservative as ESTIMATED: the token side uses
 	// EstimateTokens (MAE ~8%, biased to overestimate), so a borderline true-token
-	// regression inside estimator noise can slip through — for our lossless
+	// regression inside estimator noise can slip through - for our lossless
 	// transforms that is an efficiency miss, never data loss.
 	if len(cur) >= inChars || EstimateTokens(cur) >= EstimateTokens(content) {
 		base.Action = "skipped"
@@ -217,7 +217,7 @@ func (p *Pipeline) Compress(ctx context.Context, in Input) (outcome Outcome) {
 	return base
 }
 
-// estTokens is the gate's token floor counter — now the calibrated estimator
+// estTokens is the gate's token floor counter - now the calibrated estimator
 // (tokens.go) rather than the old chars/4, which was off -27..-48% on structured
 // content and would admit under-length inputs.
 func estTokens(s string) int { return EstimateTokens(s) }

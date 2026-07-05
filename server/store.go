@@ -1,11 +1,11 @@
 package server
 
-// Store — the disk-backed, content-addressed original-content cache behind
+// Store - the disk-backed, content-addressed original-content cache behind
 // whittle_get. Originals of REDUCED outputs (lossy/marked strategies only) are
 // kept so the model can retrieve the exact bytes when strictly required.
 // Content-addressed (SHA-256) for dedup; exposed by small integer alias (2
 // tokens in a hint vs 8 for hex). Bounded: TTL + byte cap, oldest evicted.
-// Misses are honest: "expired" — the agent can re-run the tool.
+// Misses are honest: "expired" - the agent can re-run the tool.
 
 import (
 	"crypto/sha256"
@@ -44,7 +44,7 @@ func OpenStore(dir string, maxBytes int64, ttl time.Duration) (*Store, error) {
 			}
 		} else {
 			// Index unreadable but present: aliases may be outstanding in old
-			// transcripts. NEVER reissue — jump the counter far past anything a
+			// transcripts. NEVER reissue - jump the counter far past anything a
 			// small sequence could have reached (review B3).
 			s.next = time.Now().Unix()
 		}
@@ -57,7 +57,7 @@ func (s *Store) persist() {
 		Next int64            `json:"next"`
 		IDs  map[int64]string `json:"ids"`
 	}{s.next, s.ids})
-	// Atomic: temp + rename (review B3 — a torn index.json reset the alias
+	// Atomic: temp + rename (review B3 - a torn index.json reset the alias
 	// counter, and a stale hint then retrieved the WRONG content).
 	tmp := filepath.Join(s.dir, "index.json.tmp")
 	if os.WriteFile(tmp, b, 0o644) == nil {

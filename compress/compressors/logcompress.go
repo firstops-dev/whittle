@@ -11,7 +11,7 @@ import (
 )
 
 // Per-line classification regexes (each call sees one line, so ^/$ anchor to the
-// line). Precompiled — the log path is hot.
+// line). Precompiled - the log path is hot.
 var (
 	reError   = regexp.MustCompile(`(?i)\b(error|fatal|panic|exception)\b`)
 	reFail    = regexp.MustCompile(`(?i)\b(fail(ed|ure)?)\b`)
@@ -65,7 +65,7 @@ func baseScore(lv level) float64 {
 	}
 }
 
-// LogConfig bounds the selection. Zero values are NOT defaults — use
+// LogConfig bounds the selection. Zero values are NOT defaults - use
 // DefaultLogConfig.
 type LogConfig struct {
 	MaxErrors          int
@@ -95,7 +95,7 @@ func NewLogCompressor(cfg LogConfig) LogCompressor { return LogCompressor{cfg: c
 func (LogCompressor) Name() string { return "log_compressor" }
 
 func (LogCompressor) Handles(ct compress.ContentType) bool {
-	// Terminal output, once ANSI-stripped, is log-shaped — keep errors/results, drop
+	// Terminal output, once ANSI-stripped, is log-shaped - keep errors/results, drop
 	// the noise.
 	return ct == compress.TypeLog || ct == compress.TypeTerminal
 }
@@ -131,7 +131,7 @@ func (l LogCompressor) Compress(_ context.Context, in compress.Input) (compress.
 	floorSelection(selected)
 
 	// Emit kept lines in order, replacing each contiguous run of dropped lines with
-	// a "... [N lines omitted]" marker so the drop is never silent — an agent reading
+	// a "... [N lines omitted]" marker so the drop is never silent - an agent reading
 	// the output can see where and how much was elided (matches TabularCompressor).
 	out := make([]string, 0, n)
 	gap := 0
@@ -152,7 +152,7 @@ func (l LogCompressor) Compress(_ context.Context, in compress.Input) (compress.
 	flushGap() // trailing dropped run
 	res := strings.Join(out, "\n")
 	// Never expand: an all-signal log (little dropped) plus omission markers can end
-	// up larger than the input. In that case there is nothing to compress — hand back
+	// up larger than the input. In that case there is nothing to compress - hand back
 	// the original so the pipeline's guardrail skips it, rather than returning a
 	// larger, marker-littered output.
 	if len(res) >= len(in.Content) {

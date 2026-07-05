@@ -10,13 +10,13 @@ import (
 // corpus of REAL coding-agent tool output. It was written after the detectJSON
 // bug (objects never matched, only arrays) to find every other gap of that
 // class. Failing assertions here are INTENTIONAL and are the deliverable: each
-// red case documents a routing hole. Do not "fix" them by relaxing the want —
+// red case documents a routing hole. Do not "fix" them by relaxing the want -
 // fix router.go/gate.go, or move the case to the guard set if behavior is
 // deliberately correct.
 //
 // Two layers are probed:
-//   1. TestRouterGaps_Detection — what Detect() returns vs. what it SHOULD.
-//   2. TestRouterGaps_NoStructuredLeakToProseModel — the dangerous consequence:
+//   1. TestRouterGaps_Detection - what Detect() returns vs. what it SHOULD.
+//   2. TestRouterGaps_NoStructuredLeakToProseModel - the dangerous consequence:
 //      structured content that the gate labels klass=prose AND the router lands
 //      on TypeProse reaches the LLMLingua *paraphrasing* model => corruption.
 //      The prose-safety guard only fires for klass==code_structured, so anything
@@ -77,7 +77,7 @@ func gapCorpus() map[string]string {
 		// model after LineNumberStrip).
 		"linenum_code": "1\tpackage main\n2\t\n3\tfunc main() {\n4\t\tfor i := 0; i < 10; i++ {\n5\t\t\tdoWork(i)\n6\t\t}\n7\t}",
 		"linenum_doc":  "1\t# NephilimOS\n2\t\n3\tFull reference for kernel internals and the syscall ABI for readers.\n4\t\n5\t## Boot Sequence\n6\tThe bootloader initializes the descriptor tables then jumps to the kernel entry point.\n7\tIt verifies the magic value before handing control to the scheduler afterwards.\n8\t\n9\t## Memory Layout\n10\tThe kernel reserves the first megabyte for firmware structures and data.\n11\tThe remainder is mapped linearly for the frame allocator to divide up.",
-		// gate guards: these stay TypeCode — the fenced case and the stray-code
+		// gate guards: these stay TypeCode - the fenced case and the stray-code
 		// case carry too little prose to clear the prose-mass/sentence floors, and
 		// one heading is never enough evidence. (Fences themselves no longer veto:
 		// rich fenced docs route to doc_read and MarkdownStructured masks the code.)
@@ -106,7 +106,7 @@ func gapCorpus() map[string]string {
 		"ndjson_no_levelwords": "{\"a\":1,\"b\":\"x\"}\n{\"a\":2,\"b\":\"y\"}\n{\"a\":3,\"b\":\"z\"}",
 		"json_with_trail_log":  "{\"id\":42,\"name\":\"alpha\"}\n2024-01-01 INFO done writing",
 
-		// ---- prose (genuine — these are regression guards, must stay correct) ----
+		// ---- prose (genuine - these are regression guards, must stay correct) ----
 		"plain_prose":    "The quick brown fox jumps over the lazy dog. This is an ordinary paragraph of English text with nothing structured about it at all, just words and sentences.",
 		"markdown_prose": "## Heading\n\nThis is some **markdown** prose with a [link](http://x.com) and some _emphasis_. It reads like a document, not code.",
 	}
@@ -222,7 +222,7 @@ func TestRouterGaps_Detection(t *testing.T) {
 	// would mean loosening search/log detection in ways that risk stealing
 	// timestamped logs. Their SAFETY (never paraphrased) is guaranteed elsewhere:
 	// grep_no_ext by the gate's structuralSignal backstop, ripgrep_heading by the
-	// existing codeSignal (pathExt + trailing brace) — see the leak test.
+	// existing codeSignal (pathExt + trailing brace) - see the leak test.
 	deferred := map[string]string{
 		"grep_no_ext":     "extensionless grep routing deferred; safety via gate structuralSignal",
 		"ripgrep_heading": "multi-line grouped grep routing deferred; safe code_structured skip today",
@@ -242,7 +242,7 @@ func TestRouterGaps_Detection(t *testing.T) {
 				return // pass: guard holds or (rare) gap got fixed
 			}
 			if c.guard {
-				t.Errorf("REGRESSION: %s routed to %q (conf %.2f), want %q — a previously-correct case broke",
+				t.Errorf("REGRESSION: %s routed to %q (conf %.2f), want %q - a previously-correct case broke",
 					c.name, got, conf, c.want)
 				return
 			}
@@ -252,7 +252,7 @@ func TestRouterGaps_Detection(t *testing.T) {
 	}
 }
 
-// --- Layer 2: the dangerous consequence — structured content reaching the
+// --- Layer 2: the dangerous consequence - structured content reaching the
 // LLMLingua prose (paraphrasing) model -----------------------------------------
 
 // gapProseSpy is a stand-in for the LLMLingua adapter registered on TypeProse.
@@ -295,16 +295,16 @@ func TestRouterGaps_NoStructuredLeakToProseModel(t *testing.T) {
 		name string
 		why  string
 	}{
-		{"go_panic", "Go panic / stack trace — line numbers and frames must stay verbatim"},
-		{"python_traceback", "Python traceback — file/line/exception must stay verbatim"},
-		{"pure_info_log", "level-less server log — IPs/ports/timings must stay verbatim"},
-		{"kubectl_get", "kubectl table — pod names/statuses/restart counts must stay verbatim"},
-		{"docker_ps", "docker ps table — container ids/ports must stay verbatim"},
-		{"ls_l", "ls -l — permissions/sizes/dates must stay verbatim"},
-		{"psql_table", "psql result set — column values must stay verbatim"},
-		{"code_few_keywords", "assignment-heavy code — identifiers/calls must stay verbatim"},
-		{"grep_no_ext", "grep on extensionless files — path:line:match must stay verbatim"},
-		{"grep_win_path", "grep with Windows paths — path:line:match must stay verbatim"},
+		{"go_panic", "Go panic / stack trace - line numbers and frames must stay verbatim"},
+		{"python_traceback", "Python traceback - file/line/exception must stay verbatim"},
+		{"pure_info_log", "level-less server log - IPs/ports/timings must stay verbatim"},
+		{"kubectl_get", "kubectl table - pod names/statuses/restart counts must stay verbatim"},
+		{"docker_ps", "docker ps table - container ids/ports must stay verbatim"},
+		{"ls_l", "ls -l - permissions/sizes/dates must stay verbatim"},
+		{"psql_table", "psql result set - column values must stay verbatim"},
+		{"code_few_keywords", "assignment-heavy code - identifiers/calls must stay verbatim"},
+		{"grep_no_ext", "grep on extensionless files - path:line:match must stay verbatim"},
+		{"grep_win_path", "grep with Windows paths - path:line:match must stay verbatim"},
 	}
 	for _, c := range mustNotLeak {
 		t.Run("leak/"+c.name, func(t *testing.T) {
@@ -318,7 +318,7 @@ func TestRouterGaps_NoStructuredLeakToProseModel(t *testing.T) {
 		})
 	}
 
-	// Inputs that ARE genuine prose and SHOULD reach the prose model — guards so
+	// Inputs that ARE genuine prose and SHOULD reach the prose model - guards so
 	// a future fix doesn't over-correct and starve real prose compression.
 	mustLeak := []string{"plain_prose", "markdown_prose"}
 	for _, name := range mustLeak {
@@ -343,7 +343,7 @@ func TestRouterGaps_LostValueSkips(t *testing.T) {
 		name string
 		why  string
 	}{
-		{"ndjson_no_levelwords", "NDJSON misrouted to tabular (no compressor) and dropped — JSON-lines is compressible structured data"},
+		{"ndjson_no_levelwords", "NDJSON misrouted to tabular (no compressor) and dropped - JSON-lines is compressible structured data"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -361,13 +361,13 @@ func TestRouterGaps_LostValueSkips(t *testing.T) {
 // ABOUT failures (postmortems, error investigations, architecture docs that
 // say "fails open") is saturated with error/failed/info words, and the old
 // unanchored word-match detectors routed it to the line-deduping LogCompressor
-// — which destroyed it (entity retention down to 14%). These samples come from
+// - which destroyed it (entity retention down to 14%). These samples come from
 // the fidelity corpus (fidelity/corpus/); prose must NEVER route to log.
 func TestRouter_FailureThemedProseIsNotLog(t *testing.T) {
 	samples := map[string]string{
 		"postmortem": "Postmortem: compressor sidecar outage, June 30. Between 01:15 and 04:41 UTC " +
 			"the Python inference sidecar was down while the Go front stayed healthy, so every prose " +
-			"compression request failed with connection refused — 1,874 failures in the window. Impact " +
+			"compression request failed with connection refused - 1,874 failures in the window. Impact " +
 			"was limited to lost savings because the hook fails open; no tool output was corrupted.\n\n" +
 			"Root cause: the sidecar was killed by the kernel OOM killer. The process died with SIGKILL, " +
 			"which produces no Python traceback, and the health check only probed the Go front, so the " +
@@ -393,7 +393,7 @@ func TestRouter_FailureThemedProseIsNotLog(t *testing.T) {
 	for name, text := range samples {
 		ct, conf := Detect(text)
 		if ct == TypeLog {
-			t.Errorf("%s: failure-themed prose routed to log (conf %.2f) — LogCompressor would destroy it", name, conf)
+			t.Errorf("%s: failure-themed prose routed to log (conf %.2f) - LogCompressor would destroy it", name, conf)
 		}
 	}
 }
@@ -438,7 +438,7 @@ func TestRouter_LevelLessLogFormats_StillLog(t *testing.T) {
 	}
 	for name, text := range samples {
 		if ct, _ := Detect(text); ct != TypeLog {
-			t.Errorf("%s: log routed to %q — recall regression", name, ct)
+			t.Errorf("%s: log routed to %q - recall regression", name, ct)
 		}
 	}
 }

@@ -16,7 +16,7 @@ import (
 //     model-context one. Measured end-to-end (prod, llmlingua-2 xlm-roberta-large
 //     on 4 vCPU, single-flight): latency ≈ 0.3s + 0.3s/KB, so 4.5KB ≈ 1.5s,
 //     6KB ≈ 2.1s (breaches the edge hook's 2s budget), ≥9KB always times out.
-//     The old 30000 value admitted 5x more than the budget could serve — every
+//     The old 30000 value admitted 5x more than the budget could serve - every
 //     6-30KB prose burned the full 2s and surfaced as an error. Above this
 //     ceiling prose skips CLEANLY upfront. Raise only after a faster model
 //     (bert-base ≈ 3x throughput) or chunked-parallel inference lands.
@@ -39,7 +39,7 @@ const (
 	longProseChars = 2000
 )
 
-// Structural / code-signal regexes. All precompiled — the gate runs on every
+// Structural / code-signal regexes. All precompiled - the gate runs on every
 // tool call. Direct ports of gate.py.
 var (
 	markupRe    = regexp.MustCompile(`(?is)^\s*<(\?xml|!doctype|html|svg|[a-zA-Z][\w:-]*[\s/>])`)
@@ -182,7 +182,7 @@ func classify(content, toolName, mime string) (klass, signal string) {
 		return "code_structured", "heuristic"
 	}
 	// Weak incidental tokens (a file path, a command name) accumulate in long
-	// genuine prose — e.g. Claude Code session summaries that mention `rank.py` — so
+	// genuine prose - e.g. Claude Code session summaries that mention `rank.py` - so
 	// only let the combined heuristic veto when the text is not clearly prose by
 	// character distribution. The router detects real code/tables/JSON directly.
 	if strong+weak >= 2 && proseRatio(content) < heuristicProseMax {
@@ -191,7 +191,7 @@ func classify(content, toolName, mime string) (klass, signal string) {
 	// Structural backstop: machine-shaped tool output that slips past codeSignal
 	// (grep path:line: output, stack traces) is labeled code_structured so the
 	// pipeline's prose-safety guard skips it instead of paraphrasing it. This is
-	// defense-in-depth — even if the router misroutes such content to prose, the
+	// defense-in-depth - even if the router misroutes such content to prose, the
 	// gate independently refuses to send it to the lossy model.
 	if structuralSignal(content) {
 		return "code_structured", "structural"
@@ -241,7 +241,7 @@ func Decide(content string, nTokens int, toolName, mime, contentClass string, mi
 	// "structured" means "route to a structural compressor" (e.g. JSON ->
 	// JSONCrusher), not "skip". The only hard skips at the gate are size-based
 	// (too_short here, too_large in the pipeline). `klass` is still returned so
-	// the pipeline can use it as a prose-safety guard — code/structured content
+	// the pipeline can use it as a prose-safety guard - code/structured content
 	// that falls through the router to prose must never reach the LLMLingua
 	// (prose) compressor, which would corrupt it.
 	return "compress", klass, signal, ""

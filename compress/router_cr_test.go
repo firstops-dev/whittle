@@ -7,7 +7,7 @@ import (
 
 // TestDetect_CRProgressStreamIsTerminal: a colorless progress stream (no ANSI at
 // all, many lone CRs, few newlines) must route to terminal so the CR-overwrite
-// collapse applies — previously it fell through to prose.
+// collapse applies - previously it fell through to prose.
 func TestDetect_CRProgressStreamIsTerminal(t *testing.T) {
 	var b strings.Builder
 	for p := 1; p <= 60; p++ {

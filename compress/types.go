@@ -21,7 +21,7 @@ const (
 	// TypeDocRead is a line-numbered file read (`N\t<line>`, Read tool / cat -n)
 	// whose STRIPPED content is unmistakably a markdown/prose document
 	// (isMarkdownDoc). Routed to the prose model after LineNumberStrip; every
-	// other line-numbered read stays TypeCode (passthrough) — code must never
+	// other line-numbered read stays TypeCode (passthrough) - code must never
 	// reach the paraphraser.
 	TypeDocRead  ContentType = "doc_read"
 	TypeProse    ContentType = "prose"
@@ -54,7 +54,7 @@ type Result struct {
 	OutChars int
 	// Skipped is a clean, non-error skip (the compressor chose not to compress,
 	// e.g. an upstream sidecar shed load or gated the input). The pipeline treats
-	// it as a passthrough skip with SkipReason, NOT as the error fail-open path —
+	// it as a passthrough skip with SkipReason, NOT as the error fail-open path -
 	// so legitimate skips do not pollute the error rate.
 	Skipped    bool
 	SkipReason string

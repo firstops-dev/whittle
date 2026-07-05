@@ -46,7 +46,7 @@ func (a *LLMLinguaAdapter) Compress(ctx context.Context, in compress.Input) (com
 	if rate <= 0 {
 		rate = 0.6
 	}
-	// content_class "prose" tells the Python gate to compress without re-gating —
+	// content_class "prose" tells the Python gate to compress without re-gating -
 	// correct for router-detected prose. For doc_read, send NO override so the
 	// sidecar's classify() runs its own independent code vetoes (structural, code
 	// heuristics, prose-ratio floor) as a second line of defense behind
@@ -104,7 +104,7 @@ func (a *LLMLinguaAdapter) Compress(ctx context.Context, in compress.Input) (com
 	}
 	if out.Action != "compressed" {
 		// The sidecar legitimately declined (gate skip, load-shed "busy",
-		// guardrail). That is a clean skip, NOT a failure — surfacing it as an
+		// guardrail). That is a clean skip, NOT a failure - surfacing it as an
 		// error made ~30% of prose "errors" actually be skips. Real transport /
 		// timeout / non-200 failures still return an error above.
 		reason := out.SkipReason

@@ -1,6 +1,6 @@
 package main
 
-// whittle setup / start / stop / status / cleanup — the one-command experience.
+// whittle setup / start / stop / status / cleanup - the one-command experience.
 //
 //	whittle setup    materialize the model sidecar to ~/.whittle, build its venv,
 //	                 install the Claude Code PostToolUse hook, register a launchd
@@ -46,7 +46,7 @@ func cmdSetup(_ []string) {
 	dir := whittleHome()
 	must(os.MkdirAll(filepath.Join(dir, "logs"), 0o755))
 
-	// 1. materialize the embedded sidecar + venv (optional — fail open)
+	// 1. materialize the embedded sidecar + venv (optional - fail open)
 	if err := setupSidecar(dir); err != nil {
 		fmt.Printf("  ! ML sidecar skipped (%v)\n    deterministic compression still fully works;\n    re-run `whittle setup` after installing python3 to enable prose.\n", err)
 	}
@@ -58,21 +58,21 @@ func cmdSetup(_ []string) {
 		fmt.Println("  ✓ Claude Code PostToolUse hook installed (~/.claude/settings.json)")
 	}
 
-	// 2b. MCP retrieval tool (whittle_get) — best-effort via the claude CLI
+	// 2b. MCP retrieval tool (whittle_get) - best-effort via the claude CLI
 	if self, err := os.Executable(); err == nil {
 		if err := exec.Command("claude", "mcp", "add", "--scope", "user", "whittle", "--", self, "mcp").Run(); err == nil {
 			fmt.Println("  ✓ whittle_get MCP tool registered (claude mcp)")
 		} else {
-			fmt.Println("  ! whittle_get MCP not registered (claude CLI unavailable?) — retrieval hints will still degrade gracefully")
+			fmt.Println("  ! whittle_get MCP not registered (claude CLI unavailable?) - retrieval hints will still degrade gracefully")
 		}
 	}
 
-	// 3. background services via launchd (macOS) — always-on
+	// 3. background services via launchd (macOS) - always-on
 	if runtime.GOOS == "darwin" {
 		if err := installLaunchAgent(dir); err != nil {
 			fmt.Println("  ! launchd registration failed:", err)
 		} else {
-			fmt.Println("  ✓ launchd agent registered (" + agentLabel + ") — starts at login, kept alive")
+			fmt.Println("  ✓ launchd agent registered (" + agentLabel + ") - starts at login, kept alive")
 		}
 	} else {
 		fmt.Println("  ! launchd is macOS-only; run `whittle daemon` under your supervisor (systemd unit sample in README)")
@@ -181,7 +181,7 @@ func cmdStop(_ []string) {
 			fmt.Println("whittle: nothing to stop (launchd agent not loaded)")
 			return
 		}
-		fmt.Println("whittle: stopped (hook still installed — outputs pass through uncompressed; `whittle cleanup` removes it)")
+		fmt.Println("whittle: stopped (hook still installed - outputs pass through uncompressed; `whittle cleanup` removes it)")
 		return
 	}
 	fmt.Println("whittle: stop your supervisor's whittle unit (launchd is macOS-only)")
@@ -232,7 +232,7 @@ func waitHealthy(url string, d time.Duration, name string) {
 		}
 		time.Sleep(500 * time.Millisecond)
 	}
-	fmt.Printf("  ! %s not healthy yet — check ~/.whittle/logs\n", name)
+	fmt.Printf("  ! %s not healthy yet - check ~/.whittle/logs\n", name)
 }
 
 // --- Claude Code hook management (user-level ~/.claude/settings.json) ---

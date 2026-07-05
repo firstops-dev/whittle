@@ -8,7 +8,7 @@ import (
 
 // TestLogCompressor_OmissionMarker: dropped lines must be MARKED, never silently
 // removed. A noisy log compresses, the output carries "... [N lines omitted]"
-// markers, and the accounting is exact — kept data lines + summed omitted counts
+// markers, and the accounting is exact - kept data lines + summed omitted counts
 // equal the input line count, so no line is silently unaccounted for.
 func TestLogCompressor_OmissionMarker(t *testing.T) {
 	lines := []string{"ERROR startup failed: bad config"}
@@ -62,7 +62,7 @@ func TestLogCompressor_PureInfoLog_TotalContentLoss(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_PureDebugLog_TotalContentLoss — same with DEBUG noise.
+// TestLogCompressor_PureDebugLog_TotalContentLoss - same with DEBUG noise.
 func TestLogCompressor_PureDebugLog_TotalContentLoss(t *testing.T) {
 	in := strings.Repeat("2024-01-01 DEBUG cache probe key=abc value=def hit=true\n", 40)
 	out := runLog(t, DefaultLogConfig(), in)
@@ -71,7 +71,7 @@ func TestLogCompressor_PureDebugLog_TotalContentLoss(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_SingleError_IsKept — exactly one error line, buried in noise,
+// TestLogCompressor_SingleError_IsKept - exactly one error line, buried in noise,
 // must survive.
 func TestLogCompressor_SingleError_IsKept(t *testing.T) {
 	var b strings.Builder
@@ -88,7 +88,7 @@ func TestLogCompressor_SingleError_IsKept(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_TwoDistinctErrors_NotCollapsed — dedup must not collapse two
+// TestLogCompressor_TwoDistinctErrors_NotCollapsed - dedup must not collapse two
 // genuinely different errors that share a similar shape.
 func TestLogCompressor_TwoDistinctErrors_NotCollapsed(t *testing.T) {
 	var b strings.Builder
@@ -107,7 +107,7 @@ func TestLogCompressor_TwoDistinctErrors_NotCollapsed(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_AllErrors_CapBehavior — every line is an error; the cap and
+// TestLogCompressor_AllErrors_CapBehavior - every line is an error; the cap and
 // first/last selection should keep a bounded, non-empty subset that includes the
 // first and last error.
 func TestLogCompressor_AllErrors_CapBehavior(t *testing.T) {
@@ -134,7 +134,7 @@ func TestLogCompressor_AllErrors_CapBehavior(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_StackTraceSplitByBlankLine — a stack trace interrupted by a
+// TestLogCompressor_StackTraceSplitByBlankLine - a stack trace interrupted by a
 // blank line. Both halves should be retained near the error.
 func TestLogCompressor_StackTraceSplitByBlankLine(t *testing.T) {
 	in := strings.Repeat("INFO warmup\n", 20) +
@@ -155,7 +155,7 @@ func TestLogCompressor_StackTraceSplitByBlankLine(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_CRLF — Windows line endings must not crash and must keep
+// TestLogCompressor_CRLF - Windows line endings must not crash and must keep
 // the error.
 func TestLogCompressor_CRLF(t *testing.T) {
 	in := strings.Repeat("INFO tick\r\n", 30) + "ERROR boom on windows\r\n" + strings.Repeat("INFO tick\r\n", 30)
@@ -165,7 +165,7 @@ func TestLogCompressor_CRLF(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_SingleHugeLine — one 30k-char line must not crash. (It will
+// TestLogCompressor_SingleHugeLine - one 30k-char line must not crash. (It will
 // not shrink because there is nothing to drop; the pipeline guardrail handles
 // the no-shrink case.)
 func TestLogCompressor_SingleHugeLine(t *testing.T) {
@@ -176,7 +176,7 @@ func TestLogCompressor_SingleHugeLine(t *testing.T) {
 	}
 }
 
-// TestLogCompressor_InterleavedLevels — mixed levels; errors/warns kept, info
+// TestLogCompressor_InterleavedLevels - mixed levels; errors/warns kept, info
 // noise dropped, output shrinks.
 func TestLogCompressor_InterleavedLevels(t *testing.T) {
 	var b strings.Builder

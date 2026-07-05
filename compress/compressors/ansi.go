@@ -22,7 +22,7 @@ var blankRunRe = regexp.MustCompile(`\n[ \t]*(\n[ \t]*){2,}`)
 //
 // For TERMINAL-classified content ONLY it additionally collapses carriage-return
 // overwrite chains (progress bars, spinners: `frame1\rframe2\r...`) to what the
-// terminal actually displayed — CR returns the cursor to column 0 and subsequent
+// terminal actually displayed - CR returns the cursor to column 0 and subsequent
 // output overwrites in place, so earlier frames were never persistently visible.
 // Lossless by terminal-emulation semantics (measured 99% on a progress stream,
 // docs/compressor-opportunities.md #4). Gated to TypeTerminal so a lone \r inside
@@ -33,7 +33,7 @@ func NewANSIStrip() ANSIStrip { return ANSIStrip{} }
 
 func (ANSIStrip) Name() string { return "ansi_strip" }
 
-// Handles returns true for every type — stripping escape codes is always safe.
+// Handles returns true for every type - stripping escape codes is always safe.
 func (ANSIStrip) Handles(compress.ContentType) bool { return true }
 
 func (a ANSIStrip) Compress(_ context.Context, in compress.Input) (compress.Result, error) {
@@ -47,26 +47,26 @@ func (a ANSIStrip) Compress(_ context.Context, in compress.Input) (compress.Resu
 
 // collapseCROverwrites renders each line's CR-overwrite chain to its final visible
 // state, as a terminal would: `\r` moves the cursor to column 0 and the next
-// segment overwrites IN PLACE — characters of the previous render beyond the new
+// segment overwrites IN PLACE - characters of the previous render beyond the new
 // segment's length remain visible ("abcdef\rxy" displays "xycdef"). A trailing
 // `\r` before `\n` (CRLF) leaves the buffer unchanged, so Windows line endings
 // normalize to `\n` (the terminal-displayed reality for terminal output).
 //
 // The overlay is RUNE-based (reviewer B1: byte-offset splicing cut multibyte
-// runes in half and emitted invalid UTF-8 — progress bars use block/braille
+// runes in half and emitted invalid UTF-8 - progress bars use block/braille
 // runes, and re-rendered accented text straddles boundaries). Rune==cell is an
 // approximation (wide CJK cells differ), but it can never corrupt the encoding.
 //
 // A line's chain is collapsed ONLY when its segments look like REWRITE FRAMES of
-// each other (reviewer B2: a `\r`-record data file — classic-Mac text, `\r`-
-// separated exports — otherwise collapses to its last record, total silent data
+// each other (reviewer B2: a `\r`-record data file - classic-Mac text, `\r`-
+// separated exports - otherwise collapses to its last record, total silent data
 // loss). Progress frames share long prefixes ("...4%" / "...5%") or suffixes
 // (spinner-rune + fixed label); unrelated data records share neither. Lines whose
-// segments don't qualify are left VERBATIM — never destroyed.
+// segments don't qualify are left VERBATIM - never destroyed.
 //
 // NOTE: an ANSI erase-line (ESC[K) was already removed by StripANSI, so a frame
 // that relied on it may retain stale trailing characters from a longer earlier
-// frame. That errs on KEEPING more than the terminal showed — never losing.
+// frame. That errs on KEEPING more than the terminal showed - never losing.
 func collapseCROverwrites(s string) string {
 	if !strings.Contains(s, "\r") {
 		return s

@@ -17,9 +17,9 @@ const MDBlockSentinel = "MDBLKX"
 
 // MarkdownStructured compresses a markdown doc_read STRUCTURE-AWARE: verbatim
 // blocks (fenced/indented code, headings, tables, lists, quotes, HTML, link
-// defs, config stragglers — everything compress.SegmentMarkdown marks verbatim)
+// defs, config stragglers - everything compress.SegmentMarkdown marks verbatim)
 // are swapped for MDBlockSentinel lines; ONLY the prose+sentinel document goes to
-// the LLMLingua sidecar (one call — latency stays flat); the sentinels are then
+// the LLMLingua sidecar (one call - latency stays flat); the sentinels are then
 // restored to the original blocks BYTE-EXACT, positionally.
 //
 // Fail-open everywhere: sentinel collision in the input, a lost/duplicated
@@ -33,7 +33,7 @@ const MDBlockSentinel = "MDBLKX"
 // not by refusing the whole document.
 //
 // TODO(textcompress): CCR-style recovery for the original doc (line numbers +
-// uncompressed prose) once the recovery store lands — see linenumstrip.go TODO.
+// uncompressed prose) once the recovery store lands - see linenumstrip.go TODO.
 type MarkdownStructured struct {
 	llm *LLMLinguaAdapter
 }
@@ -74,7 +74,7 @@ func (m *MarkdownStructured) Compress(ctx context.Context, in compress.Input) (c
 		}
 	}
 
-	// Nothing verbatim: a pure-prose doc — hand the whole thing to the model
+	// Nothing verbatim: a pure-prose doc - hand the whole thing to the model
 	// directly (the masking machinery would be a no-op).
 	if len(blocks) == 0 {
 		return m.llm.Compress(ctx, in)
@@ -95,7 +95,7 @@ func (m *MarkdownStructured) Compress(ctx context.Context, in compress.Input) (c
 
 	restored, ok := restoreBlocks(res.Output, blocks)
 	if !ok {
-		// A sentinel was lost or duplicated by the model — mis-splicing could put
+		// A sentinel was lost or duplicated by the model - mis-splicing could put
 		// code under the wrong section. Fail open.
 		return skip("md_structure_guard")
 	}

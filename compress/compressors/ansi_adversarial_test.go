@@ -10,8 +10,8 @@ import (
 
 // Adversarial pass on ANSIStrip, which documents itself as "deterministic and
 // lossless for visible text". The CSI-only regex `\x1b\[[0-9;?]*[ -/]*[@-~]`
-// strips ONLY 7-bit CSI sequences. Every OTHER escape form a terminal emits —
-// OSC, 8-bit C1, single-char, charset-select, DCS, truncated — survives the
+// strips ONLY 7-bit CSI sequences. Every OTHER escape form a terminal emits -
+// OSC, 8-bit C1, single-char, charset-select, DCS, truncated - survives the
 // strip as RAW CONTROL BYTES in the output. That is not lossless: the consumer
 // (an LLM, or a human re-rendering the "cleaned" text) receives bytes that will
 // re-trigger terminal control or render as garbage. Each failing case is a
@@ -27,7 +27,7 @@ func stripOut(t *testing.T, in string) string {
 }
 
 // hasControl reports whether s still contains an escape-introducer control byte
-// (ESC 0x1b or the 8-bit C1 CSI 0x9b) — i.e. a leaked, unstripped escape. Uses
+// (ESC 0x1b or the 8-bit C1 CSI 0x9b) - i.e. a leaked, unstripped escape. Uses
 // raw byte search: strings.ContainsRune(s, 0x9b) would look for the UTF-8
 // encoding of U+009B (0xC2 0x9B), NOT the raw 0x9b byte a terminal emits.
 func hasControl(s string) bool {
@@ -74,7 +74,7 @@ func TestANSIStrip_NonCSILeaks(t *testing.T) {
 			}
 			out := stripOut(t, c.in)
 			if hasControl(out) {
-				t.Errorf("STRIP-NOT-LOSSLESS: %s — escape bytes survived ANSIStrip. %s\n  out=%q",
+				t.Errorf("STRIP-NOT-LOSSLESS: %s - escape bytes survived ANSIStrip. %s\n  out=%q",
 					c.name, c.why, out)
 			}
 		})
@@ -86,7 +86,7 @@ func TestANSIStrip_NonCSILeaks(t *testing.T) {
 // `[` in data) greedily consumes the FOLLOWING visible character as the CSI
 // final byte. Here `\x1b[more` matches `\x1b[m`, so the 'm' of "more" is eaten
 // and the visible text silently becomes "ore". No escape byte is left behind, so
-// a leak check would miss it — but visible text was corrupted.
+// a leak check would miss it - but visible text was corrupted.
 func TestANSIStrip_LoneEscBracketEatsVisibleChar(t *testing.T) {
 	// Resolved as correct-by-design: `\x1b[m` IS a valid SGR reset (`\x1b[0m`), so a
 	// real terminal also consumes the 'm' as the sequence's final byte and renders

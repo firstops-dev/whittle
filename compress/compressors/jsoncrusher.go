@@ -18,7 +18,7 @@ import (
 // Mirrors headroom's lossless_min_savings_ratio (0.15).
 const losslessMinSavings = 0.15
 
-// JSONCrusher reduces JSON losslessly — it never drops rows:
+// JSONCrusher reduces JSON losslessly - it never drops rows:
 //   - Minify (lossless, any JSON): json.Compact strips insignificant whitespace.
 //   - Columnar reshape (lossless, uniform top-level array of objects): factor the
 //     repeated keys out into {"__schema__":[keys],"__rows__":[[vals],...]}. Every
@@ -29,7 +29,7 @@ const losslessMinSavings = 0.15
 // skips it).
 //
 // The LOSSY representative-sampling path (first 30% ∪ last 15% ∪ one per distinct
-// value, capped at maxItems) is currently DISABLED — see the TODO in Compress. Its
+// value, capped at maxItems) is currently DISABLED - see the TODO in Compress. Its
 // helpers (selectItems/ceilPct/canonical, savingsRatio, losslessMinSavings, the
 // maxItems field) are kept intact so re-enabling is just uncommenting.
 type JSONCrusher struct{ maxItems int }
@@ -62,10 +62,10 @@ func (j JSONCrusher) Compress(_ context.Context, in compress.Input) (compress.Re
 		if err := json.Unmarshal(best, &items); err == nil && len(items) > 0 {
 			// Lossless-first: build the union-schema columnar model once, then try
 			// each rendering (JSON rows, typed CSV) and adopt the smallest that still
-			// beats minify. Every rendering is lossless — no row is ever dropped.
+			// beats minify. Every rendering is lossless - no row is ever dropped.
 			if m, ok := buildColumnarModel(items); ok {
 				// Candidates compete on ESTIMATED TOKENS (what the consumer pays),
-				// with bytes as the tiebreaker — bytes alone can pick a rendering
+				// with bytes as the tiebreaker - bytes alone can pick a rendering
 				// that is smaller on disk but costs more model tokens.
 				bestTok := compress.EstimateTokens(string(best))
 				if enc, ok := renderColumnarJSON(m); ok {
@@ -88,7 +88,7 @@ func (j JSONCrusher) Compress(_ context.Context, in compress.Input) (compress.Re
 			// SmartCrusher parity (see docs/smartcrusher-gap-analysis.md). DONE:
 			// union/sparse schema, typed columns + CSV encoding. LOSSLESS gaps still
 			// to build: nested-object flattening, stringified-JSON recursion,
-			// discriminator bucketing. LOSSY gaps — DEFERRED, need the CCR store, do
+			// discriminator bucketing. LOSSY gaps - DEFERRED, need the CCR store, do
 			// NOT implement yet:
 			//   * opaque-blob offload (base64/html/long-string cell -> <<ccr:…>>)
 			//   * statistical row-sampling, on top of CCR.
@@ -130,7 +130,7 @@ type columnarModel struct {
 	// nested maps a flattened parent key -> its (sorted) inner keys. Set by
 	// flattenModel; recorded verbatim in "__nested__". DECODER CONTRACT: a decoder
 	// MUST rebuild each parent from EXACTLY these inner keys (`parent.<innerKey>`),
-	// NOT by prefix-matching every column that starts with `parent.` — a real
+	// NOT by prefix-matching every column that starts with `parent.` - a real
 	// sibling key like `meta.extra` also starts with `meta.` and must be left as a
 	// top-level key. Prefix-matching would silently mis-nest it.
 	nested map[string][]string
@@ -149,13 +149,13 @@ const flattenMaxInnerKeys = 6
 // buildColumnarModel constructs the union-schema model (SmartCrusher parity, gap 1
 // in docs/smartcrusher-gap-analysis.md). The schema is the UNION of all keys across
 // the array (not a single identical key set), ordered by descending frequency then
-// alphabetically — deterministic, common columns first. Values are kept as raw JSON
+// alphabetically - deterministic, common columns first. Values are kept as raw JSON
 // so types/nesting/precision survive exactly.
 //
 // Returns (nil, false) if any element is not an object, an object has a duplicate
-// key (json.Unmarshal would silently collapse it — not lossless), the array is all
+// key (json.Unmarshal would silently collapse it - not lossless), the array is all
 // empty objects, or the projected N×len(schema) matrix would exceed the input size
-// (columnar cannot beat minify then — this also caps memory at O(input) on
+// (columnar cannot beat minify then - this also caps memory at O(input) on
 // disjoint-key arrays, where the matrix would otherwise be O(N²)).
 func buildColumnarModel(items []json.RawMessage) (*columnarModel, bool) {
 	objs := make([]map[string]json.RawMessage, len(items))
@@ -226,7 +226,7 @@ func buildColumnarModel(items []json.RawMessage) (*columnarModel, bool) {
 // factorConstants moves columns whose value is byte-identical in EVERY row (and
 // absent in none) out of the row matrix into m.consts, stored once (SmartCrusher
 // gap: they built factor_out_constants and default-disabled it citing "schema
-// preservation" — moot for an explicit envelope with a decoder contract; measured
+// preservation" - moot for an explicit envelope with a decoder contract; measured
 // +55% on a real pod table, docs/compressor-opportunities.md #2). Runs AFTER
 // flattenModel so flattened dotted columns (meta.region all "us") factor too.
 // Strictly lossless: the decoder re-adds each constant to every row. Requires
@@ -302,13 +302,13 @@ func factorConstants(m *columnarModel) {
 // same key set into dotted columns (`meta` -> `meta.region`, `meta.tier`), bounded
 // by flattenMaxInnerKeys (SmartCrusher parity, gap 4). One level only. A parent is
 // flattened only if none of its `parent.innerKey` names collides with an existing
-// column, and the mapping is recorded in m.nested so reconstruction is exact — a
+// column, and the mapping is recorded in m.nested so reconstruction is exact - a
 // real key that literally contains a dot is never mis-nested. Absent parents expand
 // to absent inner cells; present cells' inner values move to the new columns.
 //
 // Runs AFTER buildColumnarModel's O(input) matrix guard, so it can widen a column
-// 1->N (N<=flattenMaxInnerKeys). This stays input-bounded — the inner keys it hoists
-// were already object-cell content counted in inputBytes — so it is not a DoS path,
+// 1->N (N<=flattenMaxInnerKeys). This stays input-bounded - the inner keys it hoists
+// were already object-cell content counted in inputBytes - so it is not a DoS path,
 // but the realized matrix can slightly exceed the pre-flatten guard's projection.
 func flattenModel(m *columnarModel) {
 	absentSet := make([]map[int]bool, len(m.rows))
@@ -478,7 +478,7 @@ func renderColumnarJSON(m *columnarModel) ([]byte, bool) {
 // renderColumnarCSV emits {"__schema__":[keys],"__types__":[types],"__csv__":"…",
 // "__absent__":…} (SmartCrusher parity, gap 2-3). Each column gets an inferred type;
 // a column is a primitive type (int/float/bool/string) ONLY when every present cell
-// is that same non-null primitive — any null or type mix makes it "json", whose
+// is that same non-null primitive - any null or type mix makes it "json", whose
 // cells render as raw JSON. That rule sidesteps the empty-cell-vs-null ambiguity: a
 // "string" column never contains null, so an empty CSV field is unambiguously "".
 // Rows are written with encoding/csv (RFC-4180 escaping of commas/quotes/newlines),
@@ -487,7 +487,7 @@ func renderColumnarJSON(m *columnarModel) ([]byte, bool) {
 // are skipped on reconstruction via "__absent__".
 //
 // Requires >= 2 columns: a single-column row could render as a blank CSV line, which
-// encoding/csv's reader skips — and single-column tables gain little from CSV anyway.
+// encoding/csv's reader skips - and single-column tables gain little from CSV anyway.
 func renderColumnarCSV(m *columnarModel) ([]byte, bool) {
 	nCols := len(m.schema)
 	if nCols < 2 {
@@ -523,7 +523,7 @@ func renderColumnarCSV(m *columnarModel) ([]byte, bool) {
 			if jt == "string" {
 				// encoding/csv's reader normalizes a CRLF byte-pair to LF, so a real
 				// carriage return written into a CSV field would be lost. Render any
-				// column holding such a string as raw JSON instead — a JSON token
+				// column holding such a string as raw JSON instead - a JSON token
 				// carries \r as the escape "\r", which csv never touches.
 				var sv string
 				if err := json.Unmarshal(row[c], &sv); err != nil {

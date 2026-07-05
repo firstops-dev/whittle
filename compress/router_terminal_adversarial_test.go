@@ -7,7 +7,7 @@ import (
 
 // This file is an adversarial pass on the terminal/ANSI ROUTING layer
 // (detectANSI + its wiring in Detect). Same spirit as router_gaps_test.go: a
-// failing assertion is the DELIVERABLE — it documents a real precision/recall
+// failing assertion is the DELIVERABLE - it documents a real precision/recall
 // hole in the router. Do NOT relax a want to make it green; fix router.go, or
 // move the case to a guard if the behavior is deliberately correct.
 //
@@ -15,7 +15,7 @@ import (
 // recall miss here: it counts ONLY 7-bit CSI sequences, so terminal output that
 // colors/positions with OSC, 8-bit C1 (\x9b), single-char escapes (\x1bM), or
 // charset selects (\x1b(0) is invisible to the detector and falls through to
-// prose — where it is either skipped or paraphrased.
+// prose - where it is either skipped or paraphrased.
 
 func isTerm(t *testing.T, in, desc string) bool {
 	t.Helper()
@@ -24,7 +24,7 @@ func isTerm(t *testing.T, in, desc string) bool {
 }
 
 // ---------------------------------------------------------------------------
-// THRESHOLD BOUNDARIES — pin exactly where the detection cliff sits. These are
+// THRESHOLD BOUNDARIES - pin exactly where the detection cliff sits. These are
 // guards (they pin current behavior); the comment records whether the cliff is
 // sensible. Math: escape = "\x1b[m" = 3 bytes; ansiMinEscapes=5, ansiMinFraction=0.08.
 // ---------------------------------------------------------------------------
@@ -59,12 +59,12 @@ func TestDetectANSI_FractionCliff(t *testing.T) {
 }
 
 func TestDetectANSI_EscapeCountFloor(t *testing.T) {
-	// 4 escapes, very high fraction (0.75) — count floor must reject regardless.
+	// 4 escapes, very high fraction (0.75) - count floor must reject regardless.
 	four := strings.Repeat("\x1b[m", 4) + "abcd" // 12 esc / 16 total
 	if isTerm(t, four, "4 escapes") {
 		t.Errorf("count floor: 4 escapes (< ansiMinEscapes=5) must NOT be terminal even at frac=0.75")
 	}
-	// 5 escapes, same fraction — fires.
+	// 5 escapes, same fraction - fires.
 	five := strings.Repeat("\x1b[m", 5) + "abcde" // 15 esc / 20 total
 	if !isTerm(t, five, "5 escapes") {
 		got, _ := Detect(five)
@@ -73,7 +73,7 @@ func TestDetectANSI_EscapeCountFloor(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// RECALL MISSES — real terminal output the CSI-only regex cannot see. Intended:
+// RECALL MISSES - real terminal output the CSI-only regex cannot see. Intended:
 // TypeTerminal (so it is stripped + log-compressed). Actual: 0 escapes counted
 // -> falls through to prose. These FAIL today and are the recall findings.
 // ---------------------------------------------------------------------------
@@ -91,7 +91,7 @@ func TestDetectANSI_RecallMisses_NonCSI(t *testing.T) {
 	// letters into line-drawing glyphs. The screen is almost entirely these.
 	box := strings.Repeat("\x1b(0lqqqqqqk\x1b(B\n\x1b(0x      x\x1b(B\n\x1b(0mqqqqqqj\x1b(B\n", 6)
 
-	// `\r`-redrawn progress bar with an OSC title update — the bar carries NO CSI.
+	// `\r`-redrawn progress bar with an OSC title update - the bar carries NO CSI.
 	spinner := strings.Repeat("\rDownloading... 50% [#####     ]\x1b]0;50%\x07", 15)
 
 	cases := []struct {
@@ -135,8 +135,8 @@ func TestDetectANSI_RecallMiss_RealisticBelow8Pct(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// PRECISION GUARDS — must NOT be pulled into terminal, and must keep real type.
-// The literal-byte distinction (source text contains the CHARACTERS \,x,1,b —
+// PRECISION GUARDS - must NOT be pulled into terminal, and must keep real type.
+// The literal-byte distinction (source text contains the CHARACTERS \,x,1,b -
 // not a real 0x1b byte) is what protects code/prose that talks ABOUT ansi codes.
 // These pass today; kept as regression guards.
 // ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ func TestDetectANSI_Precision_EscapeLiteralsInSource(t *testing.T) {
 		name, in string
 		notWant  ContentType
 	}{
-		// Go source with a regex literal for ANSI codes — backslash-x-1-b chars, no ESC byte.
+		// Go source with a regex literal for ANSI codes - backslash-x-1-b chars, no ESC byte.
 		{"go_regex_literal",
 			"package ansi\n\nvar re = regexp.MustCompile(\"\\\\x1b\\\\[[0-9;]*m\")\n\nfunc Strip(s string) string {\n\treturn re.ReplaceAllString(s, \"\")\n}",
 			TypeTerminal},
@@ -155,7 +155,7 @@ func TestDetectANSI_Precision_EscapeLiteralsInSource(t *testing.T) {
 			"The ANSI escape code ESC[31m sets the foreground to red and ESC[0m resets it. " +
 				"Terminals interpret these control sequences when the program writes them to standard output for display.",
 			TypeTerminal},
-		// Shell script echoing escapes via printf with \033 — printable backslash-0-3-3.
+		// Shell script echoing escapes via printf with \033 - printable backslash-0-3-3.
 		{"shell_echo_escapes",
 			"#!/bin/sh\nRED='\\033[31m'\nNC='\\033[0m'\nprintf \"%bhello%b\\n\" \"$RED\" \"$NC\"\necho done",
 			TypeTerminal},
@@ -164,7 +164,7 @@ func TestDetectANSI_Precision_EscapeLiteralsInSource(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			got, conf := Detect(c.in)
 			if got == c.notWant {
-				t.Errorf("PRECISION: %s misrouted to terminal (conf %.2f) — text mentions escapes but contains no real 0x1b byte",
+				t.Errorf("PRECISION: %s misrouted to terminal (conf %.2f) - text mentions escapes but contains no real 0x1b byte",
 					c.name, conf)
 			}
 		})
@@ -174,7 +174,7 @@ func TestDetectANSI_Precision_EscapeLiteralsInSource(t *testing.T) {
 // TestDetectANSI_Precision_ColoredLogKeepsLogType guards the ordering invariant:
 // a colored log whose level keywords survive the SGR codes must route to log
 // (detectLog runs before detectANSI), NOT terminal. If this regresses, colored
-// logs would be log-compressed under the terminal label — same compressor, but
+// logs would be log-compressed under the terminal label - same compressor, but
 // the routing label would be wrong and signal a detector-ordering break.
 func TestDetectANSI_Precision_ColoredLogKeepsLogType(t *testing.T) {
 	coloredLog := strings.Repeat(

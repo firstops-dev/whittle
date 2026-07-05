@@ -279,13 +279,13 @@ pool_size = 10`,
 		t.Run(name, func(t *testing.T) {
 			ct, _ := Detect(numbered(body))
 			if ct == TypeDocRead {
-				t.Fatalf("%s source routed to doc_read (would be paraphrased) — must stay code/skip", name)
+				t.Fatalf("%s source routed to doc_read (would be paraphrased) - must stay code/skip", name)
 			}
 		})
 	}
 }
 
-// TestLineNumbered_FiresOnlyOnRealMarkdown: the positive contract — genuine
+// TestLineNumbered_FiresOnlyOnRealMarkdown: the positive contract - genuine
 // markdown docs route to doc_read; near-markdown (fence, one heading, embedded
 // code) does not.
 func TestLineNumbered_FiresOnlyOnRealMarkdown(t *testing.T) {
@@ -308,7 +308,7 @@ On-call engineers should consult the runbook before restarting any worker.`
 
 // Auditor regression: SMALL/PARTIAL code reads (snippet-shaped Python: dotted
 // from-imports, bare assignments, try/except headers) were routed prose and
-// lossily compressed — "from .packages import chardet" was deleted. Must be code.
+// lossily compressed - "from .packages import chardet" was deleted. Must be code.
 func TestDetect_SmallPythonSnippetIsCode(t *testing.T) {
 	snippet := `"""Module compatibility layer."""
 
@@ -335,7 +335,7 @@ str = str
 }
 
 // Bench-corpus regression: RAW (non-line-numbered) YAML/config must never route
-// prose — sample_deploy.yaml reached llmlingua and lost 40% of its tokens.
+// prose - sample_deploy.yaml reached llmlingua and lost 40% of its tokens.
 func TestDetect_RawYAMLIsNotProse(t *testing.T) {
 	y := `apiVersion: apps/v1
 kind: Deployment
@@ -360,6 +360,6 @@ spec:
               value: mysql://db:3306/app
 `
 	if ct, _ := Detect(y); ct == TypeProse || ct == TypeDocRead {
-		t.Fatalf("raw YAML detected as %q — would reach the lossy model", ct)
+		t.Fatalf("raw YAML detected as %q - would reach the lossy model", ct)
 	}
 }

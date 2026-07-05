@@ -51,7 +51,7 @@ func TestPipeline_PanicInCompressor_NotRecovered(t *testing.T) {
 	}()
 
 	out := p.Compress(context.Background(), proseInput())
-	// If we reach here the pipeline recovered — assert fail-open semantics.
+	// If we reach here the pipeline recovered - assert fail-open semantics.
 	if out.Action != "skipped" {
 		t.Errorf("after recovered panic want action=skipped, got %q", out.Action)
 	}
@@ -118,7 +118,7 @@ func TestPipeline_GuardrailExactEqualLength(t *testing.T) {
 func TestPipeline_ProseSafetyGuard_NeverCallsProseCompressorForCode(t *testing.T) {
 	// Single-line JSON object (NOT an array): the router now correctly lands on
 	// `json` (detectJSON matches objects, not just arrays). With no json chain
-	// registered here it ends in no_compressor — the point being it routes AWAY
+	// registered here it ends in no_compressor - the point being it routes AWAY
 	// from the prose compressor (spy must never be called), which is the invariant.
 	jsonObject := `{"id":42,"name":"alpha beta gamma","desc":"a fairly long human readable description that runs on for quite a while in order to clear the gate min-token floor without any trouble at all","nested":{"a":1,"b":2,"c":[1,2,3]},"flag":true,"score":99.5,"extra":"yet more and more padding words here so the token floor is comfortably met every time"}`
 	codeFenced := bigEnough("```\nthis looks like ordinary prose inside a code fence but the fence is a structural signal\n```")
@@ -145,7 +145,7 @@ func TestPipeline_ProseSafetyGuard_NeverCallsProseCompressorForCode(t *testing.T
 			out := p.Compress(context.Background(), Input{Content: tc.content, MinTokens: DefaultMinTokens})
 
 			if atomic.LoadInt32(&spy.calls) != 0 {
-				t.Fatalf("BUG: prose compressor was invoked on %s content (detected=%q klass=%q) — corruption risk",
+				t.Fatalf("BUG: prose compressor was invoked on %s content (detected=%q klass=%q) - corruption risk",
 					tc.name, out.Detected, out.GateKlass)
 			}
 			if out.Action != "skipped" {
@@ -179,7 +179,7 @@ func TestPipeline_ProseGuard_YAMLConfigSlipsThroughToProse(t *testing.T) {
 			"plain key:value config classifies as prose and is sent to the prose model.",
 			out.Detected, out.GateKlass, out.Action)
 	} else {
-		t.Logf("YAML did NOT reach prose compressor (detected=%q klass=%q reason=%q) — guard or router caught it.",
+		t.Logf("YAML did NOT reach prose compressor (detected=%q klass=%q reason=%q) - guard or router caught it.",
 			out.Detected, out.GateKlass, out.SkipReason)
 	}
 }
@@ -212,7 +212,7 @@ func TestPipeline_ConcurrentNoRace(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// 8 (benchmarks for Detect — the hot path). Reports ns/op + allocs/op.
+// 8 (benchmarks for Detect - the hot path). Reports ns/op + allocs/op.
 // Detect re-splits content per detector; looksStructured (in the gate, exercised
 // via the pipeline benches) json.Unmarshals the whole body.
 // ---------------------------------------------------------------------------

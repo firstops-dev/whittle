@@ -13,9 +13,9 @@ import (
 //
 // Deterministic; the numbering is mechanically re-derivable (lines are numbered
 // contiguously), but the downstream prose model is lossy anyway, so this chain is
-// lossy end-to-end by design — it only runs on content the router proved is a doc.
+// lossy end-to-end by design - it only runs on content the router proved is a doc.
 //
-// TODO(textcompress): CCR-style recovery — when the recovery store lands, stash
+// TODO(textcompress): CCR-style recovery - when the recovery store lands, stash
 // the ORIGINAL doc_read content under a content hash and append a retrieval
 // marker, so an agent that needs the exact file (or its line numbers, e.g. to
 // quote a line reference) can recover it. Deferred with the other CCR work; see

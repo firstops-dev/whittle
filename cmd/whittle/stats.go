@@ -1,6 +1,6 @@
 package main
 
-// whittle stats — the local savings dashboard. Reads ~/.whittle/stats.jsonl
+// whittle stats - the local savings dashboard. Reads ~/.whittle/stats.jsonl
 // (local-only, never transmitted). Designed to answer "is whittle worth it?"
 // in one glance and to be screenshot-clean: headline number, 14-day carve
 // chart, strategy split, and the honesty metric (retrieval rate).
@@ -35,7 +35,7 @@ func cmdStats(args []string) {
 
 	f, err := os.Open(filepath.Join(whittleHome(), "stats.jsonl"))
 	if err != nil {
-		fmt.Println("whittle stats: no events yet — the hook records savings as your agent works")
+		fmt.Println("whittle stats: no events yet - the hook records savings as your agent works")
 		return
 	}
 	defer f.Close()
@@ -79,7 +79,7 @@ func cmdStats(args []string) {
 	if *share {
 		bold, dim, green, reset = "", "", "", ""
 	}
-	fmt.Printf("\n%s🪓 whittle%s %s— last %d days%s\n\n", bold, reset, dim, *days, reset)
+	fmt.Printf("\n%s🪓 whittle%s %s- last %d days%s\n\n", bold, reset, dim, *days, reset)
 	fmt.Printf("  %s%s%s tokens carved away  %s(~$%.2f at $%.2f/M · %d outputs · %d sessions)%s\n\n",
 		green+bold, humanInt(saved), reset, dim, float64(saved)/1e6**price, *price, events, max(1, len(sessions)), reset)
 	fmt.Printf("  %s\n", sparkline(daily))
@@ -106,7 +106,7 @@ func cmdStats(args []string) {
 	if events > 0 {
 		rate = 100 * float64(retrievals) / float64(events)
 	}
-	fmt.Printf("\n  %soriginals retrieved by the agent: %d (%.1f%%) — everything else was enough as carved%s\n", dim, retrievals, rate, reset)
+	fmt.Printf("\n  %soriginals retrieved by the agent: %d (%.1f%%) - everything else was enough as carved%s\n", dim, retrievals, rate, reset)
 	fmt.Printf("  %snever cuts what doesn't come back · github.com/firstops-dev/whittle%s\n\n", dim, reset)
 }
 

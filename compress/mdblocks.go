@@ -10,7 +10,7 @@ import (
 // into VERBATIM blocks (everything that must never reach the lossy prose model)
 // and PROSE segments (paragraph text that may be compressed). Single source of
 // truth shared by the router's doc gate (isMarkdownDoc) and the doc_read chain's
-// MarkdownStructured compressor — if the two ever disagreed, content the gate
+// MarkdownStructured compressor - if the two ever disagreed, content the gate
 // judged safe could be compressed under different rules.
 //
 // The classification is deliberately over-inclusive toward VERBATIM: anything
@@ -58,7 +58,7 @@ var (
 //     thematic breaks; tables (>=2 '|'); blockquotes; list items; link-reference
 //     definitions; HTML-leading and image-leading lines.
 //   - config/script stragglers outside fences (kv/assign/docker/code-signal
-//     lines): verbatim AND counted in VetoLines — sparse ones are normal in real
+//     lines): verbatim AND counted in VetoLines - sparse ones are normal in real
 //     docs ("Magic: 0xE85250D6"), dominance means the file is config, not a doc
 //     (the caller applies the budget).
 //   - shebang: flagged; callers treat it as an absolute veto (scripts).
@@ -102,7 +102,7 @@ func SegmentMarkdown(lines []string) ([]MDSegment, MDStats) {
 		}
 
 		if trimmed == "" {
-			// blank: paragraph separator — ride with the prose stream
+			// blank: paragraph separator - ride with the prose stream
 			add(line, false)
 			continue
 		}
@@ -150,7 +150,7 @@ func SegmentMarkdown(lines []string) ([]MDSegment, MDStats) {
 			// PROSE IS OPT-IN (reviewer B1): a line the isProseLine allow-list cannot
 			// positively identify as natural-language text stays VERBATIM. Unfenced
 			// SQL/lisp/C-declaration lines dodge the five straggler regexes above and
-			// previously fell through to the model — a runnable DELETE came back with
+			// previously fell through to the model - a runnable DELETE came back with
 			// its WHERE clause corrupted, reported as a successful compression. The
 			// failure direction must always be "some prose not compressed", never
 			// "code reached the paraphraser".
@@ -165,10 +165,10 @@ func SegmentMarkdown(lines []string) ([]MDSegment, MDStats) {
 // affirmatively read as natural-language text. Everything ambiguous is verbatim
 // (never modeled). Requirements:
 //   - >= 3 words, first char a letter or quote;
-//   - does not END in a code terminator (; { } ( = \ | &) — statement/decl shapes
+//   - does not END in a code terminator (; { } ( = \ | &) - statement/decl shapes
 //     like `int main(void);` or `struct node *next;`;
 //   - no two consecutive ALL-CAPS words (SQL/shell keyword runs: SELECT ... FROM,
-//     ORDER BY — prose almost never shouts twice in a row);
+//     ORDER BY - prose almost never shouts twice in a row);
 //   - low code-symbol density and high letter/space ratio, computed after
 //     removing `inline code` spans (inline code is normal in doc prose; its
 //     tokens are additionally entity-protected by the sidecar).
@@ -212,7 +212,7 @@ func isProseLine(trimmed string) bool {
 }
 
 // stripInlineCode removes `...` spans (single line). Unterminated backticks leave
-// the remainder in place (counted by the density checks — safe direction).
+// the remainder in place (counted by the density checks - safe direction).
 func stripInlineCode(s string) string {
 	var b strings.Builder
 	for {
@@ -246,7 +246,7 @@ func isClosingFence(line string, ch byte, minLen int) bool {
 }
 
 // looksLikeTitle bounds what a setext heading's text line may be: short-ish,
-// no sentence period — avoids consuming an ordinary paragraph line followed by
+// no sentence period - avoids consuming an ordinary paragraph line followed by
 // a coincidental "---" thematic break as a "heading".
 func looksLikeTitle(trimmed string) bool {
 	return len(trimmed) <= 120 && !strings.HasSuffix(trimmed, ".")

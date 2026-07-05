@@ -151,7 +151,7 @@ func docReadInput() Input {
 
 // TestPipelineDocReadNotVetoedByToolName: every Read-tool output carries
 // klass=code_structured from the tool-name vote; that veto applies to the prose
-// FALLBACK, not to the router's POSITIVE doc_read classification — otherwise no
+// FALLBACK, not to the router's POSITIVE doc_read classification - otherwise no
 // doc read could ever compress.
 func TestPipelineDocReadNotVetoedByToolName(t *testing.T) {
 	shrink := fakeCompressor{name: "fake_prose", fn: func(in Input) (Result, error) {

@@ -88,7 +88,7 @@ func TestJSONCrusherMinifiesPrettySmallArray(t *testing.T) {
 // to a representative subset. This pins the lossy dedup path that lossless-first
 // leaves in place for non-uniform arrays.
 func TestJSONCrusherLossyDedupWhenNotColumnar(t *testing.T) {
-	t.Skip("lossy row-sampling is disabled — see the TODO in jsoncrusher.go Compress; re-enable this test when it is uncommented")
+	t.Skip("lossy row-sampling is disabled - see the TODO in jsoncrusher.go Compress; re-enable this test when it is uncommented")
 	// Alternate two DIFFERENT shapes so columnarEncode bails (not a single key set),
 	// forcing the lossy sampler; the repeated identical items must dedup.
 	items := make([]string, 40)

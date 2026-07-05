@@ -7,7 +7,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/firstops-dev/whittle.svg)](https://pkg.go.dev/github.com/firstops-dev/whittle)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-![whittle compressing a noisy build log](demo/whittle.gif)
+![whittle stats: tokens carved across real agent sessions](demo/stats.gif)
 
 Whittle is a content-aware compressor for the text AI agents read: tool outputs,
 file reads, logs, JSON, terminal streams. Long agent sessions drown in tokens -
@@ -20,6 +20,8 @@ original bytes.** The reduction number it reports is calibrated to real
 tokenizer counts - not byte counts that overstate savings by up to 4×.
 
 ## See it
+
+![whittle compressing a noisy build log](demo/compress.gif)
 
 ```
 $ tail -n 6 build.log | whittle compress -stats

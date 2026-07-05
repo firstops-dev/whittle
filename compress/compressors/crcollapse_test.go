@@ -19,7 +19,7 @@ func stripAs(t *testing.T, ct compress.ContentType, in string) string {
 }
 
 // TestCROverwriteCollapse pins opportunity #4: terminal CR-overwrite chains
-// collapse to the final visible frame with true overlay semantics — and the
+// collapse to the final visible frame with true overlay semantics - and the
 // collapse NEVER runs on non-terminal content.
 func TestCROverwriteCollapse(t *testing.T) {
 	t.Run("progress_bar_final_frame", func(t *testing.T) {
@@ -40,7 +40,7 @@ func TestCROverwriteCollapse(t *testing.T) {
 
 	t.Run("overlay_keeps_visible_tail", func(t *testing.T) {
 		// terminal semantics: a shorter overwrite leaves the previous render's tail
-		// visible — the classic stale-digit artifact ("100" overwritten by "99"
+		// visible - the classic stale-digit artifact ("100" overwritten by "99"
 		// displays "990" absent an erase-line). Frames share the "counter: " label
 		// so the rewrite-signature guard admits the collapse.
 		if got := stripAs(t, compress.TypeTerminal, "counter: 100\rcounter: 99\n"); got != "counter: 990\n" {
@@ -64,7 +64,7 @@ func TestCROverwriteCollapse(t *testing.T) {
 	})
 }
 
-// TestCROverwriteCollapse_UTF8 (reviewer B1): the overlay must be rune-based —
+// TestCROverwriteCollapse_UTF8 (reviewer B1): the overlay must be rune-based -
 // multibyte runes at the overlay boundary must never be severed into invalid
 // UTF-8. Block runes, accents, braille spinners are ordinary terminal output.
 func TestCROverwriteCollapse_UTF8(t *testing.T) {
@@ -77,7 +77,7 @@ func TestCROverwriteCollapse_UTF8(t *testing.T) {
 			"⠹ building the project\n"},
 		"emoji_frames": {"🚀 launching the rocket\r✅ launching the rocket\n", "✅ launching the rocket\n"},
 		// DISSIMILAR 2-frame chain: the rewrite-signature guard leaves it verbatim
-		// (conservative — indistinguishable from 2 data records). Still valid UTF-8.
+		// (conservative - indistinguishable from 2 data records). Still valid UTF-8.
 		"dissimilar_kept_verbatim": {"éé\rx\n", "éé\rx\n"},
 	}
 	for name, tc := range cases {
@@ -94,7 +94,7 @@ func TestCROverwriteCollapse_UTF8(t *testing.T) {
 }
 
 // TestCROverwriteCollapse_DataRecordsSafe (reviewer B2): `\r`-delimited DATA
-// (classic-Mac text, `\r`-separated exports) must never be collapsed — neither
+// (classic-Mac text, `\r`-separated exports) must never be collapsed - neither
 // via routing (must not detect as terminal) nor via the collapse itself when the
 // content is terminal-typed for other reasons.
 func TestCROverwriteCollapse_DataRecordsSafe(t *testing.T) {

@@ -23,7 +23,7 @@ internal/db.go:88: ERROR retry exhausted
 internal/api.go:13: FATAL panic in handler
 cmd/run.go:7: ERROR shutting down`
 
-	// Newline-delimited JSON objects (NDJSON) — structured but not a JSON array.
+	// Newline-delimited JSON objects (NDJSON) - structured but not a JSON array.
 	ndjson := `{"level":"info","msg":"start"}
 {"level":"error","msg":"boom"}
 {"level":"warn","msg":"slow"}
@@ -47,7 +47,7 @@ cmd/run.go:7: ERROR shutting down`
 		t.Run(tt.name, func(t *testing.T) {
 			got, conf := Detect(tt.in)
 			if got != tt.want {
-				t.Errorf("Detect()=%q (conf %.2f), want %q — %s", got, conf, tt.want, tt.note)
+				t.Errorf("Detect()=%q (conf %.2f), want %q - %s", got, conf, tt.want, tt.note)
 			}
 		})
 	}

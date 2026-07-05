@@ -3,7 +3,7 @@ package compress
 // EstimateTokens is a fast, dependency-free token-count estimator calibrated
 // against tiktoken o200k_base (docs/compressor-opportunities.md #3). The consumer
 // of compressed output pays TOKENS, not bytes, and bytes diverge from tokens by
-// up to ~4x on whitespace-heavy content — so encoding choices and accept gates
+// up to ~4x on whitespace-heavy content - so encoding choices and accept gates
 // use this, not len().
 //
 // Single pass; integer ops only. Calibrated by grid-search on 10 content classes

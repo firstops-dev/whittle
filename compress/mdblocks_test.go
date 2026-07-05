@@ -87,7 +87,7 @@ func TestSegmentMarkdown_VerbatimClasses(t *testing.T) {
 			mustProse:    []string{"Prose paragraph starts", "Final prose sentence"},
 		},
 		// Reviewer B1: unfenced code that dodges the straggler regexes must still
-		// be VERBATIM — prose is opt-in, and these fail the isProseLine allow-list.
+		// be VERBATIM - prose is opt-in, and these fail the isProseLine allow-list.
 		"unfenced_sql": {
 			doc:          "The migration below removes stale sessions from the table.\nDELETE FROM sessions WHERE last_seen < 1700000000 AND tenant_id = 42;\nSELECT count(*) FROM sessions ORDER BY name ASC\nRun it during the maintenance window only please.",
 			mustVerbatim: []string{"DELETE FROM sessions", "SELECT count(*)"},

@@ -48,7 +48,7 @@ func TestMarkdownStructured_MasksAndRestores(t *testing.T) {
 	var sidecarSaw string
 	srv := fakeSidecar(t, func(content string) (string, string) {
 		sidecarSaw = content
-		// crude "compression": drop the word "in detail" etc — keep sentinels
+		// crude "compression": drop the word "in detail" etc - keep sentinels
 		out := strings.ReplaceAll(content, " for readers in detail today", "")
 		out = strings.ReplaceAll(out, " with more details here", "")
 		return out, "compressed"

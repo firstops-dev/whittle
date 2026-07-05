@@ -1,6 +1,6 @@
 package server
 
-// POST /hook — Claude Code PostToolUse over HTTP: receives the hook event,
+// POST /hook - Claude Code PostToolUse over HTTP: receives the hook event,
 // returns hookSpecificOutput.updatedToolOutput when compression wins, or an
 // empty 200 body (fail-open: Claude Code proceeds with the original).
 
@@ -20,7 +20,7 @@ import (
 )
 
 // lossyStrategy: strategies that REDUCE content (marked or model-lossy) get a
-// retrieval hint; lossless transforms (json columnar, ansi strip) get NONE —
+// retrieval hint; lossless transforms (json columnar, ansi strip) get NONE -
 // nothing was lost, so nothing is offered (and no hint tokens are spent).
 func lossyStrategy(strategy string) bool {
 	for _, m := range []string{"llmlingua", "log_compressor", "md_structured"} {
@@ -62,7 +62,7 @@ func hookHandler(p *compress.Pipeline, store *Store) http.HandlerFunc {
 		// hooks as well as command hooks. Fail open above ~9.5k until the content
 		// store + retrieval pointer lands (PLAN P2).
 		final := out.Output
-		// Retrieval hint — ONLY where content was actually reduced. Copy is
+		// Retrieval hint - ONLY where content was actually reduced. Copy is
 		// deliberately discouraging: the summary is complete; raw is for
 		// byte-exact needs. Alias integers cost ~2 tokens (measured).
 		final, storeID := finalizeReplacement(text, out.Output, out.Strategy, store)
@@ -106,7 +106,7 @@ func extractHookText(raw json.RawMessage) (string, bool) {
 }
 
 // getHandler serves originals back to the whittle_get MCP tool. Misses are
-// honest 404s ("expired") — the agent can re-run the tool.
+// honest 404s ("expired") - the agent can re-run the tool.
 func getHandler(store *Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
@@ -119,7 +119,7 @@ func getHandler(store *Store) http.HandlerFunc {
 			logEvent("", "whittle_get", "retrieve", id, 0, 0)
 		}
 		if !ok {
-			http.Error(w, "expired — re-run the tool for fresh output", http.StatusNotFound)
+			http.Error(w, "expired - re-run the tool for fresh output", http.StatusNotFound)
 			return
 		}
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -127,7 +127,7 @@ func getHandler(store *Store) http.HandlerFunc {
 	}
 }
 
-// logEvent appends one compression record to ~/.whittle/stats.jsonl — the local,
+// logEvent appends one compression record to ~/.whittle/stats.jsonl - the local,
 // never-transmitted audit trail behind `whittle stats`. One line per whittled
 // output: when, which session, which tool, which strategy, token delta, and the
 // retrieval id (0 = lossless, nothing stored). Users can inspect it directly;
@@ -153,7 +153,7 @@ func logEvent(session, tool, strategy string, storeID int64, inTok, outTok int) 
 const hintFmt = "\n… [trimmed; content above is complete in substance. Raw original only if strictly required: whittle_get(%d)]"
 
 // finalizeReplacement enforces the POST-HINT invariant (review B1): whatever is
-// emitted — with hint or without — must be strictly smaller than the original in
+// emitted - with hint or without - must be strictly smaller than the original in
 // BOTH bytes and estimated tokens, and within Claude Code's 10k output cap.
 // Order of preference: compressed+hint; compressed alone (marginal wins keep the
 // win, just without retrieval); nothing (fail open). The store alias is only

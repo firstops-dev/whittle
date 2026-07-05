@@ -10,7 +10,7 @@ import (
 // diff, html, search, tabular, unknown) pass through (the pipeline reports them as
 // skipped/no_compressor).
 //
-// TypeTabular is deliberately reduced to the LOSSLESS ANSIStrip only —
+// TypeTabular is deliberately reduced to the LOSSLESS ANSIStrip only -
 // NewTabularCompressor (row-dropping) is NOT wired. Unlike JSON, a table's headers
 // aren't repeated, so there is no lossless key-hoisting win to prefer; tabular's
 // only real lever on raw text was lossy row-dropping, and silent row loss misleads
@@ -18,7 +18,7 @@ import (
 // tabular route was also ~95% misrouted line-numbered file reads (now caught by
 // detectLineNumbered) with near-zero genuine tables. Keeping ANSIStrip means a
 // colored table is still de-ANSI'd losslessly and a plain table passes through
-// untouched (ANSIStrip is a no-op → the expansion guardrail skips it) — never
+// untouched (ANSIStrip is a no-op → the expansion guardrail skips it) - never
 // row-dropped. NewTabularCompressor is kept + tested for a future domain-gated,
 // lossless-only reintroduction; it must never silently drop rows if re-wired.
 // DefaultChains wires chains from the environment: deterministic compressors

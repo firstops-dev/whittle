@@ -30,19 +30,19 @@ var (
 	// with lowercase "error"/"failed"/"info" mid-sentence ("the process failed
 	// with connection refused", "fails open"), and the old unanchored \b-word
 	// forms routed failure-themed prose paragraphs to the line-deduping
-	// LogCompressor — destroying them (found by the fidelity eval: 4/12 prose
+	// LogCompressor - destroying them (found by the fidelity eval: 4/12 prose
 	// samples misrouted, entity retention down to 14%). Log-shaped means:
 	//   - an UPPERCASE level token in the line's prefix region (timestamp/level
 	//     headers: "2026-07-01 10:00:00 INFO ...", "[ERROR] ..."), or
 	//   - a level key-value ("level=error", "level":"warn"), or
 	//   - a line-leading "Error:"/"panic:" style marker.
-	//   - a CLI-logger prefix ("npm error ...", "yarn warn ..." — the npm-style
+	//   - a CLI-logger prefix ("npm error ...", "yarn warn ..." - the npm-style
 	//     "tool level message" family), matched against a bounded tool list so
 	//     prose like "The error string was..." can never qualify.
 	logLevelRe = regexp.MustCompile(`^.{0,48}\b(ERROR|WARN(ING)?|INFO|FATAL|DEBUG|TRACE|PANIC|SEVERE|CRITICAL|NOTICE|ALERT)\b|(?i)\blevel["':=]+\s*"?(error|warn(ing)?|info|fatal|debug|trace|panic|critical|notice)\b|(?i)^\s*(error|warning|fatal|panic|severe|critical)\s*:`)
 	// logColorLevelRe: an SGR color code immediately before a level token
-	// ("\x1b[31mERROR..."). Machine output by definition — no one authors prose
-	// with escape codes — so it counts as STRUCTURAL evidence, exempt from the
+	// ("\x1b[31mERROR..."). Machine output by definition - no one authors prose
+	// with escape codes - so it counts as STRUCTURAL evidence, exempt from the
 	// prose veto. (Needs its own pattern anyway: the SGR terminator is the
 	// letter 'm', which glues onto the token and defeats \b.)
 	logColorLevelRe = regexp.MustCompile("\x1b\\[[0-9;]*m(ERROR|WARN(ING)?|INFO|FATAL|DEBUG|TRACE|PANIC|SEVERE|CRITICAL)\\b")
@@ -54,12 +54,12 @@ var (
 	logCliRe = regexp.MustCompile(`(?i)^\s*(npm|yarn|pnpm|pip|gem|cargo|apt|brew|docker|kubectl|systemd)\s+(error|warn(ing)?|info|notice|verbose|silly|debug)\b`)
 	// Build/test status: runner-shaped lines ("--- FAIL: TestX", "ok  pkg 1.2s",
 	// "2 passed, 1 failed", "FAILED tests/x.py"), or exception leads
-	// ("ValueError: ...") — not prose that talks about failures. The go-test "ok"
+	// ("ValueError: ...") - not prose that talks about failures. The go-test "ok"
 	// form requires the line to END at the duration so prose like "ok so 3s
 	// later..." cannot qualify.
 	logBuildRe = regexp.MustCompile(`^(--- )?(FAIL|PASS|SKIP|FAILED|PASSED)\b|^ok\s+[\w./\-]+\s+([\d.]+m?s|\(cached\))\s*$|(?i)\b\d+\s+(passed|failed|skipped|errors?)\b|(?i)^\s*[\w.]*(exception|error):\s`)
 	// logShapeRe matches structural log-line formats that carry no level word at
-	// all — evidence the OLD bare-word detector caught incidentally and the
+	// all - evidence the OLD bare-word detector caught incidentally and the
 	// shaped rewrite must keep:
 	//   - BSD syslog:  "Jul  1 10:00:00 host sshd[123]: ..."
 	//   - klog/glog:   "E0701 10:00:00.123456   1 server.go:214] ..."
@@ -67,13 +67,13 @@ var (
 	logShapeRe = regexp.MustCompile(`^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\b|^[IWEF]\d{4}\s+\d{2}:\d{2}:\d{2}|^\s*(\w+=\S+\s+){2,}`)
 	// logDefiniteRe is an unambiguous runtime-crash / traceback marker: its mere
 	// presence routes to log regardless of line ratio (a panic or traceback has few
-	// "level word" lines but must never be paraphrased). Go panics included — a gap
+	// "level word" lines but must never be paraphrased). Go panics included - a gap
 	// Headroom's classifier leaves open.
 	logDefiniteRe = regexp.MustCompile(`(?i)(^panic:|^traceback \(most recent call last\):|^\s*goroutine\s+\d+\s+\[)`)
 	// logStackRe matches individual stack-frame lines (indented `at`, `File "..."`,
 	// goroutine headers, hex PC offsets, `file.ext:line` frames).
 	logStackRe = regexp.MustCompile(`(?i)(^panic:|^traceback|^\s+at\s|^\s*file ".*", line \d+|^\s*goroutine\s|\+0x[0-9a-f]+|^\s*[\w./$\-]+\.(go|py|js|java|rb|rs|ts):\d+)`)
-	// logTimeRe matches a leading timestamp (date or HH:MM:SS) — the structural
+	// logTimeRe matches a leading timestamp (date or HH:MM:SS) - the structural
 	// signal for level-less logs (access logs, app stdout).
 	logTimeRe = regexp.MustCompile(`^\s*\[?(\d{4}-\d{2}-\d{2}|\d{2}:\d{2}:\d{2})`)
 
@@ -81,7 +81,7 @@ var (
 	mdSepRe   = regexp.MustCompile(`(?m)^\s*\|?[ :|]*-{2,}[-: |]*$`)
 	// pipeSepRe matches an ascii/psql table separator row (---+---, |---|).
 	pipeSepRe = regexp.MustCompile(`(?m)^\s*[:|+-]{2,}[-+|:\s]*$`)
-	// colGapRe splits on internal multi-space runs — the column-gap signal for
+	// colGapRe splits on internal multi-space runs - the column-gap signal for
 	// space-aligned fixed-width tables (kubectl/docker/ls -l). Headroom has this
 	// parser but never wires a detector to it; we do.
 	colGapRe = regexp.MustCompile(` {2,}`)
@@ -92,7 +92,7 @@ var (
 	// charset designations, and single-char Fe/Fp escapes. Used for both stripping
 	// (lossless visible text) and terminal-density detection. Order matters: the
 	// multi-char forms are listed before the single-char catch-all (leftmost-first).
-	// NOTE: 8-bit C1 introducers (raw 0x9b/0x9d) are NOT matched — a raw 0x9b is
+	// NOTE: 8-bit C1 introducers (raw 0x9b/0x9d) are NOT matched - a raw 0x9b is
 	// invalid UTF-8 and cannot live in a UTF-8 regex pattern, and such bytes would
 	// already be mangled by JSON transport before reaching us. Terminals overwhelm-
 	// ingly emit the 7-bit ESC forms below.
@@ -110,7 +110,7 @@ var (
 	codeCallRe = regexp.MustCompile(`^\s*[\w.\[\]]+\s*=\s*[\w.]+\s*\(|^\s*[\w.]+\([^)]*\)\s*;?\s*$`)
 	// codeSnippetRe: evidence shapes that dominate SMALL/PARTIAL code reads, which
 	// the keyword/call regexes miss (auditor: 200-900-token Python snippets routed
-	// to prose and lossily compressed — deleted "from .packages import chardet",
+	// to prose and lossily compressed - deleted "from .packages import chardet",
 	// "_ver = sys.version_info"). Dotted-from imports, block headers ending in ":",
 	// decorators, bare assignments, and flow statements.
 	codeSnippetRe = regexp.MustCompile(`^\s*from\s+[.\w]+\s+import\b|^\s*(try|except|finally|elif|else|with|for|while|if)\b[^\n]*:\s*$|^\s*@\w|^\s*(pass|raise|return|yield)\b|^\s*[\w.\[\]]+\s*[+\-*/|&]?=\s*\S`)
@@ -131,7 +131,7 @@ const maxDetectLines = 500
 // confidence and is taken only if it clears its gate. Falls back to prose.
 //
 // The content is split into lines ONCE (capped) and that slice is shared by
-// every line-based detector — re-splitting per detector was the hot-path cost.
+// every line-based detector - re-splitting per detector was the hot-path cost.
 func Detect(content string) (ContentType, float64) {
 	// Classify on the de-ANSI'd text: a colored diff/log/grep carries escape codes
 	// before its line-start markers, which would break the structured detectors and
@@ -161,8 +161,8 @@ func Detect(content string) (ContentType, float64) {
 	// Line-numbered file reads are claimed AFTER the structured detectors (json/
 	// diff/html/search/log). `^\d+\t` alone cannot tell a `cat -n` read from a
 	// tab-separated stream whose first column is a bare integer (epoch, PID,
-	// sequence id) — a genuine log of that shape must reach detectLog FIRST and be
-	// compressed. Only content no structured detector claimed — a real file read —
+	// sequence id) - a genuine log of that shape must reach detectLog FIRST and be
+	// compressed. Only content no structured detector claimed - a real file read -
 	// falls here and passes through, instead of being row-dropped (tabular) or
 	// paraphrased (prose fallback).
 	if ct, conf, ok := detectLineNumbered(work, nonEmpty); ok {
@@ -175,8 +175,8 @@ func Detect(content string) (ContentType, float64) {
 		return ct, conf
 	}
 	// ANSI-heavy terminal output that no structured detector claimed (a colored TUI
-	// dump, a progress/status screen). Runs LAST so a colored log/diff/json — whose
-	// keywords or shape survive the interspersed escapes — routes to its real type
+	// dump, a progress/status screen). Runs LAST so a colored log/diff/json - whose
+	// keywords or shape survive the interspersed escapes - routes to its real type
 	// first; only structure-less escape-heavy content falls through to here.
 	if ct, conf, ok := detectANSI(content); ok {
 		return ct, conf
@@ -199,7 +199,7 @@ const (
 
 // detectANSI classifies raw terminal output by the density of ANSI escape codes,
 // or by carriage-return overwrite density (a colorless progress bar / spinner
-// stream carries no escapes at all — its terminal signature is many lone CRs and
+// stream carries no escapes at all - its terminal signature is many lone CRs and
 // few newlines). The win is the lossless strip + CR-overwrite collapse; the chain
 // then log-compresses what remains.
 func detectANSI(content string) (ContentType, float64, bool) {
@@ -249,7 +249,7 @@ func StripANSI(s string) string {
 
 func detectJSON(content string) (ContentType, float64, bool) {
 	s := strings.TrimSpace(content)
-	// Match both objects and arrays — the gate's looksStructured already treats
+	// Match both objects and arrays - the gate's looksStructured already treats
 	// '{' and '[' identically, so routing must too, or JSON objects (the common
 	// case: API responses, `kubectl -o json`) fall through to prose and get
 	// skipped by the prose-safety guard instead of reaching JSONCrusher.
@@ -325,7 +325,7 @@ func detectHTML(content string) (ContentType, float64, bool) {
 		return "", 0, false
 	}
 	if markupLeadRe.MatchString(s) {
-		return TypeHTML, 0.95, true // xml / svg / doctype / html — definitive
+		return TypeHTML, 0.95, true // xml / svg / doctype / html - definitive
 	}
 	sample := s
 	if len(sample) > 3000 {
@@ -373,7 +373,7 @@ func detectLog(lines []string) (ContentType, float64, bool) {
 	// separate "ERROR indicates..." (doc) from "ERROR failed to connect to db"
 	// (level-prefixed app log):
 	//   1. prose-shaped character distribution (letters+spaces >= 0.82), AND
-	//   2. sentence punctuation — at least half the lines end with . ! or ?
+	//   2. sentence punctuation - at least half the lines end with . ! or ?
 	//      (prose is written in sentences; log lines almost never end with a
 	//      period).
 	// STRUCTURAL evidence (timestamps, syslog/klog/logfmt shapes, stack frames,
@@ -381,7 +381,7 @@ func detectLog(lines []string) (ContentType, float64, bool) {
 	proseVeto := proseRatio(strings.Join(lines, "\n")) >= 0.82 && sentenceLineRatio(lines) >= 0.5
 	matched := 0
 	for _, ln := range lines {
-		// Unambiguous crash/traceback markers route immediately — a panic or
+		// Unambiguous crash/traceback markers route immediately - a panic or
 		// traceback has too few "level word" lines to clear the ratio, but it must
 		// never reach the paraphraser.
 		if logDefiniteRe.MatchString(ln) {
@@ -392,7 +392,7 @@ func detectLog(lines []string) (ContentType, float64, bool) {
 			logCliRe.MatchString(ln), logColorLevelRe.MatchString(ln):
 			matched++
 		case logTimeRe.MatchString(ln) && strings.Count(ln, ",") < 2:
-			// Level-less timestamped log line — but not a CSV row (a date-first CSV
+			// Level-less timestamped log line - but not a CSV row (a date-first CSV
 			// would otherwise be misread as a log).
 			matched++
 		case !proseVeto && (logLevelRe.MatchString(ln) || logBuildRe.MatchString(ln)):
@@ -408,7 +408,7 @@ func detectLog(lines []string) (ContentType, float64, bool) {
 }
 
 // sentenceLineRatio is the fraction of nonempty lines that end with sentence
-// punctuation — the second prong of detectLog's prose veto.
+// punctuation - the second prong of detectLog's prose veto.
 func sentenceLineRatio(lines []string) float64 {
 	ended, total := 0, 0
 	for _, ln := range lines {
@@ -432,7 +432,7 @@ func sentenceLineRatio(lines []string) float64 {
 // (`N\t<line>`). Such reads were the single largest misroute: the prefix made them
 // look like a 2-column TSV to detectTabular (which silently row-dropped them) and
 // broke code detection (falling through to the prose paraphraser). Classifying them
-// as TypeCode — which has no compressor in DefaultChains — passes them through
+// as TypeCode - which has no compressor in DefaultChains - passes them through
 // UNCOMPRESSED. That is the correct default: a line-numbered read is a file an agent
 // acts on line-by-line (where silent loss is worst), and its underlying content
 // (code/config/prose/log) is not reliably any single compressible type. A strong
@@ -445,7 +445,7 @@ func sentenceLineRatio(lines []string) float64 {
 // (a line-numbered read).
 // One carve-out (docs/compressor-opportunities.md #1): if the STRIPPED content is
 // unmistakably a markdown/prose document, the read routes to TypeDocRead (line
-// numbers stripped, then the prose model — measured ~11% of corpus tokens were doc
+// numbers stripped, then the prose model - measured ~11% of corpus tokens were doc
 // reads skipped here). The doc check is zero-tolerance: any code fence, any
 // code-signal line, or a weak prose ratio keeps the read TypeCode (passthrough).
 // The filename is not available on this API, so the gate is content-shape, not
@@ -468,7 +468,7 @@ func detectLineNumbered(work string, nonEmpty []string) (ContentType, float64, b
 	// code hiding beyond a detection window must also be able to veto). Cost is
 	// bounded: this branch only runs for confirmed line-numbered reads, and the
 	// global MaxChars gate bounds the body upstream.
-	// Judge the EXACT line sequence the chain will segment (blanks preserved —
+	// Judge the EXACT line sequence the chain will segment (blanks preserved -
 	// reviewer C1: the gate and MarkdownStructured must run SegmentMarkdown on
 	// identical inputs or their verbatim/prose decisions could diverge).
 	if isMarkdownDoc(strings.Split(StripLineNumbers(work), "\n")) {
@@ -499,7 +499,7 @@ func StripLineNumbers(content string) string {
 
 var (
 	mdHeadingRe = regexp.MustCompile(`^#{1,6}\s\S`)
-	// assignLineRe matches bare assignment lines — Makefile/shell/TOML/INI style
+	// assignLineRe matches bare assignment lines - Makefile/shell/TOML/INI style
 	// (`CXX := clang++`, `ENV="$1"`, `port = 8080`). These files' `# comments`
 	// mimic markdown headings and can even read as sentences, but markdown prose
 	// essentially never opens a line with an identifier assignment. Found via a
@@ -508,12 +508,12 @@ var (
 	// kvLineRe matches YAML/config `key: value` lines (incl. `- name: ...` list
 	// entries). Reviewer B1: prose-heavy YAML (Ansible/CI/compose with doc
 	// comments + sentence-like task names) dodged the `=`-keyed assignLineRe and
-	// was paraphrased — a playbook lost its `become: yes` directive. Markdown
-	// prose CAN open a line "Note: ..." — rejecting those too is the accepted
+	// was paraphrased - a playbook lost its `become: yes` directive. Markdown
+	// prose CAN open a line "Note: ..." - rejecting those too is the accepted
 	// zero-tolerance cost (a missed doc over an eaten config).
 	kvLineRe = regexp.MustCompile(`^\s*(-\s+)?[A-Za-z_][\w.-]*:(\s|$)`)
 	// dockerDirectiveRe: Dockerfile directives dodge all three code detectors
-	// (reviewer O1) — a heavily-commented Dockerfile would otherwise qualify.
+	// (reviewer O1) - a heavily-commented Dockerfile would otherwise qualify.
 	dockerDirectiveRe = regexp.MustCompile(`^\s*(FROM|RUN|COPY|ADD|ENV|ARG|WORKDIR|EXPOSE|ENTRYPOINT|CMD|USER|VOLUME|LABEL|HEALTHCHECK|ONBUILD|STOPSIGNAL|SHELL)\s`)
 )
 
@@ -608,7 +608,7 @@ func detectCode(lines []string) (ContentType, float64, bool) {
 			// kv/config lines (yaml `key: value`, `- name: x`, Dockerfile directives)
 			// count as code evidence: raw YAML slipped to prose and was lossily
 			// compressed (bench corpus caught sample_deploy.yaml at 40% loss).
-			// Prose crosses the 25%% hit ratio only if kv-shaped lines dominate —
+			// Prose crosses the 25%% hit ratio only if kv-shaped lines dominate -
 			// and then passthrough is the safe direction anyway.
 			hits++
 		}

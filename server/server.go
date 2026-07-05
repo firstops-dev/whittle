@@ -2,7 +2,7 @@
 // compressor's POST /v1/compress with a content-aware router + structural
 // compressors (and delegates the prose path back to the Python service). The
 // response shape matches the Python service closely enough that the edge-server
-// caller — which reads only `compressed` + `action` — is unchanged.
+// caller - which reads only `compressed` + `action` - is unchanged.
 package server
 
 import (

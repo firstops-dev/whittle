@@ -144,7 +144,7 @@ func reconstructIfColumnar(t *testing.T, out string) ([]json.RawMessage, bool) {
 }
 
 // assertNoMutation is the core anti-mutation invariant across BOTH output shapes:
-//   - columnar (lossless): reconstructs to EXACTLY the input array, in order — no
+//   - columnar (lossless): reconstructs to EXACTLY the input array, in order - no
 //     row dropped, no value changed.
 //   - array (minify or lossy sample): every element is structurally one of the
 //     input elements, nothing invented, count never grows.
@@ -196,7 +196,7 @@ func assertValidSubset(t *testing.T, in, out string) {
 
 // TestJSONCrusher_UnionSparseLossless pins SmartCrusher gap 1 (union/sparse
 // schema): objects with DIFFERING key sets (an optional field) and a present-null
-// must still take the columnar path AND round-trip exactly — an absent key and a
+// must still take the columnar path AND round-trip exactly - an absent key and a
 // present `null` are distinguished via "__absent__". Before this, any key-set
 // difference made columnarEncode bail entirely.
 func TestJSONCrusher_UnionSparseLossless(t *testing.T) {
@@ -225,7 +225,7 @@ func TestJSONCrusher_UnionSparseLossless(t *testing.T) {
 
 // TestJSONCrusher_DisjointKeysNoBlowup: when every object carries a unique key,
 // the union schema grows with N and the row matrix would be O(N²). columnarEncode
-// must early-abort before allocating it (reviewer B1) — this array must pass
+// must early-abort before allocating it (reviewer B1) - this array must pass
 // through unchanged and the call must stay cheap (no OOM/hang).
 func TestJSONCrusher_DisjointKeysNoBlowup(t *testing.T) {
 	var items []string
@@ -295,7 +295,7 @@ func TestJSONCrusher_CSVEncodingLossless(t *testing.T) {
 			assertNoMutation(t, in, res.Output)
 
 			// AND the CSV renderer itself must be lossless whenever it can render at
-			// all — its escaping is exercised directly, independent of adoption.
+			// all - its escaping is exercised directly, independent of adoption.
 			var items []json.RawMessage
 			if err := json.Unmarshal([]byte(in), &items); err != nil {
 				t.Fatal(err)
@@ -312,7 +312,7 @@ func TestJSONCrusher_CSVEncodingLossless(t *testing.T) {
 // TestJSONCrusher_NumericPrecisionByteExact guards value BYTE-exactness (reviewer
 // C1): assertNoMutation's canonAny normalizes numbers to float64 and so cannot see
 // a precision/formatting regression. Values are kept as raw tokens, so a big int64
-// and a high-precision float must reconstruct byte-for-byte — checked directly here.
+// and a high-precision float must reconstruct byte-for-byte - checked directly here.
 func TestJSONCrusher_NumericPrecisionByteExact(t *testing.T) {
 	var items []string
 	for i := 0; i < 20; i++ {
@@ -474,7 +474,7 @@ func TestJSONCrusher_HTMLCharsRepresentation(t *testing.T) {
 	}
 	in := "[" + strings.Join(items, ",") + "]"
 	res := crush(t, in)
-	assertNoMutation(t, in, res.Output) // lossless columnar or subset — never mutated
+	assertNoMutation(t, in, res.Output) // lossless columnar or subset - never mutated
 
 	if strings.Contains(res.Output, `<`) || strings.Contains(res.Output, `&`) {
 		t.Logf("NOTE: JSONCrusher HTML-escapes kept items (< > & -> \\u003c \\u003e \\u0026) "+
@@ -483,9 +483,9 @@ func TestJSONCrusher_HTMLCharsRepresentation(t *testing.T) {
 	}
 }
 
-// TestJSONCrusher_VeryLargeArray — a large uniform array takes the lossless
+// TestJSONCrusher_VeryLargeArray - a large uniform array takes the lossless
 // columnar path (all rows kept, keys hoisted): must shrink, stay lossless, and
-// not panic. The lossy 15-item cap does NOT apply here — lossless-first keeps
+// not panic. The lossy 15-item cap does NOT apply here - lossless-first keeps
 // every row when key-hoisting clears the savings floor.
 func TestJSONCrusher_VeryLargeArray(t *testing.T) {
 	items := make([]string, 50000)
@@ -507,7 +507,7 @@ func TestJSONCrusher_VeryLargeArray(t *testing.T) {
 	}
 }
 
-// TestJSONCrusher_DistinctItemsOrderPreserved — the columnar path preserves row
+// TestJSONCrusher_DistinctItemsOrderPreserved - the columnar path preserves row
 // order exactly (rows[i] is items[i]).
 func TestJSONCrusher_DistinctItemsOrderPreserved(t *testing.T) {
 	items := make([]string, 40)

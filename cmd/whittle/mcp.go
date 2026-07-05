@@ -1,6 +1,6 @@
 package main
 
-// whittle mcp — a minimal stdio MCP server exposing one tool: whittle_get(id).
+// whittle mcp - a minimal stdio MCP server exposing one tool: whittle_get(id).
 // Registered in Claude Code by `whittle setup` (claude mcp add), removed by
 // cleanup. It proxies the resident daemon's /get endpoint.
 
@@ -43,7 +43,7 @@ func cmdMCP(_ []string) {
 		case "tools/list":
 			reply(map[string]any{"tools": []any{map[string]any{
 				"name":        "whittle_get",
-				"description": "Retrieve the exact original bytes of a whittled (compressed) tool output. Use ONLY when the byte-exact original is strictly required — whittled summaries are complete in substance.",
+				"description": "Retrieve the exact original bytes of a whittled (compressed) tool output. Use ONLY when the byte-exact original is strictly required - whittled summaries are complete in substance.",
 				"inputSchema": map[string]any{"type": "object",
 					"properties": map[string]any{"id": map[string]any{"type": "integer", "description": "the id from whittle_get(N) in the output"}},
 					"required":   []string{"id"}},
@@ -78,7 +78,7 @@ func fetchOriginal(id int64) (string, bool) {
 	return string(b), false
 }
 
-// coerceID accepts the id as a JSON number OR a numeric string — models pass
+// coerceID accepts the id as a JSON number OR a numeric string - models pass
 // integer-looking arguments as strings often enough that a silent 0 would turn
 // valid retrievals into phantom "expired" misses (review C2).
 func coerceID(raw json.RawMessage) int64 {

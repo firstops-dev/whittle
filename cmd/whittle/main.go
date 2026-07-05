@@ -56,11 +56,11 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, `whittle — carves agent tool outputs down to what matters
+	fmt.Fprintln(os.Stderr, `whittle - carves agent tool outputs down to what matters
 
 usage:
   whittle setup                     install: model sidecar, Claude Code hook,
-                                    background service (launchd) — one command
+                                    background service (launchd) - one command
   whittle status                    health of router, sidecar, hook
   whittle stats [-days 7]           local savings report (tokens whittled)
   whittle stop                      stop background services

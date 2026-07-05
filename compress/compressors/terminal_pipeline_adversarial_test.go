@@ -23,7 +23,7 @@ func termPipeline() *compress.Pipeline {
 
 // TestTerminalPipeline_PureEscapeStripsToEmpty_PassesThrough is a guard: input
 // that is ALL escapes (no visible text) routes terminal, strips to "", and the
-// empty-output guardrail must fail open with the ORIGINAL — never emit "".
+// empty-output guardrail must fail open with the ORIGINAL - never emit "".
 func TestTerminalPipeline_PureEscapeStripsToEmpty_PassesThrough(t *testing.T) {
 	in := strings.Repeat("\x1b[0m", 80) // 320 bytes, all CSI, frac=1.0, count=80
 	out := termPipeline().Compress(context.Background(), compress.Input{Content: in, MinTokens: compress.DefaultMinTokens})
@@ -67,7 +67,7 @@ func TestTerminalPipeline_OSC8LeaksToConsumer(t *testing.T) {
 // line-anchored ^diff/^@@/^[+-] regexes all miss and the diff falls through to
 // detectANSI -> terminal. The terminal chain then strips the colors and hands a
 // plain diff to LogCompressor, which finds NO log-level words and (via
-// floorSelection) keeps only the first/last few lines — silently dropping the
+// floorSelection) keeps only the first/last few lines - silently dropping the
 // middle hunks while REPORTING success.
 //
 // Crucially this is WORSE than skipping: before the terminal type existed, a
@@ -88,7 +88,7 @@ func TestTerminalPipeline_ColoredDiffDataLoss(t *testing.T) {
 	out := termPipeline().Compress(context.Background(), compress.Input{Content: in, MinTokens: compress.DefaultMinTokens})
 
 	if out.Detected != compress.TypeTerminal {
-		t.Logf("note: colored diff detected as %q (not terminal) — data-loss path may differ", out.Detected)
+		t.Logf("note: colored diff detected as %q (not terminal) - data-loss path may differ", out.Detected)
 	}
 
 	// Every changed line must survive in the output; count how many were dropped.
@@ -126,13 +126,13 @@ func TestTerminalPipeline_NonCSITerminalSkippedNotCompressed(t *testing.T) {
 	out := termPipeline().Compress(context.Background(), compress.Input{Content: in, MinTokens: compress.DefaultMinTokens})
 
 	if out.Detected == compress.TypeTerminal {
-		// Recall fixed — but then assert the 8-bit escapes did not leak.
+		// Recall fixed - but then assert the 8-bit escapes did not leak.
 		if hasControl(out.Output) && out.Action == "compressed" {
 			t.Errorf("8-bit-CSI terminal compressed but raw \\x9b bytes leaked into output: %q", out.Output)
 		}
 		return
 	}
-	t.Errorf("RECALL (pipeline): 8-bit-C1 colored terminal output detected as %q (action=%q) — never routes to the "+
+	t.Errorf("RECALL (pipeline): 8-bit-C1 colored terminal output detected as %q (action=%q) - never routes to the "+
 		"terminal chain, so the strip+log-compress win is lost and raw \\x9b bytes are passed/processed verbatim",
 		out.Detected, out.Action)
 }
