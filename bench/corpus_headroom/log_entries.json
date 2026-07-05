@@ -1,0 +1,1402 @@
+[
+  {
+    "timestamp": "2025-01-06T00:00:30.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_16 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_174619c4e26b4fbf"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:07Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Database query completed in 2276ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_1a368d6d3dd648f4"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:07Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Metrics exported: 627 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_3887b53fbf544db7"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:17.500000Z",
+    "level": "WARNING",
+    "logger": "api",
+    "message": "Failed to process request: Not found",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_bc7c2508b5d44f60"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:21Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Cache hit for key cache:58",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_eb46158fb16a489b"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:53Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_56 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_f10fc4f3b9f94c86"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:10.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Metrics exported: 5226 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-01",
+    "trace_id": "trace_0756b20dc78a4bea"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:01Z",
+    "level": "ERROR",
+    "logger": "worker",
+    "message": "Failed to process request: Not found",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_dc43b04b22874c24",
+    "exception": {
+      "type": "ValueError",
+      "message": "Failed to process request: Not found",
+      "stacktrace": "  File \"handlers.py\", line 353, in execute\n  File \"app.py\", line 321, in process\n  File \"utils.py\", line 383, in process\n  File \"handlers.py\", line 246, in query\n  File \"services.py\", line 483, in validate"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:59Z",
+    "level": "WARNING",
+    "logger": "worker",
+    "message": "Failed to process request: Invalid input",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_4d0f0abd716d4431"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:40Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "API call to auth returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_3fa04f40d0e4408e"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:41Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Background job job_10 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_3cad23b628d54f3d"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:42Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Background job job_32 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_f6975f5f1b85437b"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:18Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "API call to auth returned 200",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_c0e6d9d9f3fc4d03"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:27Z",
+    "level": "DEBUG",
+    "logger": "app",
+    "message": "Database query completed in 2364ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_191ff82d80034eac"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:46Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Database query completed in 1206ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_aa74ce546dfd406f"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:16.500000Z",
+    "level": "WARNING",
+    "logger": "worker",
+    "message": "Failed to process request: Invalid input",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_91b2d8e272fb49f1"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:39.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_56 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_7e53007ee78e4a79"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:49Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Health check passed for api",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_87338cda89574b44"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:09Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Metrics exported: 6463 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_beb804ac18cf41b6"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:57Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 9239 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_7f68734e701c4c01"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:33.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_95 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_ee1e45f2188c4cf4"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:52Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_66 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_114a612301574ad9"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:01.500000Z",
+    "level": "WARNING",
+    "logger": "app",
+    "message": "Invalid input: Out of range",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_eb59c21e21824ea3"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:30Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_62 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_18fb96fe00804b55"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:05Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 1011 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_29391fe2b4674ff7"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:02.500000Z",
+    "level": "ERROR",
+    "logger": "api",
+    "message": "Connection failed to users: timeout after 4110ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_144b239251d54a2c",
+    "exception": {
+      "type": "TimeoutError",
+      "message": "Connection failed to users: timeout after 4110ms",
+      "stacktrace": "  File \"database.py\", line 19, in handle_request\n  File \"services.py\", line 459, in execute\n  File \"handlers.py\", line 39, in process\n  File \"utils.py\", line 494, in handle_request\n  File \"app.py\", line 384, in query"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:39Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_3 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_5e622870bc754047"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:26.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Cache hit for key cache:34",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_621991fb745b4fdc"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:44.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 9445 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_cd28291577984159"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:11Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Metrics exported: 5185 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_395528a572684777"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:16Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Health check passed for queue",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_ab29c502a475465f"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:14.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "API call to payments returned 200",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_40c2cdc21bd8477a"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:21.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "API call to users returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_ad8bbb6671fb417e"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:22Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Health check passed for database",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_25a15f84625647bc"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:31Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Request processed successfully for user user_6374",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_28bc18625c2d451d"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:58Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Metrics exported: 6924 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_d63949399de14028"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:14Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Request processed successfully for user user_7371",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_7a0d2a10b60e45d3"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:25.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Background job job_90 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_b5c3a2b0bd054f77"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:12Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 8802 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_3235910705ff445b"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:36Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Health check passed for cache",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_1926dc92d70f4718"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:37Z",
+    "level": "WARNING",
+    "logger": "worker",
+    "message": "Database error: QueryTimeout",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_f7b6f88d849044fb"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:12.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 8877 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_5217951251f74413"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:54Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_99 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_a3c1b16ef7804e5e"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:11.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Metrics exported: 3115 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_d54e7eaa61f44fd3"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:32Z",
+    "level": "WARNING",
+    "logger": "worker",
+    "message": "Failed to process request: Not found",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_48f90e6532d14f5e"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:03Z",
+    "level": "ERROR",
+    "logger": "api",
+    "message": "Connection failed to notifications: timeout after 1040ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_5fecd606240f4c00",
+    "exception": {
+      "type": "RuntimeError",
+      "message": "Connection failed to notifications: timeout after 1040ms",
+      "stacktrace": "  File \"database.py\", line 470, in validate\n  File \"database.py\", line 71, in process\n  File \"handlers.py\", line 42, in execute\n  File \"app.py\", line 311, in validate\n  File \"handlers.py\", line 311, in process"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:14.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Metrics exported: 5455 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_271a3827e1fc42f7"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:06Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Cache hit for key cache:32",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_e4ae8f0ce6484d24"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:53.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_81 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_1a7580d0181949c5"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:34Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "API call to notifications returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_bc3283a153564de2"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:42.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_72 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_9e1940bf8b4144be"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:56Z",
+    "level": "DEBUG",
+    "logger": "scheduler",
+    "message": "Health check passed for database",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_2973f9e545e440c5"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:52.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Cache hit for key cache:40",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_587e88d2306f4e61"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:07.500000Z",
+    "level": "WARNING",
+    "logger": "app",
+    "message": "Connection failed to payments: timeout after 4479ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_b99893d88d744289"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:10Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Metrics exported: 4737 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_b4da6da2d86b4ddd"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:49.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Cache hit for key cache:42",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_630a6067fcfa47cc"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:02Z",
+    "level": "ERROR",
+    "logger": "worker",
+    "message": "Connection failed to users: timeout after 908ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_601be80d63fc4dbb",
+    "exception": {
+      "type": "TimeoutError",
+      "message": "Connection failed to users: timeout after 908ms",
+      "stacktrace": "  File \"utils.py\", line 394, in execute\n  File \"services.py\", line 67, in execute\n  File \"database.py\", line 90, in query"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:25Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "API call to payments returned 201",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_215ad214b9794498"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:15Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Request processed successfully for user user_6733",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_6eae9b41ad934355"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:08Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_67 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_1d400efc22df465e"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:13Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Database query completed in 1245ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_296f478e591d4bdd"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:13.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Database query completed in 775ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_ec20b81cdb28460b"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:13.500000Z",
+    "level": "WARNING",
+    "logger": "api",
+    "message": "Rate limit exceeded for user user_7381",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_f104a7b6fb4b47a7"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:38.500000Z",
+    "level": "WARNING",
+    "logger": "api",
+    "message": "Database error: ConnectionError",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_38a572af5690490c"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:04Z",
+    "level": "ERROR",
+    "logger": "app",
+    "message": "Failed to process request: Not found",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_6890984641e9475d",
+    "exception": {
+      "type": "TimeoutError",
+      "message": "Failed to process request: Not found",
+      "stacktrace": "  File \"utils.py\", line 438, in handle_request\n  File \"app.py\", line 484, in process\n  File \"handlers.py\", line 218, in query"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:09Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_15 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_e9bfba9f6fe247e3"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:31.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Cache hit for key cache:48",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_5a2d8b64b5c84660"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:08.500000Z",
+    "level": "DEBUG",
+    "logger": "api",
+    "message": "Background job job_20 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_4511f0b7d27c45cc"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:19Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_23 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-01",
+    "trace_id": "trace_84680e92340b40ed"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:51.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Metrics exported: 1313 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_b5007ab9f3314e0f"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:08.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Database query completed in 327ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_9f7c83d01dae4588"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:03.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Background job job_84 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_1ce6ad17dfd44ca9"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:59.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Cache hit for key cache:44",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_68f1720eacd34cd3"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:14Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_89 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_c2a49427deaf4052"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:33Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_17 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_bc7b08099dd74ce7"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:36.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "API call to auth returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_2a4564ed3dd342c4"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:07.500000Z",
+    "level": "WARNING",
+    "logger": "app",
+    "message": "Invalid input: Out of range",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_09a21e01acee49de"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:47.500000Z",
+    "level": "DEBUG",
+    "logger": "app",
+    "message": "Request processed successfully for user user_7397",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_120f8265fa414d4a"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:01Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "API call to users returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_22f5920b593340c7"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:09.500000Z",
+    "level": "DEBUG",
+    "logger": "api",
+    "message": "API call to auth returned 200",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_cc9753fe3c994567"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:46.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Health check passed for cache",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_7cc874a04efd44d2"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:18.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_30 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_39db966bd0cd4a8a"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:00.500000Z",
+    "level": "CRITICAL",
+    "logger": "worker",
+    "message": "CRITICAL: Memory usage exceeded threshold (95%)",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_3026dfd2058e49dc",
+    "exception": {
+      "type": "ValueError",
+      "message": "CRITICAL: Memory usage exceeded threshold (95%)",
+      "stacktrace": "  File \"database.py\", line 284, in handle_request\n  File \"database.py\", line 50, in validate\n  File \"services.py\", line 434, in validate"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:56.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Health check passed for database",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_b6f1849277554f24"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:20.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_95 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_36175fd6dac141a8"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:43Z",
+    "level": "WARNING",
+    "logger": "api",
+    "message": "Database error: IntegrityError",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_b06ed194e8d2421b"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:38Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Database query completed in 3531ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_d50d01b5e0674515"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:45Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Cache hit for key cache:83",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_a3323c5722034165"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:35Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "API call to notifications returned 201",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_de1acb19df184bd1"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:22.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Request processed successfully for user user_5415",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_b84a5ed087e9449a"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:58.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "API call to users returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_6b74610f905849ae"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:01.500000Z",
+    "level": "ERROR",
+    "logger": "api",
+    "message": "Database error: ConnectionError",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_86e6f886974647ef",
+    "exception": {
+      "type": "RuntimeError",
+      "message": "Database error: ConnectionError",
+      "stacktrace": "  File \"handlers.py\", line 145, in process\n  File \"handlers.py\", line 391, in validate\n  File \"utils.py\", line 144, in validate\n  File \"database.py\", line 469, in validate\n  File \"database.py\", line 195, in process\n  File \"handlers.py\", line 270, in query"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:01:03Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "API call to payments returned 200",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_1d9ecde596444b3e"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:26Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Health check passed for queue",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_c03116f805414309"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:32.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Metrics exported: 2163 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_3f2950e9358e482b"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:06Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Database query completed in 269ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_362241ddc3b64186"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:35.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Metrics exported: 2231 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_99e127ebe515481a"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:28.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Health check passed for queue",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_9fd9c3a9e03a4172"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:27.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_88 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_13ddb941145348d6"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:11.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Database query completed in 3405ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_16e293813135413d"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:54.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_59 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_bc97856f6af04bc5"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:08Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Database query completed in 4596ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_b53805debc1044e1"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:05.500000Z",
+    "level": "WARNING",
+    "logger": "app",
+    "message": "Rate limit exceeded for user user_6049",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_f18265cf68804cd5"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:00.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Cache hit for key cache:37",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_bc51435ef6614d41"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:04.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "API call to notifications returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_f8270f79ee3340da"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:12Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Request processed successfully for user user_7756",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_793c9fd133654d9f"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:28Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 1310 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_0ee67ccb9d444aa6"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:19.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Cache hit for key cache:2",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_f66e2a2da55746ba"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:00Z",
+    "level": "CRITICAL",
+    "logger": "app",
+    "message": "CRITICAL: Database connection pool exhausted",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_5b69c62bce4c4852",
+    "exception": {
+      "type": "ConnectionError",
+      "message": "CRITICAL: Database connection pool exhausted",
+      "stacktrace": "  File \"utils.py\", line 318, in handle_request\n  File \"utils.py\", line 111, in validate\n  File \"database.py\", line 122, in query\n  File \"utils.py\", line 152, in handle_request"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:05.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Background job job_17 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_11c564cd62124f8b"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:13Z",
+    "level": "DEBUG",
+    "logger": "api",
+    "message": "Cache hit for key cache:80",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_f850c68641794469"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:23Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Background job job_64 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_7d6b9708e0c04855"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:20Z",
+    "level": "DEBUG",
+    "logger": "api",
+    "message": "Request processed successfully for user user_3485",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_c0d8823c1c17483e"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:24.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Database query completed in 972ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_340f676a97794df8"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:47Z",
+    "level": "DEBUG",
+    "logger": "app",
+    "message": "API call to auth returned 204",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_45439e6a3cd040f9"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:00Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_72 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_3777c1410c8e465f"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:40.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Cache hit for key cache:99",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_7ebfc5c68c96441d"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:50Z",
+    "level": "DEBUG",
+    "logger": "app",
+    "message": "Background job job_86 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_6b8f2187fe98444b"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:02Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Request processed successfully for user user_3868",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_cffeec35f1b24b76"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:24Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_78 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_8bc8a059788c481a"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:11Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Health check passed for cache",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_453d7377087448e2"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:17Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 4669 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_d16fbc23747f4359"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:05Z",
+    "level": "WARNING",
+    "logger": "scheduler",
+    "message": "Database error: IntegrityError",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_dc69653e01084e52"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:04.500000Z",
+    "level": "ERROR",
+    "logger": "scheduler",
+    "message": "Rate limit exceeded for user user_4502",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_4c84b1ded7d64da8",
+    "exception": {
+      "type": "ConnectionError",
+      "message": "Rate limit exceeded for user user_4502",
+      "stacktrace": "  File \"handlers.py\", line 39, in validate\n  File \"utils.py\", line 41, in execute\n  File \"app.py\", line 35, in validate\n  File \"database.py\", line 267, in validate\n  File \"handlers.py\", line 39, in validate"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:01:06.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Cache hit for key cache:23",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_57c247539e5f4370"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:15.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "API call to payments returned 200",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_88227619c57b4630"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:51Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Cache hit for key cache:51",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_e40fe51e233a47a0"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:37.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Database query completed in 1284ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-07",
+    "trace_id": "trace_57fca73a88e94f7f"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:10.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Cache hit for key cache:71",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_17cc4a176cee4e49"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:48.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Request processed successfully for user user_6170",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_9deceea4d2a847a2"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:23.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Health check passed for cache",
+    "service": "headroom-benchmark",
+    "hostname": "worker-01",
+    "trace_id": "trace_7998aa530fd943be"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:55Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_72 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_4c5f9d8ba22b4ab2"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:48Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Request processed successfully for user user_6772",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_eb9e606d5c3b4d86"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:45.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Health check passed for database",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_d8d31e23154a4b67"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:29Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Request processed successfully for user user_9138",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_589c397a80514cf3"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:02.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Metrics exported: 2762 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-01",
+    "trace_id": "trace_b8d11365fe594625"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:57.500000Z",
+    "level": "WARNING",
+    "logger": "worker",
+    "message": "Connection failed to notifications: timeout after 2738ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-10",
+    "trace_id": "trace_d7fc23817e5e4ba9"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:34.500000Z",
+    "level": "WARNING",
+    "logger": "scheduler",
+    "message": "Connection failed to auth: timeout after 4993ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_64f3aba7a0ba4f83"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:03.500000Z",
+    "level": "ERROR",
+    "logger": "api",
+    "message": "Connection failed to auth: timeout after 492ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_36665b7e5821496d",
+    "exception": {
+      "type": "ConnectionError",
+      "message": "Connection failed to auth: timeout after 492ms",
+      "stacktrace": "  File \"handlers.py\", line 411, in query\n  File \"database.py\", line 107, in handle_request\n  File \"app.py\", line 347, in query\n  File \"services.py\", line 226, in query\n  File \"database.py\", line 452, in handle_request\n  File \"app.py\", line 41, in query"
+    }
+  },
+  {
+    "timestamp": "2025-01-06T00:00:41.500000Z",
+    "level": "INFO",
+    "logger": "app",
+    "message": "Database query completed in 3159ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-08",
+    "trace_id": "trace_a9ac6d2c3c414668"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:50.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Metrics exported: 6372 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_3f72f89a55954366"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:43.500000Z",
+    "level": "WARNING",
+    "logger": "api",
+    "message": "Rate limit exceeded for user user_9331",
+    "service": "headroom-benchmark",
+    "hostname": "worker-02",
+    "trace_id": "trace_2268a3531e384920"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:09.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Database query completed in 4733ms",
+    "service": "headroom-benchmark",
+    "hostname": "worker-06",
+    "trace_id": "trace_f65d5bd93c0e4fe7"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:29.500000Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_17 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-03",
+    "trace_id": "trace_c0b63ed367934ef3"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:55.500000Z",
+    "level": "DEBUG",
+    "logger": "scheduler",
+    "message": "Health check passed for queue",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_98638ed3d4464221"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:12.500000Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Metrics exported: 4019 datapoints",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_fca6490726cb4f3b"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:06.500000Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Cache hit for key cache:14",
+    "service": "headroom-benchmark",
+    "hostname": "worker-05",
+    "trace_id": "trace_adf8cfb72d7b44c9"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:44Z",
+    "level": "INFO",
+    "logger": "worker",
+    "message": "Request processed successfully for user user_6517",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_6f02916f8d4b45c3"
+  },
+  {
+    "timestamp": "2025-01-06T00:01:04Z",
+    "level": "INFO",
+    "logger": "scheduler",
+    "message": "Background job job_18 started",
+    "service": "headroom-benchmark",
+    "hostname": "worker-09",
+    "trace_id": "trace_5abbdbd9c8e0490d"
+  },
+  {
+    "timestamp": "2025-01-06T00:00:10Z",
+    "level": "INFO",
+    "logger": "api",
+    "message": "Background job job_40 completed",
+    "service": "headroom-benchmark",
+    "hostname": "worker-04",
+    "trace_id": "trace_296cd777c0bc4f6d"
+  }
+]

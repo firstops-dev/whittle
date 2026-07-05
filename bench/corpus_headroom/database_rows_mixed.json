@@ -1,0 +1,1556 @@
+[
+  {
+    "id": 1,
+    "user_id": 1825,
+    "amount": -949.98,
+    "currency": "EUR",
+    "status": "completed",
+    "created_at": "2025-01-01T19:08:00Z",
+    "reference": "TXN-2E56ED46"
+  },
+  {
+    "id": 2,
+    "user_id": 1680,
+    "amount": 353.4,
+    "currency": "GBP",
+    "status": "completed",
+    "created_at": "2025-01-03T06:27:00Z",
+    "reference": "TXN-8EF1F397"
+  },
+  {
+    "id": 3,
+    "username": "user_1488",
+    "email": "user2@example.com",
+    "created_at": "2025-01-03T14:13:00Z",
+    "status": "active",
+    "login_count": 517,
+    "is_verified": null
+  },
+  {
+    "id": 4,
+    "username": "user_4257",
+    "email": "user3@example.com",
+    "created_at": "2025-01-05T10:41:00Z",
+    "status": "pending",
+    "login_count": 558,
+    "is_verified": false
+  },
+  {
+    "id": 5,
+    "username": "user_8359",
+    "email": "user4@example.com",
+    "created_at": "2025-01-06T06:17:00Z",
+    "status": "active",
+    "login_count": 777,
+    "is_verified": true
+  },
+  {
+    "id": 6,
+    "user_id": 6925,
+    "amount": -319.5,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-01-06T22:06:00Z",
+    "reference": "TXN-F61E2E69"
+  },
+  {
+    "id": 7,
+    "username": "user_7224",
+    "email": "user6@example.com",
+    "created_at": "2025-01-07T15:22:00Z",
+    "status": "inactive",
+    "login_count": 618,
+    "is_verified": false
+  },
+  {
+    "id": 8,
+    "username": "user_8527",
+    "email": "user7@example.com",
+    "created_at": "2025-01-09T05:07:00Z",
+    "status": "inactive",
+    "login_count": 80,
+    "is_verified": null
+  },
+  {
+    "id": 9,
+    "metric_name": "request_count",
+    "value": 109.96,
+    "timestamp": "2025-01-02T06:12:00Z",
+    "host": "server-03",
+    "region": "us-east-1"
+  },
+  {
+    "id": 10,
+    "user_id": 3734,
+    "amount": 546.14,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-01-10T15:24:00Z",
+    "reference": "TXN-7ADC1476"
+  },
+  {
+    "id": 11,
+    "metric_name": "latency_ms",
+    "value": 81.71,
+    "timestamp": "2025-01-02T08:53:00Z",
+    "host": "server-12",
+    "region": "us-east-1"
+  },
+  {
+    "id": 12,
+    "metric_name": "cpu_usage",
+    "value": 86.28,
+    "timestamp": "2025-01-02T07:40:00Z",
+    "host": "server-06",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 13,
+    "user_id": 4011,
+    "amount": -673.2,
+    "currency": "EUR",
+    "status": "pending",
+    "created_at": "2025-01-14T08:44:00Z",
+    "reference": "TXN-FD2C40F8"
+  },
+  {
+    "id": 14,
+    "user_id": 3599,
+    "amount": 369.23,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-01-14T13:51:00Z",
+    "reference": "TXN-687483BE"
+  },
+  {
+    "id": 15,
+    "metric_name": "latency_ms",
+    "value": 117.63,
+    "timestamp": "2025-01-01T20:04:00Z",
+    "host": "server-07",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 16,
+    "user_id": 5156,
+    "amount": -574.75,
+    "currency": "EUR",
+    "status": "pending",
+    "created_at": "2025-01-17T08:29:00Z",
+    "reference": "TXN-FC9D00F1"
+  },
+  {
+    "id": 17,
+    "username": "user_5339",
+    "email": "user16@example.com",
+    "created_at": "2025-01-17T16:15:00Z",
+    "status": "pending",
+    "login_count": 574,
+    "is_verified": null
+  },
+  {
+    "id": 18,
+    "metric_name": "latency_ms",
+    "value": 99.7,
+    "timestamp": "2025-01-01T23:14:00Z",
+    "host": "server-05",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 19,
+    "metric_name": "cpu_usage",
+    "value": 84.14,
+    "timestamp": "2025-01-01T13:55:00Z",
+    "host": "server-04",
+    "region": "us-east-1"
+  },
+  {
+    "id": 20,
+    "user_id": 2622,
+    "amount": 584.16,
+    "currency": "EUR",
+    "status": "failed",
+    "created_at": "2025-01-20T14:24:00Z",
+    "reference": "TXN-CA00D020"
+  },
+  {
+    "id": 21,
+    "metric_name": "request_count",
+    "value": 86.11,
+    "timestamp": "2025-01-02T05:55:00Z",
+    "host": "server-01",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 22,
+    "user_id": 1877,
+    "amount": 363.42,
+    "currency": "GBP",
+    "status": "pending",
+    "created_at": "2025-01-23T08:21:00Z",
+    "reference": "TXN-849CDFBF"
+  },
+  {
+    "id": 23,
+    "username": "user_5808",
+    "email": "user22@example.com",
+    "created_at": "2025-01-24T01:10:00Z",
+    "status": "inactive",
+    "login_count": 3,
+    "is_verified": null
+  },
+  {
+    "id": 24,
+    "user_id": 4316,
+    "amount": 943.78,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-01-24T15:55:00Z",
+    "reference": "TXN-D13AD38B"
+  },
+  {
+    "id": 25,
+    "user_id": 4890,
+    "amount": 683.34,
+    "currency": "GBP",
+    "status": "failed",
+    "created_at": "2025-01-25T18:09:00Z",
+    "reference": "TXN-09B2F4E4"
+  },
+  {
+    "id": 26,
+    "metric_name": "memory_mb",
+    "value": 90.45,
+    "timestamp": "2025-01-02T05:49:00Z",
+    "host": "server-17",
+    "region": "us-east-1"
+  },
+  {
+    "id": 27,
+    "user_id": 5311,
+    "amount": -22.79,
+    "currency": "USD",
+    "status": "pending",
+    "created_at": "2025-01-27T21:15:00Z",
+    "reference": "TXN-148EBB79"
+  },
+  {
+    "id": 28,
+    "username": "user_4946",
+    "email": "user27@example.com",
+    "created_at": "2025-01-29T06:05:00Z",
+    "status": "active",
+    "login_count": 749,
+    "is_verified": false
+  },
+  {
+    "id": 29,
+    "username": "user_9727",
+    "email": "user28@example.com",
+    "created_at": "2025-01-29T16:08:00Z",
+    "status": "pending",
+    "login_count": 486,
+    "is_verified": null
+  },
+  {
+    "id": 30,
+    "username": "user_5342",
+    "email": "user29@example.com",
+    "created_at": "2025-01-31T04:55:00Z",
+    "status": "pending",
+    "login_count": 433,
+    "is_verified": true
+  },
+  {
+    "id": 31,
+    "user_id": 3296,
+    "amount": 425.9,
+    "currency": "EUR",
+    "status": "failed",
+    "created_at": "2025-02-01T08:23:00Z",
+    "reference": "TXN-38395A87"
+  },
+  {
+    "id": 32,
+    "metric_name": "memory_mb",
+    "value": 113.28,
+    "timestamp": "2025-01-01T19:04:00Z",
+    "host": "server-11",
+    "region": "us-east-1"
+  },
+  {
+    "id": 33,
+    "user_id": 9076,
+    "amount": -539.77,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-02-02T14:45:00Z",
+    "reference": "TXN-3CB5E951"
+  },
+  {
+    "id": 34,
+    "user_id": 965,
+    "amount": -542.12,
+    "currency": "USD",
+    "status": "pending",
+    "created_at": "2025-02-03T14:32:00Z",
+    "reference": "TXN-1FC37212"
+  },
+  {
+    "id": 35,
+    "username": "user_5562",
+    "email": "user34@example.com",
+    "created_at": "2025-02-05T09:31:00Z",
+    "status": "active",
+    "login_count": 552,
+    "is_verified": true
+  },
+  {
+    "id": 36,
+    "user_id": 9356,
+    "amount": 152.42,
+    "currency": "USD",
+    "status": "pending",
+    "created_at": "2025-02-06T01:12:00Z",
+    "reference": "TXN-4AE21732"
+  },
+  {
+    "id": 37,
+    "username": "user_2588",
+    "email": "user36@example.com",
+    "created_at": "2025-02-07T09:27:00Z",
+    "status": "inactive",
+    "login_count": 433,
+    "is_verified": false
+  },
+  {
+    "id": 38,
+    "metric_name": "cpu_usage",
+    "value": 90.31,
+    "timestamp": "2025-01-02T09:41:00Z",
+    "host": "server-04",
+    "region": "us-east-1"
+  },
+  {
+    "id": 39,
+    "metric_name": "cpu_usage",
+    "value": 96.32,
+    "timestamp": "2025-01-01T19:12:00Z",
+    "host": "server-07",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 40,
+    "metric_name": "memory_mb",
+    "value": 73.32,
+    "timestamp": "2025-01-02T01:11:00Z",
+    "host": "server-09",
+    "region": "us-west-2"
+  },
+  {
+    "id": 41,
+    "username": "user_2235",
+    "email": "user40@example.com",
+    "created_at": "2025-02-11T02:51:00Z",
+    "status": "pending",
+    "login_count": 100,
+    "is_verified": true
+  },
+  {
+    "id": 42,
+    "user_id": 8857,
+    "amount": 672.06,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-02-11T17:26:00Z",
+    "reference": "TXN-37DD5824"
+  },
+  {
+    "id": 43,
+    "metric_name": "cpu_usage",
+    "value": 70.21,
+    "timestamp": "2025-01-01T17:24:00Z",
+    "host": "server-01",
+    "region": "us-west-2"
+  },
+  {
+    "id": 44,
+    "metric_name": "latency_ms",
+    "value": 103.51,
+    "timestamp": "2025-01-01T21:27:00Z",
+    "host": "server-18",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 45,
+    "user_id": 7974,
+    "amount": -690.41,
+    "currency": "EUR",
+    "status": "completed",
+    "created_at": "2025-02-14T13:37:00Z",
+    "reference": "TXN-C73A519A"
+  },
+  {
+    "id": 46,
+    "user_id": 8884,
+    "amount": -878.08,
+    "currency": "EUR",
+    "status": "completed",
+    "created_at": "2025-02-15T13:37:00Z",
+    "reference": "TXN-341FBB83"
+  },
+  {
+    "id": 47,
+    "metric_name": "memory_mb",
+    "value": 70.65,
+    "timestamp": "2025-01-01T13:32:00Z",
+    "host": "server-03",
+    "region": "us-east-1"
+  },
+  {
+    "id": 48,
+    "username": "user_2113",
+    "email": "user47@example.com",
+    "created_at": "2025-02-18T09:55:00Z",
+    "status": "active",
+    "login_count": 413,
+    "is_verified": true
+  },
+  {
+    "id": 49,
+    "user_id": 4034,
+    "amount": 157.84,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-02-18T14:26:00Z",
+    "reference": "TXN-59C8510C"
+  },
+  {
+    "id": 50,
+    "user_id": 9563,
+    "amount": 130.45,
+    "currency": "EUR",
+    "status": "pending",
+    "created_at": "2025-02-19T18:42:00Z",
+    "reference": "TXN-E4B7F704"
+  },
+  {
+    "id": 51,
+    "user_id": 5148,
+    "amount": -522.63,
+    "currency": "EUR",
+    "status": "completed",
+    "created_at": "2025-02-21T09:41:00Z",
+    "reference": "TXN-775EF5DD"
+  },
+  {
+    "id": 52,
+    "metric_name": "latency_ms",
+    "value": 99.47,
+    "timestamp": "2025-01-01T22:59:00Z",
+    "host": "server-03",
+    "region": "us-east-1"
+  },
+  {
+    "id": 53,
+    "metric_name": "cpu_usage",
+    "value": 86.03,
+    "timestamp": "2025-01-01T14:34:00Z",
+    "host": "server-07",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 54,
+    "metric_name": "memory_mb",
+    "value": 86.69,
+    "timestamp": "2025-01-01T23:56:00Z",
+    "host": "server-03",
+    "region": "us-east-1"
+  },
+  {
+    "id": 55,
+    "metric_name": "request_count",
+    "value": 96.49,
+    "timestamp": "2025-01-02T07:51:00Z",
+    "host": "server-17",
+    "region": "us-east-1"
+  },
+  {
+    "id": 56,
+    "user_id": 9087,
+    "amount": -401.24,
+    "currency": "GBP",
+    "status": "completed",
+    "created_at": "2025-02-25T16:16:00Z",
+    "reference": "TXN-08FB9BE4"
+  },
+  {
+    "id": 57,
+    "username": "user_2753",
+    "email": "user56@example.com",
+    "created_at": "2025-02-27T11:35:00Z",
+    "status": "active",
+    "login_count": 278,
+    "is_verified": false
+  },
+  {
+    "id": 58,
+    "user_id": 3451,
+    "amount": 435.22,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-02-28T08:54:00Z",
+    "reference": "TXN-316F9C80"
+  },
+  {
+    "id": 59,
+    "metric_name": "latency_ms",
+    "value": 115.72,
+    "timestamp": "2025-01-01T20:57:00Z",
+    "host": "server-02",
+    "region": "us-east-1"
+  },
+  {
+    "id": 60,
+    "user_id": 6940,
+    "amount": 658.7,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-03-01T22:49:00Z",
+    "reference": "TXN-AFA5E65C"
+  },
+  {
+    "id": 61,
+    "username": "user_5291",
+    "email": "user60@example.com",
+    "created_at": "2025-03-02T17:47:00Z",
+    "status": "inactive",
+    "login_count": 564,
+    "is_verified": null
+  },
+  {
+    "id": 62,
+    "metric_name": "memory_mb",
+    "value": 93.22,
+    "timestamp": "2025-01-02T05:02:00Z",
+    "host": "server-12",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 63,
+    "user_id": 2427,
+    "amount": -140.43,
+    "currency": "USD",
+    "status": "pending",
+    "created_at": "2025-03-04T23:57:00Z",
+    "reference": "TXN-65F9DB60"
+  },
+  {
+    "id": 64,
+    "username": "user_6862",
+    "email": "user63@example.com",
+    "created_at": "2025-03-05T18:43:00Z",
+    "status": "active",
+    "login_count": 682,
+    "is_verified": true
+  },
+  {
+    "id": 65,
+    "metric_name": "latency_ms",
+    "value": 97.27,
+    "timestamp": "2025-01-02T07:47:00Z",
+    "host": "server-05",
+    "region": "us-east-1"
+  },
+  {
+    "id": 66,
+    "username": "user_3900",
+    "email": "user65@example.com",
+    "created_at": "2025-03-08T01:01:00Z",
+    "status": "active",
+    "login_count": 754,
+    "is_verified": false
+  },
+  {
+    "id": 67,
+    "metric_name": "memory_mb",
+    "value": 109.66,
+    "timestamp": "2025-01-01T20:10:00Z",
+    "host": "server-04",
+    "region": "us-west-2"
+  },
+  {
+    "id": 68,
+    "username": "user_8711",
+    "email": "user67@example.com",
+    "created_at": "2025-03-09T19:12:00Z",
+    "status": "inactive",
+    "login_count": 358,
+    "is_verified": false
+  },
+  {
+    "id": 69,
+    "username": "user_4652",
+    "email": "user68@example.com",
+    "created_at": "2025-03-10T12:42:00Z",
+    "status": "active",
+    "login_count": 408,
+    "is_verified": false
+  },
+  {
+    "id": 70,
+    "metric_name": "cpu_usage",
+    "value": 71.63,
+    "timestamp": "2025-01-01T20:22:00Z",
+    "host": "server-17",
+    "region": "us-west-2"
+  },
+  {
+    "id": 71,
+    "user_id": 8786,
+    "amount": -337.7,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-03-12T20:11:00Z",
+    "reference": "TXN-D124101B"
+  },
+  {
+    "id": 72,
+    "user_id": 4350,
+    "amount": -923.49,
+    "currency": "GBP",
+    "status": "pending",
+    "created_at": "2025-03-13T23:46:00Z",
+    "reference": "TXN-E1CC35BB"
+  },
+  {
+    "id": 73,
+    "metric_name": "cpu_usage",
+    "value": 60.19,
+    "timestamp": "2025-01-02T00:57:00Z",
+    "host": "server-19",
+    "region": "us-east-1"
+  },
+  {
+    "id": 74,
+    "metric_name": "cpu_usage",
+    "value": 116.81,
+    "timestamp": "2025-01-02T10:27:00Z",
+    "host": "server-01",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 75,
+    "user_id": 3229,
+    "amount": -271.56,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-03-16T22:39:00Z",
+    "reference": "TXN-BA39C829"
+  },
+  {
+    "id": 76,
+    "metric_name": "request_count",
+    "value": 95.99,
+    "timestamp": "2025-01-02T04:19:00Z",
+    "host": "server-14",
+    "region": "us-west-2"
+  },
+  {
+    "id": 77,
+    "metric_name": "request_count",
+    "value": 93.38,
+    "timestamp": "2025-01-02T05:08:00Z",
+    "host": "server-07",
+    "region": "us-west-2"
+  },
+  {
+    "id": 78,
+    "user_id": 6212,
+    "amount": 354.64,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-03-20T06:19:00Z",
+    "reference": "TXN-21C20A49"
+  },
+  {
+    "id": 79,
+    "metric_name": "request_count",
+    "value": 99.59,
+    "timestamp": "2025-01-01T18:27:00Z",
+    "host": "server-19",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 80,
+    "user_id": 5280,
+    "amount": -70.02,
+    "currency": "EUR",
+    "status": "failed",
+    "created_at": "2025-03-21T18:32:00Z",
+    "reference": "TXN-062480D7"
+  },
+  {
+    "id": 81,
+    "metric_name": "memory_mb",
+    "value": 99.87,
+    "timestamp": "2025-01-02T09:05:00Z",
+    "host": "server-10",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 82,
+    "user_id": 5492,
+    "amount": -813.23,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-03-23T21:14:00Z",
+    "reference": "TXN-E23ED8F7"
+  },
+  {
+    "id": 83,
+    "username": "user_3414",
+    "email": "user82@example.com",
+    "created_at": "2025-03-24T12:02:00Z",
+    "status": "active",
+    "login_count": 486,
+    "is_verified": null
+  },
+  {
+    "id": 84,
+    "username": "user_8461",
+    "email": "user83@example.com",
+    "created_at": "2025-03-26T01:56:00Z",
+    "status": "pending",
+    "login_count": 589,
+    "is_verified": true
+  },
+  {
+    "id": 85,
+    "user_id": 6292,
+    "amount": -11.25,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-03-27T08:44:00Z",
+    "reference": "TXN-F0F351C9"
+  },
+  {
+    "id": 86,
+    "username": "user_2746",
+    "email": "user85@example.com",
+    "created_at": "2025-03-28T01:14:00Z",
+    "status": "active",
+    "login_count": 823,
+    "is_verified": null
+  },
+  {
+    "id": 87,
+    "user_id": 7612,
+    "amount": -899.56,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-03-29T02:08:00Z",
+    "reference": "TXN-5EAC3DFE"
+  },
+  {
+    "id": 88,
+    "metric_name": "request_count",
+    "value": 77.94,
+    "timestamp": "2025-01-02T02:39:00Z",
+    "host": "server-17",
+    "region": "us-west-2"
+  },
+  {
+    "id": 89,
+    "user_id": 7306,
+    "amount": 794.42,
+    "currency": "GBP",
+    "status": "pending",
+    "created_at": "2025-03-31T02:16:00Z",
+    "reference": "TXN-184B545E"
+  },
+  {
+    "id": 90,
+    "username": "user_5543",
+    "email": "user89@example.com",
+    "created_at": "2025-04-01T04:31:00Z",
+    "status": "pending",
+    "login_count": 244,
+    "is_verified": false
+  },
+  {
+    "id": 91,
+    "metric_name": "cpu_usage",
+    "value": 40.0,
+    "timestamp": "2025-01-02T10:18:00Z",
+    "host": "server-08",
+    "region": "us-west-2",
+    "is_anomaly": true
+  },
+  {
+    "id": 92,
+    "metric_name": "memory_mb",
+    "value": 92.07,
+    "timestamp": "2025-01-01T16:14:00Z",
+    "host": "server-13",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 93,
+    "username": "user_4505",
+    "email": "user92@example.com",
+    "created_at": "2025-04-03T14:26:00Z",
+    "status": "inactive",
+    "login_count": 338,
+    "is_verified": null
+  },
+  {
+    "id": 94,
+    "metric_name": "latency_ms",
+    "value": 116.93,
+    "timestamp": "2025-01-01T13:13:00Z",
+    "host": "server-14",
+    "region": "us-west-2"
+  },
+  {
+    "id": 95,
+    "user_id": 321,
+    "amount": 713.46,
+    "currency": "GBP",
+    "status": "pending",
+    "created_at": "2025-04-06T03:00:00Z",
+    "reference": "TXN-9211136E"
+  },
+  {
+    "id": 96,
+    "metric_name": "latency_ms",
+    "value": 95.52,
+    "timestamp": "2025-01-02T05:47:00Z",
+    "host": "server-18",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 97,
+    "username": "user_8999",
+    "email": "user96@example.com",
+    "created_at": "2025-04-07T19:17:00Z",
+    "status": "inactive",
+    "login_count": 497,
+    "is_verified": true
+  },
+  {
+    "id": 98,
+    "metric_name": "request_count",
+    "value": 114.22,
+    "timestamp": "2025-01-02T09:43:00Z",
+    "host": "server-13",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 99,
+    "username": "user_8657",
+    "email": "user98@example.com",
+    "created_at": "2025-04-09T16:39:00Z",
+    "status": "pending",
+    "login_count": 27,
+    "is_verified": false
+  },
+  {
+    "id": 100,
+    "user_id": 9247,
+    "amount": 326.0,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-04-11T01:08:00Z",
+    "reference": "TXN-622766F3"
+  },
+  {
+    "id": 101,
+    "metric_name": "request_count",
+    "value": 104.84,
+    "timestamp": "2025-01-02T18:29:00Z",
+    "host": "server-11",
+    "region": "us-west-2"
+  },
+  {
+    "id": 102,
+    "metric_name": "request_count",
+    "value": 110.59,
+    "timestamp": "2025-01-03T01:16:00Z",
+    "host": "server-03",
+    "region": "us-west-2"
+  },
+  {
+    "id": 103,
+    "username": "user_9837",
+    "email": "user102@example.com",
+    "created_at": "2025-04-13T13:22:00Z",
+    "status": "active",
+    "login_count": 665,
+    "is_verified": true
+  },
+  {
+    "id": 104,
+    "user_id": 660,
+    "amount": 508.47,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-04-14T12:39:00Z",
+    "reference": "TXN-C02A24E2"
+  },
+  {
+    "id": 105,
+    "username": "user_4908",
+    "email": "user104@example.com",
+    "created_at": "2025-04-15T16:30:00Z",
+    "status": "pending",
+    "login_count": 117,
+    "is_verified": null
+  },
+  {
+    "id": 106,
+    "username": "user_8619",
+    "email": "user105@example.com",
+    "created_at": "2025-04-17T10:16:00Z",
+    "status": "inactive",
+    "login_count": 171,
+    "is_verified": null
+  },
+  {
+    "id": 107,
+    "user_id": 1877,
+    "amount": 555.58,
+    "currency": "USD",
+    "status": "pending",
+    "created_at": "2025-04-17T15:37:00Z",
+    "reference": "TXN-093B8998"
+  },
+  {
+    "id": 108,
+    "username": "user_6111",
+    "email": "user107@example.com",
+    "created_at": "2025-04-19T06:43:00Z",
+    "status": "inactive",
+    "login_count": 406,
+    "is_verified": null
+  },
+  {
+    "id": 109,
+    "username": "user_2245",
+    "email": "user108@example.com",
+    "created_at": "2025-04-20T06:44:00Z",
+    "status": "pending",
+    "login_count": 248,
+    "is_verified": true
+  },
+  {
+    "id": 110,
+    "user_id": 4942,
+    "amount": 700.59,
+    "currency": "GBP",
+    "status": "completed",
+    "created_at": "2025-04-21T06:50:00Z",
+    "reference": "TXN-EEBF1CF8"
+  },
+  {
+    "id": 111,
+    "username": "user_6688",
+    "email": "user110@example.com",
+    "created_at": "2025-04-22T05:27:00Z",
+    "status": "pending",
+    "login_count": 379,
+    "is_verified": true
+  },
+  {
+    "id": 112,
+    "user_id": 5591,
+    "amount": -974.7,
+    "currency": "EUR",
+    "status": "pending",
+    "created_at": "2025-04-22T15:27:00Z",
+    "reference": "TXN-7C273DD3"
+  },
+  {
+    "id": 113,
+    "metric_name": "memory_mb",
+    "value": 81.44,
+    "timestamp": "2025-01-03T01:11:00Z",
+    "host": "server-17",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 114,
+    "metric_name": "latency_ms",
+    "value": 78.8,
+    "timestamp": "2025-01-03T02:27:00Z",
+    "host": "server-19",
+    "region": "us-west-2"
+  },
+  {
+    "id": 115,
+    "metric_name": "cpu_usage",
+    "value": 116.86,
+    "timestamp": "2025-01-02T20:56:00Z",
+    "host": "server-15",
+    "region": "us-east-1"
+  },
+  {
+    "id": 116,
+    "metric_name": "latency_ms",
+    "value": 77.31,
+    "timestamp": "2025-01-02T22:01:00Z",
+    "host": "server-16",
+    "region": "us-west-2"
+  },
+  {
+    "id": 117,
+    "username": "user_8988",
+    "email": "user116@example.com",
+    "created_at": "2025-04-27T18:22:00Z",
+    "status": "inactive",
+    "login_count": 348,
+    "is_verified": false
+  },
+  {
+    "id": 118,
+    "user_id": 4527,
+    "amount": 111.58,
+    "currency": "GBP",
+    "status": "completed",
+    "created_at": "2025-04-28T14:15:00Z",
+    "reference": "TXN-2BDC6402"
+  },
+  {
+    "id": 119,
+    "user_id": 6659,
+    "amount": -22.84,
+    "currency": "USD",
+    "status": "failed",
+    "created_at": "2025-04-30T03:41:00Z",
+    "reference": "TXN-688B5234"
+  },
+  {
+    "id": 120,
+    "user_id": 8042,
+    "amount": -103.65,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-04-30T21:14:00Z",
+    "reference": "TXN-0010EEB4"
+  },
+  {
+    "id": 121,
+    "metric_name": "request_count",
+    "value": 95.41,
+    "timestamp": "2025-01-03T03:35:00Z",
+    "host": "server-17",
+    "region": "us-west-2"
+  },
+  {
+    "id": 122,
+    "metric_name": "request_count",
+    "value": 88.02,
+    "timestamp": "2025-01-02T23:44:00Z",
+    "host": "server-15",
+    "region": "us-west-2"
+  },
+  {
+    "id": 123,
+    "metric_name": "memory_mb",
+    "value": 99.93,
+    "timestamp": "2025-01-02T22:07:00Z",
+    "host": "server-18",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 124,
+    "username": "user_4138",
+    "email": "user123@example.com",
+    "created_at": "2025-05-04T18:47:00Z",
+    "status": "inactive",
+    "login_count": 283,
+    "is_verified": null
+  },
+  {
+    "id": 125,
+    "user_id": 8596,
+    "amount": 193.58,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-05-05T21:14:00Z",
+    "reference": "TXN-35205EC5"
+  },
+  {
+    "id": 126,
+    "metric_name": "memory_mb",
+    "value": 107.61,
+    "timestamp": "2025-01-02T21:00:00Z",
+    "host": "server-18",
+    "region": "us-east-1"
+  },
+  {
+    "id": 127,
+    "metric_name": "request_count",
+    "value": 104.82,
+    "timestamp": "2025-01-03T10:08:00Z",
+    "host": "server-16",
+    "region": "us-east-1"
+  },
+  {
+    "id": 128,
+    "username": "user_5658",
+    "email": "user127@example.com",
+    "created_at": "2025-05-09T03:30:00Z",
+    "status": "inactive",
+    "login_count": 348,
+    "is_verified": true
+  },
+  {
+    "id": 129,
+    "username": "user_5136",
+    "email": "user128@example.com",
+    "created_at": "2025-05-10T03:07:00Z",
+    "status": "active",
+    "login_count": 410,
+    "is_verified": false
+  },
+  {
+    "id": 130,
+    "username": "user_1878",
+    "email": "user129@example.com",
+    "created_at": "2025-05-10T16:09:00Z",
+    "status": "pending",
+    "login_count": 971,
+    "is_verified": false
+  },
+  {
+    "id": 131,
+    "username": "user_5066",
+    "email": "user130@example.com",
+    "created_at": "2025-05-11T15:35:00Z",
+    "status": "inactive",
+    "login_count": 620,
+    "is_verified": null
+  },
+  {
+    "id": 132,
+    "user_id": 3698,
+    "amount": 551.39,
+    "currency": "EUR",
+    "status": "pending",
+    "created_at": "2025-05-13T02:19:00Z",
+    "reference": "TXN-D8A92D54"
+  },
+  {
+    "id": 133,
+    "user_id": 7026,
+    "amount": -389.24,
+    "currency": "GBP",
+    "status": "completed",
+    "created_at": "2025-05-14T07:47:00Z",
+    "reference": "TXN-21C4E993"
+  },
+  {
+    "id": 134,
+    "username": "user_4404",
+    "email": "user133@example.com",
+    "created_at": "2025-05-15T08:13:00Z",
+    "status": "inactive",
+    "login_count": 676,
+    "is_verified": true
+  },
+  {
+    "id": 135,
+    "username": "user_4929",
+    "email": "user134@example.com",
+    "created_at": "2025-05-15T17:35:00Z",
+    "status": "active",
+    "login_count": 160,
+    "is_verified": true
+  },
+  {
+    "id": 136,
+    "metric_name": "latency_ms",
+    "value": 40.0,
+    "timestamp": "2025-01-03T10:38:00Z",
+    "host": "server-16",
+    "region": "us-west-2",
+    "is_anomaly": true
+  },
+  {
+    "id": 137,
+    "username": "user_4792",
+    "email": "user136@example.com",
+    "created_at": "2025-05-17T21:45:00Z",
+    "status": "inactive",
+    "login_count": 719,
+    "is_verified": false
+  },
+  {
+    "id": 138,
+    "username": "user_4824",
+    "email": "user137@example.com",
+    "created_at": "2025-05-18T20:50:00Z",
+    "status": "pending",
+    "login_count": 603,
+    "is_verified": null
+  },
+  {
+    "id": 139,
+    "username": "user_7965",
+    "email": "user138@example.com",
+    "created_at": "2025-05-19T15:34:00Z",
+    "status": "active",
+    "login_count": 663,
+    "is_verified": true
+  },
+  {
+    "id": 140,
+    "metric_name": "memory_mb",
+    "value": 102.67,
+    "timestamp": "2025-01-02T21:38:00Z",
+    "host": "server-19",
+    "region": "us-west-2"
+  },
+  {
+    "id": 141,
+    "metric_name": "cpu_usage",
+    "value": 94.88,
+    "timestamp": "2025-01-03T02:44:00Z",
+    "host": "server-10",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 142,
+    "metric_name": "latency_ms",
+    "value": 116.54,
+    "timestamp": "2025-01-03T02:05:00Z",
+    "host": "server-20",
+    "region": "us-east-1"
+  },
+  {
+    "id": 143,
+    "metric_name": "request_count",
+    "value": 93.77,
+    "timestamp": "2025-01-03T07:16:00Z",
+    "host": "server-01",
+    "region": "us-east-1"
+  },
+  {
+    "id": 144,
+    "username": "user_1339",
+    "email": "user143@example.com",
+    "created_at": "2025-05-25T09:52:00Z",
+    "status": "inactive",
+    "login_count": 590,
+    "is_verified": true
+  },
+  {
+    "id": 145,
+    "username": "user_8708",
+    "email": "user144@example.com",
+    "created_at": "2025-05-26T04:41:00Z",
+    "status": "inactive",
+    "login_count": 938,
+    "is_verified": false
+  },
+  {
+    "id": 146,
+    "username": "user_8141",
+    "email": "user145@example.com",
+    "created_at": "2025-05-27T08:52:00Z",
+    "status": "inactive",
+    "login_count": 992,
+    "is_verified": true
+  },
+  {
+    "id": 147,
+    "metric_name": "cpu_usage",
+    "value": 92.2,
+    "timestamp": "2025-01-02T17:21:00Z",
+    "host": "server-14",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 148,
+    "metric_name": "request_count",
+    "value": 111.03,
+    "timestamp": "2025-01-03T09:25:00Z",
+    "host": "server-18",
+    "region": "us-east-1"
+  },
+  {
+    "id": 149,
+    "metric_name": "cpu_usage",
+    "value": 109.73,
+    "timestamp": "2025-01-03T00:55:00Z",
+    "host": "server-17",
+    "region": "us-east-1"
+  },
+  {
+    "id": 150,
+    "user_id": 8890,
+    "amount": -76.05,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-05-31T04:23:00Z",
+    "reference": "TXN-FEB14619"
+  },
+  {
+    "id": 151,
+    "user_id": 8168,
+    "amount": 250.82,
+    "currency": "USD",
+    "status": "completed",
+    "created_at": "2025-05-31T20:35:00Z",
+    "reference": "TXN-3A4D3D70"
+  },
+  {
+    "id": 152,
+    "username": "user_5719",
+    "email": "user151@example.com",
+    "created_at": "2025-06-02T02:56:00Z",
+    "status": "pending",
+    "login_count": 496,
+    "is_verified": true
+  },
+  {
+    "id": 153,
+    "username": "user_4920",
+    "email": "user152@example.com",
+    "created_at": "2025-06-03T10:10:00Z",
+    "status": "inactive",
+    "login_count": 564,
+    "is_verified": true
+  },
+  {
+    "id": 154,
+    "user_id": 6685,
+    "amount": -813.58,
+    "currency": "USD",
+    "status": "pending",
+    "created_at": "2025-06-03T15:41:00Z",
+    "reference": "TXN-F02C606F"
+  },
+  {
+    "id": 155,
+    "username": "user_9165",
+    "email": "user154@example.com",
+    "created_at": "2025-06-05T10:18:00Z",
+    "status": "pending",
+    "login_count": 722,
+    "is_verified": false
+  },
+  {
+    "id": 156,
+    "metric_name": "latency_ms",
+    "value": 106.01,
+    "timestamp": "2025-01-03T03:15:00Z",
+    "host": "server-15",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 157,
+    "username": "user_7284",
+    "email": "user156@example.com",
+    "created_at": "2025-06-06T18:58:00Z",
+    "status": "pending",
+    "login_count": 520,
+    "is_verified": null
+  },
+  {
+    "id": 158,
+    "username": "user_2143",
+    "email": "user157@example.com",
+    "created_at": "2025-06-07T20:49:00Z",
+    "status": "inactive",
+    "login_count": 348,
+    "is_verified": null
+  },
+  {
+    "id": 159,
+    "metric_name": "request_count",
+    "value": 105.25,
+    "timestamp": "2025-01-03T06:37:00Z",
+    "host": "server-16",
+    "region": "us-east-1"
+  },
+  {
+    "id": 160,
+    "metric_name": "latency_ms",
+    "value": 88.95,
+    "timestamp": "2025-01-02T23:21:00Z",
+    "host": "server-18",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 161,
+    "metric_name": "memory_mb",
+    "value": 87.3,
+    "timestamp": "2025-01-03T10:15:00Z",
+    "host": "server-19",
+    "region": "us-west-2"
+  },
+  {
+    "id": 162,
+    "username": "user_7730",
+    "email": "user161@example.com",
+    "created_at": "2025-06-11T13:20:00Z",
+    "status": "pending",
+    "login_count": 484,
+    "is_verified": null
+  },
+  {
+    "id": 163,
+    "metric_name": "latency_ms",
+    "value": 103.66,
+    "timestamp": "2025-01-03T09:50:00Z",
+    "host": "server-05",
+    "region": "us-west-2"
+  },
+  {
+    "id": 164,
+    "username": "user_3068",
+    "email": "user163@example.com",
+    "created_at": "2025-06-14T04:37:00Z",
+    "status": "inactive",
+    "login_count": 890,
+    "is_verified": true
+  },
+  {
+    "id": 165,
+    "metric_name": "cpu_usage",
+    "value": 126.69,
+    "timestamp": "2025-01-03T11:09:00Z",
+    "host": "server-14",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 166,
+    "username": "user_2225",
+    "email": "user165@example.com",
+    "created_at": "2025-06-16T03:50:00Z",
+    "status": "inactive",
+    "login_count": 346,
+    "is_verified": null
+  },
+  {
+    "id": 167,
+    "user_id": 6513,
+    "amount": 299.67,
+    "currency": "EUR",
+    "status": "failed",
+    "created_at": "2025-06-17T05:24:00Z",
+    "reference": "TXN-A733C2E9"
+  },
+  {
+    "id": 168,
+    "metric_name": "latency_ms",
+    "value": 119.32,
+    "timestamp": "2025-01-03T05:02:00Z",
+    "host": "server-20",
+    "region": "us-east-1"
+  },
+  {
+    "id": 169,
+    "username": "user_5708",
+    "email": "user168@example.com",
+    "created_at": "2025-06-18T19:47:00Z",
+    "status": "active",
+    "login_count": 444,
+    "is_verified": true
+  },
+  {
+    "id": 170,
+    "user_id": 1647,
+    "amount": -112.64,
+    "currency": "GBP",
+    "status": "pending",
+    "created_at": "2025-06-19T12:02:00Z",
+    "reference": "TXN-D68704FD"
+  },
+  {
+    "id": 171,
+    "metric_name": "request_count",
+    "value": 103.57,
+    "timestamp": "2025-01-03T01:09:00Z",
+    "host": "server-08",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 172,
+    "metric_name": "memory_mb",
+    "value": 88.02,
+    "timestamp": "2025-01-02T17:11:00Z",
+    "host": "server-03",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 173,
+    "metric_name": "memory_mb",
+    "value": 91.87,
+    "timestamp": "2025-01-02T19:29:00Z",
+    "host": "server-09",
+    "region": "us-west-2"
+  },
+  {
+    "id": 174,
+    "metric_name": "cpu_usage",
+    "value": 92.39,
+    "timestamp": "2025-01-03T02:57:00Z",
+    "host": "server-10",
+    "region": "eu-west-1"
+  },
+  {
+    "id": 175,
+    "user_id": 2589,
+    "amount": -852.28,
+    "currency": "EUR",
+    "status": "failed",
+    "created_at": "2025-06-24T21:40:00Z",
+    "reference": "TXN-411B1CA7"
+  },
+  {
+    "id": 176,
+    "metric_name": "request_count",
+    "value": 93.93,
+    "timestamp": "2025-01-02T18:24:00Z",
+    "host": "server-16",
+    "region": "us-east-1"
+  },
+  {
+    "id": 177,
+    "username": "user_7248",
+    "email": "user176@example.com",
+    "created_at": "2025-06-27T06:22:00Z",
+    "status": "pending",
+    "login_count": 302,
+    "is_verified": null
+  },
+  {
+    "id": 178,
+    "metric_name": "cpu_usage",
+    "value": 84.58,
+    "timestamp": "2025-01-03T09:25:00Z",
+    "host": "server-09",
+    "region": "us-east-1"
+  },
+  {
+    "id": 179,
+    "user_id": 804,
+    "amount": 821.23,
+    "currency": "GBP",
+    "status": "pending",
+    "created_at": "2025-06-28T21:49:00Z",
+    "reference": "TXN-4FA55580"
+  },
+  {
+    "id": 180,
+    "username": "user_6772",
+    "email": "user179@example.com",
+    "created_at": "2025-06-29T19:40:00Z",
+    "status": "active",
+    "login_count": 635,
+    "is_verified": false
+  }
+]

@@ -1,0 +1,2104 @@
+[
+  {
+    "timestamp": "2024-01-15T10:00:00Z",
+    "cpu_percent": 46.4,
+    "memory_percent": 59.2,
+    "requests_per_min": 970,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:01:00Z",
+    "cpu_percent": 42.4,
+    "memory_percent": 59.8,
+    "requests_per_min": 926,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:02:00Z",
+    "cpu_percent": 46.8,
+    "memory_percent": 64.4,
+    "requests_per_min": 922,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:03:00Z",
+    "cpu_percent": 45.9,
+    "memory_percent": 59.2,
+    "requests_per_min": 923,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:04:00Z",
+    "cpu_percent": 42.2,
+    "memory_percent": 62.0,
+    "requests_per_min": 906,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:05:00Z",
+    "cpu_percent": 45.6,
+    "memory_percent": 63.3,
+    "requests_per_min": 1079,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:06:00Z",
+    "cpu_percent": 45.4,
+    "memory_percent": 60.3,
+    "requests_per_min": 1050,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:07:00Z",
+    "cpu_percent": 42.8,
+    "memory_percent": 64.2,
+    "requests_per_min": 1094,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:08:00Z",
+    "cpu_percent": 48.1,
+    "memory_percent": 63.2,
+    "requests_per_min": 987,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:09:00Z",
+    "cpu_percent": 42.8,
+    "memory_percent": 60.3,
+    "requests_per_min": 1095,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:10:00Z",
+    "cpu_percent": 43.4,
+    "memory_percent": 59.6,
+    "requests_per_min": 924,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:11:00Z",
+    "cpu_percent": 43.6,
+    "memory_percent": 61.1,
+    "requests_per_min": 967,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:12:00Z",
+    "cpu_percent": 48.1,
+    "memory_percent": 63.4,
+    "requests_per_min": 1037,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:13:00Z",
+    "cpu_percent": 41.2,
+    "memory_percent": 64.5,
+    "requests_per_min": 920,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:14:00Z",
+    "cpu_percent": 45.5,
+    "memory_percent": 64.0,
+    "requests_per_min": 1058,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:15:00Z",
+    "cpu_percent": 48.9,
+    "memory_percent": 61.2,
+    "requests_per_min": 949,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:16:00Z",
+    "cpu_percent": 47.0,
+    "memory_percent": 59.3,
+    "requests_per_min": 958,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:17:00Z",
+    "cpu_percent": 47.7,
+    "memory_percent": 64.9,
+    "requests_per_min": 959,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:18:00Z",
+    "cpu_percent": 48.7,
+    "memory_percent": 61.3,
+    "requests_per_min": 1016,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:19:00Z",
+    "cpu_percent": 46.4,
+    "memory_percent": 61.2,
+    "requests_per_min": 994,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:20:00Z",
+    "cpu_percent": 43.6,
+    "memory_percent": 63.0,
+    "requests_per_min": 1079,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:21:00Z",
+    "cpu_percent": 49.4,
+    "memory_percent": 62.9,
+    "requests_per_min": 1055,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:22:00Z",
+    "cpu_percent": 46.3,
+    "memory_percent": 62.2,
+    "requests_per_min": 962,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:23:00Z",
+    "cpu_percent": 41.6,
+    "memory_percent": 61.3,
+    "requests_per_min": 1063,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:24:00Z",
+    "cpu_percent": 46.9,
+    "memory_percent": 60.3,
+    "requests_per_min": 983,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:25:00Z",
+    "cpu_percent": 48.4,
+    "memory_percent": 63.7,
+    "requests_per_min": 958,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:26:00Z",
+    "cpu_percent": 48.2,
+    "memory_percent": 63.8,
+    "requests_per_min": 1002,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:27:00Z",
+    "cpu_percent": 42.7,
+    "memory_percent": 60.3,
+    "requests_per_min": 1045,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:28:00Z",
+    "cpu_percent": 48.8,
+    "memory_percent": 60.9,
+    "requests_per_min": 1067,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:29:00Z",
+    "cpu_percent": 45.0,
+    "memory_percent": 64.3,
+    "requests_per_min": 1064,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:30:00Z",
+    "cpu_percent": 44.6,
+    "memory_percent": 60.6,
+    "requests_per_min": 963,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:31:00Z",
+    "cpu_percent": 47.4,
+    "memory_percent": 62.2,
+    "requests_per_min": 1091,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:32:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 64.4,
+    "requests_per_min": 1002,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:33:00Z",
+    "cpu_percent": 43.6,
+    "memory_percent": 65.0,
+    "requests_per_min": 935,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:34:00Z",
+    "cpu_percent": 45.1,
+    "memory_percent": 59.5,
+    "requests_per_min": 912,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:35:00Z",
+    "cpu_percent": 48.6,
+    "memory_percent": 59.9,
+    "requests_per_min": 940,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:36:00Z",
+    "cpu_percent": 47.9,
+    "memory_percent": 61.5,
+    "requests_per_min": 916,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:37:00Z",
+    "cpu_percent": 43.8,
+    "memory_percent": 62.6,
+    "requests_per_min": 1019,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:38:00Z",
+    "cpu_percent": 45.3,
+    "memory_percent": 64.8,
+    "requests_per_min": 902,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:39:00Z",
+    "cpu_percent": 46.8,
+    "memory_percent": 59.7,
+    "requests_per_min": 1037,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:40:00Z",
+    "cpu_percent": 47.5,
+    "memory_percent": 63.6,
+    "requests_per_min": 987,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:41:00Z",
+    "cpu_percent": 41.1,
+    "memory_percent": 61.6,
+    "requests_per_min": 1016,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:42:00Z",
+    "cpu_percent": 40.0,
+    "memory_percent": 63.3,
+    "requests_per_min": 1084,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:43:00Z",
+    "cpu_percent": 42.6,
+    "memory_percent": 62.0,
+    "requests_per_min": 945,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:44:00Z",
+    "cpu_percent": 45.1,
+    "memory_percent": 59.6,
+    "requests_per_min": 1060,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:45:00Z",
+    "cpu_percent": 43.0,
+    "memory_percent": 62.8,
+    "requests_per_min": 1055,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:46:00Z",
+    "cpu_percent": 42.0,
+    "memory_percent": 61.2,
+    "requests_per_min": 941,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:47:00Z",
+    "cpu_percent": 45.4,
+    "memory_percent": 63.7,
+    "requests_per_min": 1035,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:48:00Z",
+    "cpu_percent": 49.2,
+    "memory_percent": 62.6,
+    "requests_per_min": 1025,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:49:00Z",
+    "cpu_percent": 40.2,
+    "memory_percent": 64.6,
+    "requests_per_min": 978,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:50:00Z",
+    "cpu_percent": 95.0,
+    "memory_percent": 88.0,
+    "requests_per_min": 5000,
+    "status": "ok",
+    "event": "traffic_spike"
+  },
+  {
+    "timestamp": "2024-01-15T10:51:00Z",
+    "cpu_percent": 42.4,
+    "memory_percent": 60.4,
+    "requests_per_min": 1045,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:52:00Z",
+    "cpu_percent": 49.5,
+    "memory_percent": 59.5,
+    "requests_per_min": 1024,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:53:00Z",
+    "cpu_percent": 48.2,
+    "memory_percent": 64.9,
+    "requests_per_min": 1036,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:54:00Z",
+    "cpu_percent": 47.7,
+    "memory_percent": 59.8,
+    "requests_per_min": 1021,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:55:00Z",
+    "cpu_percent": 49.5,
+    "memory_percent": 60.0,
+    "requests_per_min": 1035,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:56:00Z",
+    "cpu_percent": 48.7,
+    "memory_percent": 61.5,
+    "requests_per_min": 954,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:57:00Z",
+    "cpu_percent": 49.3,
+    "memory_percent": 63.5,
+    "requests_per_min": 1076,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:58:00Z",
+    "cpu_percent": 42.0,
+    "memory_percent": 60.9,
+    "requests_per_min": 1071,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T10:59:00Z",
+    "cpu_percent": 46.5,
+    "memory_percent": 61.6,
+    "requests_per_min": 1032,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:00:00Z",
+    "cpu_percent": 44.5,
+    "memory_percent": 60.5,
+    "requests_per_min": 916,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:01:00Z",
+    "cpu_percent": 43.4,
+    "memory_percent": 62.5,
+    "requests_per_min": 958,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:02:00Z",
+    "cpu_percent": 45.9,
+    "memory_percent": 59.0,
+    "requests_per_min": 1081,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:03:00Z",
+    "cpu_percent": 46.3,
+    "memory_percent": 60.4,
+    "requests_per_min": 908,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:04:00Z",
+    "cpu_percent": 48.6,
+    "memory_percent": 59.4,
+    "requests_per_min": 960,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:05:00Z",
+    "cpu_percent": 42.8,
+    "memory_percent": 61.9,
+    "requests_per_min": 1038,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:06:00Z",
+    "cpu_percent": 41.3,
+    "memory_percent": 64.6,
+    "requests_per_min": 1046,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:07:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 60.5,
+    "requests_per_min": 1021,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:08:00Z",
+    "cpu_percent": 48.1,
+    "memory_percent": 60.1,
+    "requests_per_min": 924,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:09:00Z",
+    "cpu_percent": 46.6,
+    "memory_percent": 61.1,
+    "requests_per_min": 1005,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:10:00Z",
+    "cpu_percent": 44.7,
+    "memory_percent": 63.4,
+    "requests_per_min": 1072,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:11:00Z",
+    "cpu_percent": 46.5,
+    "memory_percent": 62.9,
+    "requests_per_min": 915,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:12:00Z",
+    "cpu_percent": 44.0,
+    "memory_percent": 61.0,
+    "requests_per_min": 927,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:13:00Z",
+    "cpu_percent": 42.5,
+    "memory_percent": 60.1,
+    "requests_per_min": 1014,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:14:00Z",
+    "cpu_percent": 41.4,
+    "memory_percent": 60.1,
+    "requests_per_min": 1018,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:15:00Z",
+    "cpu_percent": 42.5,
+    "memory_percent": 64.5,
+    "requests_per_min": 1013,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:16:00Z",
+    "cpu_percent": 48.1,
+    "memory_percent": 64.1,
+    "requests_per_min": 925,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:17:00Z",
+    "cpu_percent": 40.5,
+    "memory_percent": 65.0,
+    "requests_per_min": 903,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:18:00Z",
+    "cpu_percent": 49.7,
+    "memory_percent": 64.6,
+    "requests_per_min": 960,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:19:00Z",
+    "cpu_percent": 41.7,
+    "memory_percent": 61.9,
+    "requests_per_min": 954,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:20:00Z",
+    "cpu_percent": 48.6,
+    "memory_percent": 64.4,
+    "requests_per_min": 942,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:21:00Z",
+    "cpu_percent": 43.8,
+    "memory_percent": 64.9,
+    "requests_per_min": 967,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:22:00Z",
+    "cpu_percent": 49.3,
+    "memory_percent": 63.7,
+    "requests_per_min": 973,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:23:00Z",
+    "cpu_percent": 44.2,
+    "memory_percent": 64.7,
+    "requests_per_min": 1100,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:24:00Z",
+    "cpu_percent": 45.6,
+    "memory_percent": 63.3,
+    "requests_per_min": 939,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:25:00Z",
+    "cpu_percent": 41.9,
+    "memory_percent": 60.3,
+    "requests_per_min": 914,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:26:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 62.3,
+    "requests_per_min": 1091,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:27:00Z",
+    "cpu_percent": 43.1,
+    "memory_percent": 59.3,
+    "requests_per_min": 1022,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:28:00Z",
+    "cpu_percent": 45.0,
+    "memory_percent": 64.1,
+    "requests_per_min": 940,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:29:00Z",
+    "cpu_percent": 40.6,
+    "memory_percent": 62.0,
+    "requests_per_min": 947,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:30:00Z",
+    "cpu_percent": 40.7,
+    "memory_percent": 59.4,
+    "requests_per_min": 960,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:31:00Z",
+    "cpu_percent": 44.0,
+    "memory_percent": 64.6,
+    "requests_per_min": 1045,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:32:00Z",
+    "cpu_percent": 42.5,
+    "memory_percent": 62.6,
+    "requests_per_min": 1058,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:33:00Z",
+    "cpu_percent": 40.8,
+    "memory_percent": 62.9,
+    "requests_per_min": 1044,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:34:00Z",
+    "cpu_percent": 45.2,
+    "memory_percent": 64.6,
+    "requests_per_min": 952,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:35:00Z",
+    "cpu_percent": 46.7,
+    "memory_percent": 60.9,
+    "requests_per_min": 967,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:36:00Z",
+    "cpu_percent": 44.0,
+    "memory_percent": 63.0,
+    "requests_per_min": 976,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:37:00Z",
+    "cpu_percent": 44.6,
+    "memory_percent": 64.6,
+    "requests_per_min": 918,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:38:00Z",
+    "cpu_percent": 40.1,
+    "memory_percent": 62.7,
+    "requests_per_min": 1044,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:39:00Z",
+    "cpu_percent": 50.0,
+    "memory_percent": 59.4,
+    "requests_per_min": 954,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:40:00Z",
+    "cpu_percent": 45.1,
+    "memory_percent": 59.8,
+    "requests_per_min": 989,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:41:00Z",
+    "cpu_percent": 48.8,
+    "memory_percent": 64.3,
+    "requests_per_min": 994,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:42:00Z",
+    "cpu_percent": 42.8,
+    "memory_percent": 61.6,
+    "requests_per_min": 1039,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:43:00Z",
+    "cpu_percent": 47.0,
+    "memory_percent": 62.7,
+    "requests_per_min": 1067,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:44:00Z",
+    "cpu_percent": 45.3,
+    "memory_percent": 63.0,
+    "requests_per_min": 1041,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:45:00Z",
+    "cpu_percent": 43.0,
+    "memory_percent": 63.0,
+    "requests_per_min": 934,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:46:00Z",
+    "cpu_percent": 42.6,
+    "memory_percent": 64.3,
+    "requests_per_min": 1090,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:47:00Z",
+    "cpu_percent": 45.5,
+    "memory_percent": 60.6,
+    "requests_per_min": 1054,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:48:00Z",
+    "cpu_percent": 42.1,
+    "memory_percent": 61.1,
+    "requests_per_min": 1075,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:49:00Z",
+    "cpu_percent": 46.3,
+    "memory_percent": 60.6,
+    "requests_per_min": 1025,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:50:00Z",
+    "cpu_percent": 42.5,
+    "memory_percent": 64.4,
+    "requests_per_min": 913,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:51:00Z",
+    "cpu_percent": 40.9,
+    "memory_percent": 61.5,
+    "requests_per_min": 970,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:52:00Z",
+    "cpu_percent": 40.4,
+    "memory_percent": 61.0,
+    "requests_per_min": 933,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:53:00Z",
+    "cpu_percent": 46.4,
+    "memory_percent": 60.6,
+    "requests_per_min": 1089,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:54:00Z",
+    "cpu_percent": 44.4,
+    "memory_percent": 63.2,
+    "requests_per_min": 1043,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:55:00Z",
+    "cpu_percent": 40.1,
+    "memory_percent": 59.5,
+    "requests_per_min": 1076,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:56:00Z",
+    "cpu_percent": 49.0,
+    "memory_percent": 62.3,
+    "requests_per_min": 994,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:57:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 59.9,
+    "requests_per_min": 932,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:58:00Z",
+    "cpu_percent": 40.4,
+    "memory_percent": 61.2,
+    "requests_per_min": 910,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T11:59:00Z",
+    "cpu_percent": 49.0,
+    "memory_percent": 60.3,
+    "requests_per_min": 963,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:00:00Z",
+    "cpu_percent": 46.7,
+    "memory_percent": 61.1,
+    "requests_per_min": 1043,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:01:00Z",
+    "cpu_percent": 48.8,
+    "memory_percent": 61.4,
+    "requests_per_min": 1058,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:02:00Z",
+    "cpu_percent": 47.5,
+    "memory_percent": 64.6,
+    "requests_per_min": 960,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:03:00Z",
+    "cpu_percent": 48.6,
+    "memory_percent": 64.9,
+    "requests_per_min": 945,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:04:00Z",
+    "cpu_percent": 48.8,
+    "memory_percent": 59.1,
+    "requests_per_min": 1088,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:05:00Z",
+    "cpu_percent": 49.2,
+    "memory_percent": 63.7,
+    "requests_per_min": 1005,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:06:00Z",
+    "cpu_percent": 48.0,
+    "memory_percent": 64.2,
+    "requests_per_min": 963,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:07:00Z",
+    "cpu_percent": 42.7,
+    "memory_percent": 63.7,
+    "requests_per_min": 927,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:08:00Z",
+    "cpu_percent": 43.8,
+    "memory_percent": 59.2,
+    "requests_per_min": 1020,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:09:00Z",
+    "cpu_percent": 42.2,
+    "memory_percent": 63.9,
+    "requests_per_min": 1017,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:10:00Z",
+    "cpu_percent": 43.5,
+    "memory_percent": 63.9,
+    "requests_per_min": 958,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:11:00Z",
+    "cpu_percent": 42.2,
+    "memory_percent": 63.0,
+    "requests_per_min": 1002,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:12:00Z",
+    "cpu_percent": 43.3,
+    "memory_percent": 64.2,
+    "requests_per_min": 1097,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:13:00Z",
+    "cpu_percent": 42.8,
+    "memory_percent": 62.8,
+    "requests_per_min": 1002,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:14:00Z",
+    "cpu_percent": 46.8,
+    "memory_percent": 64.1,
+    "requests_per_min": 984,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:15:00Z",
+    "cpu_percent": 49.4,
+    "memory_percent": 59.7,
+    "requests_per_min": 966,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:16:00Z",
+    "cpu_percent": 41.8,
+    "memory_percent": 64.8,
+    "requests_per_min": 967,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:17:00Z",
+    "cpu_percent": 40.4,
+    "memory_percent": 62.6,
+    "requests_per_min": 988,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:18:00Z",
+    "cpu_percent": 47.3,
+    "memory_percent": 60.9,
+    "requests_per_min": 1055,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:19:00Z",
+    "cpu_percent": 49.8,
+    "memory_percent": 59.7,
+    "requests_per_min": 1047,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:20:00Z",
+    "cpu_percent": 41.9,
+    "memory_percent": 59.3,
+    "requests_per_min": 1011,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:21:00Z",
+    "cpu_percent": 40.0,
+    "memory_percent": 64.6,
+    "requests_per_min": 1037,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:22:00Z",
+    "cpu_percent": 46.9,
+    "memory_percent": 64.6,
+    "requests_per_min": 1088,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:23:00Z",
+    "cpu_percent": 46.7,
+    "memory_percent": 61.2,
+    "requests_per_min": 917,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:24:00Z",
+    "cpu_percent": 49.5,
+    "memory_percent": 64.5,
+    "requests_per_min": 1059,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:25:00Z",
+    "cpu_percent": 43.1,
+    "memory_percent": 64.1,
+    "requests_per_min": 1084,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:26:00Z",
+    "cpu_percent": 49.0,
+    "memory_percent": 62.0,
+    "requests_per_min": 1070,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:27:00Z",
+    "cpu_percent": 44.1,
+    "memory_percent": 61.4,
+    "requests_per_min": 975,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:28:00Z",
+    "cpu_percent": 45.5,
+    "memory_percent": 60.2,
+    "requests_per_min": 1070,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:29:00Z",
+    "cpu_percent": 49.4,
+    "memory_percent": 63.1,
+    "requests_per_min": 944,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:30:00Z",
+    "cpu_percent": 46.2,
+    "memory_percent": 60.8,
+    "requests_per_min": 1040,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:31:00Z",
+    "cpu_percent": 48.3,
+    "memory_percent": 60.8,
+    "requests_per_min": 953,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:32:00Z",
+    "cpu_percent": 44.3,
+    "memory_percent": 62.5,
+    "requests_per_min": 1067,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:33:00Z",
+    "cpu_percent": 43.2,
+    "memory_percent": 61.7,
+    "requests_per_min": 1072,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:34:00Z",
+    "cpu_percent": 42.1,
+    "memory_percent": 61.8,
+    "requests_per_min": 1088,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:35:00Z",
+    "cpu_percent": 41.7,
+    "memory_percent": 59.5,
+    "requests_per_min": 1031,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:36:00Z",
+    "cpu_percent": 46.6,
+    "memory_percent": 62.7,
+    "requests_per_min": 923,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:37:00Z",
+    "cpu_percent": 48.2,
+    "memory_percent": 63.5,
+    "requests_per_min": 1072,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:38:00Z",
+    "cpu_percent": 43.1,
+    "memory_percent": 63.8,
+    "requests_per_min": 937,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:39:00Z",
+    "cpu_percent": 40.2,
+    "memory_percent": 60.5,
+    "requests_per_min": 1021,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:40:00Z",
+    "cpu_percent": 46.1,
+    "memory_percent": 63.6,
+    "requests_per_min": 1016,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:41:00Z",
+    "cpu_percent": 44.1,
+    "memory_percent": 62.8,
+    "requests_per_min": 949,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:42:00Z",
+    "cpu_percent": 47.2,
+    "memory_percent": 61.3,
+    "requests_per_min": 1002,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:43:00Z",
+    "cpu_percent": 42.4,
+    "memory_percent": 62.9,
+    "requests_per_min": 901,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:44:00Z",
+    "cpu_percent": 48.9,
+    "memory_percent": 64.2,
+    "requests_per_min": 927,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:45:00Z",
+    "cpu_percent": 47.8,
+    "memory_percent": 60.3,
+    "requests_per_min": 1078,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:46:00Z",
+    "cpu_percent": 45.2,
+    "memory_percent": 59.3,
+    "requests_per_min": 963,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:47:00Z",
+    "cpu_percent": 49.2,
+    "memory_percent": 59.7,
+    "requests_per_min": 934,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:48:00Z",
+    "cpu_percent": 48.0,
+    "memory_percent": 63.0,
+    "requests_per_min": 1043,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:49:00Z",
+    "cpu_percent": 46.0,
+    "memory_percent": 64.7,
+    "requests_per_min": 1013,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:50:00Z",
+    "cpu_percent": 46.1,
+    "memory_percent": 63.3,
+    "requests_per_min": 1029,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:51:00Z",
+    "cpu_percent": 44.3,
+    "memory_percent": 64.4,
+    "requests_per_min": 1014,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:52:00Z",
+    "cpu_percent": 49.0,
+    "memory_percent": 63.5,
+    "requests_per_min": 1021,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:53:00Z",
+    "cpu_percent": 44.5,
+    "memory_percent": 63.5,
+    "requests_per_min": 1063,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:54:00Z",
+    "cpu_percent": 42.8,
+    "memory_percent": 63.7,
+    "requests_per_min": 1024,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:55:00Z",
+    "cpu_percent": 46.3,
+    "memory_percent": 60.6,
+    "requests_per_min": 919,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:56:00Z",
+    "cpu_percent": 47.1,
+    "memory_percent": 60.4,
+    "requests_per_min": 985,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:57:00Z",
+    "cpu_percent": 43.2,
+    "memory_percent": 62.2,
+    "requests_per_min": 935,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:58:00Z",
+    "cpu_percent": 41.5,
+    "memory_percent": 61.3,
+    "requests_per_min": 939,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T12:59:00Z",
+    "cpu_percent": 47.1,
+    "memory_percent": 59.4,
+    "requests_per_min": 1004,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:00:00Z",
+    "cpu_percent": 43.3,
+    "memory_percent": 61.8,
+    "requests_per_min": 915,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:01:00Z",
+    "cpu_percent": 42.1,
+    "memory_percent": 61.5,
+    "requests_per_min": 1097,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:02:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 63.2,
+    "requests_per_min": 1095,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:03:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 61.9,
+    "requests_per_min": 990,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:04:00Z",
+    "cpu_percent": 43.0,
+    "memory_percent": 61.3,
+    "requests_per_min": 1007,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:05:00Z",
+    "cpu_percent": 45.4,
+    "memory_percent": 63.4,
+    "requests_per_min": 1054,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:06:00Z",
+    "cpu_percent": 49.0,
+    "memory_percent": 61.9,
+    "requests_per_min": 969,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:07:00Z",
+    "cpu_percent": 44.4,
+    "memory_percent": 59.2,
+    "requests_per_min": 986,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:08:00Z",
+    "cpu_percent": 46.7,
+    "memory_percent": 63.8,
+    "requests_per_min": 1085,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:09:00Z",
+    "cpu_percent": 41.7,
+    "memory_percent": 61.8,
+    "requests_per_min": 932,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:10:00Z",
+    "cpu_percent": 49.8,
+    "memory_percent": 62.2,
+    "requests_per_min": 1000,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:11:00Z",
+    "cpu_percent": 45.9,
+    "memory_percent": 63.0,
+    "requests_per_min": 921,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:12:00Z",
+    "cpu_percent": 46.4,
+    "memory_percent": 59.8,
+    "requests_per_min": 1018,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:13:00Z",
+    "cpu_percent": 41.8,
+    "memory_percent": 60.6,
+    "requests_per_min": 983,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:14:00Z",
+    "cpu_percent": 42.1,
+    "memory_percent": 61.0,
+    "requests_per_min": 1094,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:15:00Z",
+    "cpu_percent": 48.8,
+    "memory_percent": 60.7,
+    "requests_per_min": 1007,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:16:00Z",
+    "cpu_percent": 42.5,
+    "memory_percent": 59.5,
+    "requests_per_min": 904,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:17:00Z",
+    "cpu_percent": 47.5,
+    "memory_percent": 59.3,
+    "requests_per_min": 989,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:18:00Z",
+    "cpu_percent": 42.2,
+    "memory_percent": 59.4,
+    "requests_per_min": 1066,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:19:00Z",
+    "cpu_percent": 40.4,
+    "memory_percent": 59.2,
+    "requests_per_min": 963,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:20:00Z",
+    "cpu_percent": 98.0,
+    "memory_percent": 95.0,
+    "requests_per_min": 150,
+    "status": "degraded",
+    "event": "service_degradation"
+  },
+  {
+    "timestamp": "2024-01-15T13:21:00Z",
+    "cpu_percent": 42.0,
+    "memory_percent": 59.1,
+    "requests_per_min": 939,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:22:00Z",
+    "cpu_percent": 42.4,
+    "memory_percent": 61.8,
+    "requests_per_min": 929,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:23:00Z",
+    "cpu_percent": 45.6,
+    "memory_percent": 60.3,
+    "requests_per_min": 1079,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:24:00Z",
+    "cpu_percent": 42.6,
+    "memory_percent": 61.2,
+    "requests_per_min": 1055,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:25:00Z",
+    "cpu_percent": 46.1,
+    "memory_percent": 63.5,
+    "requests_per_min": 929,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:26:00Z",
+    "cpu_percent": 47.8,
+    "memory_percent": 60.0,
+    "requests_per_min": 979,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:27:00Z",
+    "cpu_percent": 41.1,
+    "memory_percent": 59.2,
+    "requests_per_min": 979,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:28:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 64.4,
+    "requests_per_min": 996,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:29:00Z",
+    "cpu_percent": 44.0,
+    "memory_percent": 63.3,
+    "requests_per_min": 919,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:30:00Z",
+    "cpu_percent": 45.9,
+    "memory_percent": 64.0,
+    "requests_per_min": 962,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:31:00Z",
+    "cpu_percent": 41.0,
+    "memory_percent": 63.6,
+    "requests_per_min": 1075,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:32:00Z",
+    "cpu_percent": 46.0,
+    "memory_percent": 59.7,
+    "requests_per_min": 1044,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:33:00Z",
+    "cpu_percent": 47.8,
+    "memory_percent": 61.1,
+    "requests_per_min": 1009,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:34:00Z",
+    "cpu_percent": 46.6,
+    "memory_percent": 59.4,
+    "requests_per_min": 1065,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:35:00Z",
+    "cpu_percent": 43.4,
+    "memory_percent": 64.1,
+    "requests_per_min": 1025,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:36:00Z",
+    "cpu_percent": 41.1,
+    "memory_percent": 64.8,
+    "requests_per_min": 1062,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:37:00Z",
+    "cpu_percent": 48.9,
+    "memory_percent": 61.8,
+    "requests_per_min": 939,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:38:00Z",
+    "cpu_percent": 44.4,
+    "memory_percent": 63.4,
+    "requests_per_min": 1066,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:39:00Z",
+    "cpu_percent": 42.7,
+    "memory_percent": 63.8,
+    "requests_per_min": 1037,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:40:00Z",
+    "cpu_percent": 47.7,
+    "memory_percent": 61.8,
+    "requests_per_min": 1087,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:41:00Z",
+    "cpu_percent": 45.9,
+    "memory_percent": 60.9,
+    "requests_per_min": 962,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:42:00Z",
+    "cpu_percent": 48.3,
+    "memory_percent": 59.5,
+    "requests_per_min": 1015,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:43:00Z",
+    "cpu_percent": 42.4,
+    "memory_percent": 61.8,
+    "requests_per_min": 1056,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:44:00Z",
+    "cpu_percent": 46.7,
+    "memory_percent": 61.0,
+    "requests_per_min": 1026,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:45:00Z",
+    "cpu_percent": 48.5,
+    "memory_percent": 60.1,
+    "requests_per_min": 954,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:46:00Z",
+    "cpu_percent": 43.5,
+    "memory_percent": 60.6,
+    "requests_per_min": 971,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:47:00Z",
+    "cpu_percent": 48.8,
+    "memory_percent": 63.2,
+    "requests_per_min": 970,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:48:00Z",
+    "cpu_percent": 45.6,
+    "memory_percent": 62.1,
+    "requests_per_min": 948,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:49:00Z",
+    "cpu_percent": 40.9,
+    "memory_percent": 63.3,
+    "requests_per_min": 1025,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:50:00Z",
+    "cpu_percent": 45.6,
+    "memory_percent": 60.4,
+    "requests_per_min": 1021,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:51:00Z",
+    "cpu_percent": 46.5,
+    "memory_percent": 61.9,
+    "requests_per_min": 904,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:52:00Z",
+    "cpu_percent": 40.9,
+    "memory_percent": 60.3,
+    "requests_per_min": 1077,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:53:00Z",
+    "cpu_percent": 42.4,
+    "memory_percent": 63.0,
+    "requests_per_min": 994,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:54:00Z",
+    "cpu_percent": 44.7,
+    "memory_percent": 62.2,
+    "requests_per_min": 1008,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:55:00Z",
+    "cpu_percent": 50.0,
+    "memory_percent": 62.3,
+    "requests_per_min": 990,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:56:00Z",
+    "cpu_percent": 47.0,
+    "memory_percent": 60.6,
+    "requests_per_min": 964,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:57:00Z",
+    "cpu_percent": 42.3,
+    "memory_percent": 63.3,
+    "requests_per_min": 980,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:58:00Z",
+    "cpu_percent": 41.2,
+    "memory_percent": 62.2,
+    "requests_per_min": 1095,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T13:59:00Z",
+    "cpu_percent": 46.9,
+    "memory_percent": 60.1,
+    "requests_per_min": 1089,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:00:00Z",
+    "cpu_percent": 44.8,
+    "memory_percent": 63.3,
+    "requests_per_min": 1094,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:01:00Z",
+    "cpu_percent": 45.2,
+    "memory_percent": 60.7,
+    "requests_per_min": 925,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:02:00Z",
+    "cpu_percent": 48.3,
+    "memory_percent": 60.8,
+    "requests_per_min": 992,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:03:00Z",
+    "cpu_percent": 41.8,
+    "memory_percent": 59.1,
+    "requests_per_min": 1036,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:04:00Z",
+    "cpu_percent": 41.3,
+    "memory_percent": 59.3,
+    "requests_per_min": 913,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:05:00Z",
+    "cpu_percent": 45.5,
+    "memory_percent": 63.2,
+    "requests_per_min": 932,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:06:00Z",
+    "cpu_percent": 46.4,
+    "memory_percent": 63.5,
+    "requests_per_min": 926,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:07:00Z",
+    "cpu_percent": 48.7,
+    "memory_percent": 62.4,
+    "requests_per_min": 1020,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:08:00Z",
+    "cpu_percent": 44.8,
+    "memory_percent": 61.0,
+    "requests_per_min": 913,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:09:00Z",
+    "cpu_percent": 42.5,
+    "memory_percent": 64.2,
+    "requests_per_min": 929,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:10:00Z",
+    "cpu_percent": 48.2,
+    "memory_percent": 61.4,
+    "requests_per_min": 918,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:11:00Z",
+    "cpu_percent": 45.8,
+    "memory_percent": 63.1,
+    "requests_per_min": 938,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:12:00Z",
+    "cpu_percent": 41.5,
+    "memory_percent": 62.4,
+    "requests_per_min": 977,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:13:00Z",
+    "cpu_percent": 40.9,
+    "memory_percent": 60.5,
+    "requests_per_min": 1042,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:14:00Z",
+    "cpu_percent": 47.6,
+    "memory_percent": 62.6,
+    "requests_per_min": 1058,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:15:00Z",
+    "cpu_percent": 42.3,
+    "memory_percent": 62.1,
+    "requests_per_min": 1015,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:16:00Z",
+    "cpu_percent": 49.1,
+    "memory_percent": 60.8,
+    "requests_per_min": 1050,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:17:00Z",
+    "cpu_percent": 49.9,
+    "memory_percent": 60.8,
+    "requests_per_min": 1058,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:18:00Z",
+    "cpu_percent": 40.6,
+    "memory_percent": 64.8,
+    "requests_per_min": 925,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:19:00Z",
+    "cpu_percent": 49.5,
+    "memory_percent": 60.2,
+    "requests_per_min": 954,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:20:00Z",
+    "cpu_percent": 42.6,
+    "memory_percent": 59.5,
+    "requests_per_min": 961,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:21:00Z",
+    "cpu_percent": 41.7,
+    "memory_percent": 59.5,
+    "requests_per_min": 900,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:22:00Z",
+    "cpu_percent": 44.1,
+    "memory_percent": 63.1,
+    "requests_per_min": 1020,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:23:00Z",
+    "cpu_percent": 42.9,
+    "memory_percent": 60.4,
+    "requests_per_min": 1080,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:24:00Z",
+    "cpu_percent": 42.8,
+    "memory_percent": 64.2,
+    "requests_per_min": 918,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:25:00Z",
+    "cpu_percent": 46.9,
+    "memory_percent": 64.5,
+    "requests_per_min": 1060,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:26:00Z",
+    "cpu_percent": 45.9,
+    "memory_percent": 63.8,
+    "requests_per_min": 950,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:27:00Z",
+    "cpu_percent": 44.3,
+    "memory_percent": 62.3,
+    "requests_per_min": 1065,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:28:00Z",
+    "cpu_percent": 41.5,
+    "memory_percent": 60.6,
+    "requests_per_min": 936,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:29:00Z",
+    "cpu_percent": 40.7,
+    "memory_percent": 60.0,
+    "requests_per_min": 978,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:30:00Z",
+    "cpu_percent": 46.0,
+    "memory_percent": 63.9,
+    "requests_per_min": 973,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:31:00Z",
+    "cpu_percent": 44.4,
+    "memory_percent": 61.8,
+    "requests_per_min": 977,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:32:00Z",
+    "cpu_percent": 47.0,
+    "memory_percent": 64.7,
+    "requests_per_min": 1028,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:33:00Z",
+    "cpu_percent": 45.4,
+    "memory_percent": 61.6,
+    "requests_per_min": 1053,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:34:00Z",
+    "cpu_percent": 40.4,
+    "memory_percent": 61.6,
+    "requests_per_min": 982,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:35:00Z",
+    "cpu_percent": 46.0,
+    "memory_percent": 59.2,
+    "requests_per_min": 958,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:36:00Z",
+    "cpu_percent": 49.6,
+    "memory_percent": 64.0,
+    "requests_per_min": 1047,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:37:00Z",
+    "cpu_percent": 45.9,
+    "memory_percent": 59.1,
+    "requests_per_min": 1095,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:38:00Z",
+    "cpu_percent": 46.7,
+    "memory_percent": 60.6,
+    "requests_per_min": 910,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:39:00Z",
+    "cpu_percent": 47.6,
+    "memory_percent": 60.1,
+    "requests_per_min": 1032,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:40:00Z",
+    "cpu_percent": 46.5,
+    "memory_percent": 64.5,
+    "requests_per_min": 946,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:41:00Z",
+    "cpu_percent": 50.0,
+    "memory_percent": 61.6,
+    "requests_per_min": 1025,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:42:00Z",
+    "cpu_percent": 49.7,
+    "memory_percent": 61.8,
+    "requests_per_min": 1004,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:43:00Z",
+    "cpu_percent": 43.3,
+    "memory_percent": 63.0,
+    "requests_per_min": 941,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:44:00Z",
+    "cpu_percent": 43.3,
+    "memory_percent": 63.2,
+    "requests_per_min": 973,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:45:00Z",
+    "cpu_percent": 46.6,
+    "memory_percent": 61.4,
+    "requests_per_min": 1094,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:46:00Z",
+    "cpu_percent": 45.5,
+    "memory_percent": 61.7,
+    "requests_per_min": 980,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:47:00Z",
+    "cpu_percent": 42.5,
+    "memory_percent": 59.7,
+    "requests_per_min": 1097,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:48:00Z",
+    "cpu_percent": 44.0,
+    "memory_percent": 62.1,
+    "requests_per_min": 900,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:49:00Z",
+    "cpu_percent": 46.6,
+    "memory_percent": 62.3,
+    "requests_per_min": 1005,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:50:00Z",
+    "cpu_percent": 40.5,
+    "memory_percent": 62.1,
+    "requests_per_min": 1059,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:51:00Z",
+    "cpu_percent": 47.6,
+    "memory_percent": 62.8,
+    "requests_per_min": 1094,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:52:00Z",
+    "cpu_percent": 40.5,
+    "memory_percent": 60.6,
+    "requests_per_min": 933,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:53:00Z",
+    "cpu_percent": 49.3,
+    "memory_percent": 61.6,
+    "requests_per_min": 1078,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:54:00Z",
+    "cpu_percent": 44.8,
+    "memory_percent": 59.2,
+    "requests_per_min": 1061,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:55:00Z",
+    "cpu_percent": 46.1,
+    "memory_percent": 60.4,
+    "requests_per_min": 940,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:56:00Z",
+    "cpu_percent": 43.1,
+    "memory_percent": 59.1,
+    "requests_per_min": 1004,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:57:00Z",
+    "cpu_percent": 40.9,
+    "memory_percent": 65.0,
+    "requests_per_min": 929,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:58:00Z",
+    "cpu_percent": 44.6,
+    "memory_percent": 59.7,
+    "requests_per_min": 939,
+    "status": "ok"
+  },
+  {
+    "timestamp": "2024-01-15T14:59:00Z",
+    "cpu_percent": 45.0,
+    "memory_percent": 63.3,
+    "requests_per_min": 1030,
+    "status": "ok"
+  }
+]

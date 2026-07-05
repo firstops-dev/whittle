@@ -7,19 +7,28 @@ through). ML prose rows require the sidecar (`WHITTLE_MODEL_URL`).
 
 | file | detected | action | strategy | token reduction |
 |---|---|---|---|---|
-| code/requests_compat.py | code | skipped (no_compressor) |  | 0.0% |
-| code/requests_models.py | code | skipped (no_compressor) |  | 0.0% |
-| code/requests_sessions.py | code | skipped (no_compressor) |  | 0.0% |
-| code/sample_deploy.yaml | code | skipped (no_compressor) |  | 0.0% |
-| code/small_go_snippet.go.txt | code | skipped (no_compressor) |  | 0.0% |
-| json/api_users_sparse.json | json | compressed | ansi_strip+json_crusher | 57.3% |
-| json/nested_config.json | json | compressed | ansi_strip+json_crusher | 64.5% |
-| json/pods_pretty.json | json | compressed | ansi_strip+json_crusher | 56.6% |
-| log/build_noisy.log | log | compressed | ansi_strip+log_compressor | 69.8% |
-| log/healthcheck_repetitive.log | log | compressed | ansi_strip+log_compressor | 97.2% |
-| markdown/linenumbered_readme.txt | doc_read | skipped (too_large_prose) |  | 0.0% |
-| markdown/service_doc.md | prose | skipped (too_large_prose) |  | 0.0% |
-| prose/incident_report.txt | prose | skipped (too_large_prose) |  | 0.0% |
-| prose/meeting_notes.txt | prose | skipped (too_large_prose) |  | 0.0% |
-| terminal/colored_tests.txt | log | compressed | ansi_strip+log_compressor | 96.5% |
-| terminal/progress_multibyte.txt | terminal | compressed | ansi_strip+log_compressor | 98.7% |
+| bench/corpus/code/requests_compat.py | code | skipped (no_compressor) |  | 0.0% |
+| bench/corpus/code/requests_models.py | code | skipped (no_compressor) |  | 0.0% |
+| bench/corpus/code/requests_sessions.py | code | skipped (no_compressor) |  | 0.0% |
+| bench/corpus/code/sample_deploy.yaml | code | skipped (no_compressor) |  | 0.0% |
+| bench/corpus/code/small_go_snippet.go.txt | code | skipped (no_compressor) |  | 0.0% |
+| bench/corpus/json/api_users_sparse.json | json | compressed | ansi_strip+json_crusher | 57.3% |
+| bench/corpus/json/nested_config.json | json | compressed | ansi_strip+json_crusher | 64.5% |
+| bench/corpus/json/pods_pretty.json | json | compressed | ansi_strip+json_crusher | 56.6% |
+| bench/corpus/log/build_noisy.log | log | compressed | ansi_strip+log_compressor | 69.8% |
+| bench/corpus/log/healthcheck_repetitive.log | log | compressed | ansi_strip+log_compressor | 97.2% |
+| bench/corpus/markdown/linenumbered_readme.txt | doc_read | skipped (too_large_prose) |  | 0.0% |
+| bench/corpus/prose/incident_report.txt | prose | skipped (too_large_prose) |  | 0.0% |
+| bench/corpus/prose/meeting_notes.txt | prose | skipped (too_large_prose) |  | 0.0% |
+| bench/corpus/terminal/colored_tests.txt | log | compressed | ansi_strip+log_compressor | 96.5% |
+| bench/corpus/terminal/progress_multibyte.txt | terminal | compressed | ansi_strip+log_compressor | 98.7% |
+| bench/corpus_headroom/agentic_conversation_anthropic.json | json | compressed | ansi_strip+json_crusher | 12.5% |
+| bench/corpus_headroom/agentic_conversation_openai.json | json | compressed | ansi_strip+json_crusher | 6.3% |
+| bench/corpus_headroom/api_responses.json | json | compressed | ansi_strip+json_crusher | 55.6% |
+| bench/corpus_headroom/database_rows_mixed.json | json | compressed | ansi_strip+json_crusher | 35.4% |
+| bench/corpus_headroom/file_search_data.json | json | compressed | ansi_strip+json_crusher | 55.3% |
+| bench/corpus_headroom/log_data.json | json | compressed | ansi_strip+json_crusher | 45.6% |
+| bench/corpus_headroom/log_entries.json | json | compressed | ansi_strip+json_crusher | 46.1% |
+| bench/corpus_headroom/metrics_data.json | json | compressed | ansi_strip+json_crusher | 53.8% |
+| bench/corpus_headroom/rag_conversation.json | json | compressed | ansi_strip+json_crusher | 4.9% |
+| bench/corpus_headroom/search_results.json | json | compressed | ansi_strip+json_crusher | 42.4% |

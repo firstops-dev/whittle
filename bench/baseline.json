@@ -1,6 +1,6 @@
 [
  {
-  "file": "code/requests_compat.py",
+  "file": "bench/corpus/code/requests_compat.py",
   "sha": "e553fc5aedf4",
   "detected": "code",
   "action": "skipped",
@@ -8,7 +8,7 @@
   "token_reduction": 0
  },
  {
-  "file": "code/requests_models.py",
+  "file": "bench/corpus/code/requests_models.py",
   "sha": "a950af0b967e",
   "detected": "code",
   "action": "skipped",
@@ -16,7 +16,7 @@
   "token_reduction": 0
  },
  {
-  "file": "code/requests_sessions.py",
+  "file": "bench/corpus/code/requests_sessions.py",
   "sha": "5cacd4f40f05",
   "detected": "code",
   "action": "skipped",
@@ -24,7 +24,7 @@
   "token_reduction": 0
  },
  {
-  "file": "code/sample_deploy.yaml",
+  "file": "bench/corpus/code/sample_deploy.yaml",
   "sha": "49cf9afdf460",
   "detected": "code",
   "action": "skipped",
@@ -32,7 +32,7 @@
   "token_reduction": 0
  },
  {
-  "file": "code/small_go_snippet.go.txt",
+  "file": "bench/corpus/code/small_go_snippet.go.txt",
   "sha": "a57962510076",
   "detected": "code",
   "action": "skipped",
@@ -40,7 +40,7 @@
   "token_reduction": 0
  },
  {
-  "file": "json/api_users_sparse.json",
+  "file": "bench/corpus/json/api_users_sparse.json",
   "sha": "4e5e7f6518fa",
   "detected": "json",
   "action": "compressed",
@@ -48,7 +48,7 @@
   "token_reduction": 0.573
  },
  {
-  "file": "json/nested_config.json",
+  "file": "bench/corpus/json/nested_config.json",
   "sha": "6f68b85ea7c5",
   "detected": "json",
   "action": "compressed",
@@ -56,7 +56,7 @@
   "token_reduction": 0.645
  },
  {
-  "file": "json/pods_pretty.json",
+  "file": "bench/corpus/json/pods_pretty.json",
   "sha": "415607f45788",
   "detected": "json",
   "action": "compressed",
@@ -64,7 +64,7 @@
   "token_reduction": 0.566
  },
  {
-  "file": "log/build_noisy.log",
+  "file": "bench/corpus/log/build_noisy.log",
   "sha": "2c854ca7a1f4",
   "detected": "log",
   "action": "compressed",
@@ -72,7 +72,7 @@
   "token_reduction": 0.698
  },
  {
-  "file": "log/healthcheck_repetitive.log",
+  "file": "bench/corpus/log/healthcheck_repetitive.log",
   "sha": "6131116392f0",
   "detected": "log",
   "action": "compressed",
@@ -80,7 +80,7 @@
   "token_reduction": 0.972
  },
  {
-  "file": "markdown/linenumbered_readme.txt",
+  "file": "bench/corpus/markdown/linenumbered_readme.txt",
   "sha": "0b0af9144993",
   "detected": "doc_read",
   "action": "skipped",
@@ -88,15 +88,7 @@
   "token_reduction": 0
  },
  {
-  "file": "markdown/service_doc.md",
-  "sha": "4b1bcc5de779",
-  "detected": "prose",
-  "action": "skipped",
-  "skip_reason": "too_large_prose",
-  "token_reduction": 0
- },
- {
-  "file": "prose/incident_report.txt",
+  "file": "bench/corpus/prose/incident_report.txt",
   "sha": "5ecfe8808160",
   "detected": "prose",
   "action": "skipped",
@@ -104,7 +96,7 @@
   "token_reduction": 0
  },
  {
-  "file": "prose/meeting_notes.txt",
+  "file": "bench/corpus/prose/meeting_notes.txt",
   "sha": "6acb483d0c10",
   "detected": "prose",
   "action": "skipped",
@@ -112,7 +104,7 @@
   "token_reduction": 0
  },
  {
-  "file": "terminal/colored_tests.txt",
+  "file": "bench/corpus/terminal/colored_tests.txt",
   "sha": "d28ed17d9aa3",
   "detected": "log",
   "action": "compressed",
@@ -120,11 +112,91 @@
   "token_reduction": 0.965
  },
  {
-  "file": "terminal/progress_multibyte.txt",
+  "file": "bench/corpus/terminal/progress_multibyte.txt",
   "sha": "0c2d1756d764",
   "detected": "terminal",
   "action": "compressed",
   "strategy": "ansi_strip+log_compressor",
   "token_reduction": 0.987
+ },
+ {
+  "file": "bench/corpus_headroom/agentic_conversation_anthropic.json",
+  "sha": "02ea5fdb966e",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.125
+ },
+ {
+  "file": "bench/corpus_headroom/agentic_conversation_openai.json",
+  "sha": "42cdc979e1b5",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.063
+ },
+ {
+  "file": "bench/corpus_headroom/api_responses.json",
+  "sha": "fa9b26e6d933",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.556
+ },
+ {
+  "file": "bench/corpus_headroom/database_rows_mixed.json",
+  "sha": "8ed8a5b9ce1e",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.354
+ },
+ {
+  "file": "bench/corpus_headroom/file_search_data.json",
+  "sha": "3aab44c35c87",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.553
+ },
+ {
+  "file": "bench/corpus_headroom/log_data.json",
+  "sha": "a27a60713f9c",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.456
+ },
+ {
+  "file": "bench/corpus_headroom/log_entries.json",
+  "sha": "0baf2f2d6cc4",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.461
+ },
+ {
+  "file": "bench/corpus_headroom/metrics_data.json",
+  "sha": "1747499f5738",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.538
+ },
+ {
+  "file": "bench/corpus_headroom/rag_conversation.json",
+  "sha": "80a6ebb9f313",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.049
+ },
+ {
+  "file": "bench/corpus_headroom/search_results.json",
+  "sha": "f9e9ca64fb46",
+  "detected": "json",
+  "action": "compressed",
+  "strategy": "ansi_strip+json_crusher",
+  "token_reduction": 0.424
  }
 ]

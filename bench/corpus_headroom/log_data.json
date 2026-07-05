@@ -1,0 +1,1828 @@
+[
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:00:00Z",
+    "request_id": "req-cfcd2084"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:01:00Z",
+    "request_id": "req-c4ca4238"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:02:00Z",
+    "request_id": "req-c81e728d"
+  },
+  {
+    "level": "ERROR",
+    "message": "Connection refused to payment-service:8080 - ECONNREFUSED",
+    "service": "payment-processor",
+    "error_code": "PAYMENT_SERVICE_DOWN",
+    "trace_id": "abc123",
+    "timestamp": "2024-01-15T10:03:00Z",
+    "request_id": "req-eccbc87e"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:04:00Z",
+    "request_id": "req-a87ff679"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:05:00Z",
+    "request_id": "req-e4da3b7f"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:06:00Z",
+    "request_id": "req-1679091c"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:07:00Z",
+    "request_id": "req-8f14e45f"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:08:00Z",
+    "request_id": "req-c9f0f895"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:09:00Z",
+    "request_id": "req-45c48cce"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:10:00Z",
+    "request_id": "req-d3d94468"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:11:00Z",
+    "request_id": "req-6512bd43"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:12:00Z",
+    "request_id": "req-c20ad4d7"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:13:00Z",
+    "request_id": "req-c51ce410"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:14:00Z",
+    "request_id": "req-aab32389"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:15:00Z",
+    "request_id": "req-9bf31c7f"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:16:00Z",
+    "request_id": "req-c74d97b0"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:17:00Z",
+    "request_id": "req-70efdf2e"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:18:00Z",
+    "request_id": "req-6f4922f4"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:19:00Z",
+    "request_id": "req-1f0e3dad"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:20:00Z",
+    "request_id": "req-98f13708"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:21:00Z",
+    "request_id": "req-3c59dc04"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:22:00Z",
+    "request_id": "req-b6d767d2"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:23:00Z",
+    "request_id": "req-37693cfc"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:24:00Z",
+    "request_id": "req-1ff1de77"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:25:00Z",
+    "request_id": "req-8e296a06"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:26:00Z",
+    "request_id": "req-4e732ced"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:27:00Z",
+    "request_id": "req-02e74f10"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:28:00Z",
+    "request_id": "req-33e75ff0"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:29:00Z",
+    "request_id": "req-6ea9ab1b"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "request_id": "req-34173cb3"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:31:00Z",
+    "request_id": "req-c16a5320"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:32:00Z",
+    "request_id": "req-6364d3f0"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:33:00Z",
+    "request_id": "req-182be0c5"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:34:00Z",
+    "request_id": "req-e369853d"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:35:00Z",
+    "request_id": "req-1c383cd3"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:36:00Z",
+    "request_id": "req-19ca14e7"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:37:00Z",
+    "request_id": "req-a5bfc9e0"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:38:00Z",
+    "request_id": "req-a5771bce"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:39:00Z",
+    "request_id": "req-d67d8ab4"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:40:00Z",
+    "request_id": "req-d645920e"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:41:00Z",
+    "request_id": "req-3416a75f"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:42:00Z",
+    "request_id": "req-a1d0c6e8"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:43:00Z",
+    "request_id": "req-17e62166"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:44:00Z",
+    "request_id": "req-f7177163"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:45:00Z",
+    "request_id": "req-6c8349cc"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:46:00Z",
+    "request_id": "req-d9d4f495"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:47:00Z",
+    "request_id": "req-67c6a1e7"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:48:00Z",
+    "request_id": "req-642e92ef"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:49:00Z",
+    "request_id": "req-f457c545"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:50:00Z",
+    "request_id": "req-c0c7c76d"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:51:00Z",
+    "request_id": "req-2838023a"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T10:52:00Z",
+    "request_id": "req-9a115815"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:53:00Z",
+    "request_id": "req-d82c8d16"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:54:00Z",
+    "request_id": "req-a684ecee"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:55:00Z",
+    "request_id": "req-b53b3a3d"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T10:56:00Z",
+    "request_id": "req-9f61408e"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:57:00Z",
+    "request_id": "req-72b32a1f"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T10:58:00Z",
+    "request_id": "req-66f041e1"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T10:59:00Z",
+    "request_id": "req-093f65e0"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T11:00:00Z",
+    "request_id": "req-072b030b"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:01:00Z",
+    "request_id": "req-7f39f831"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:02:00Z",
+    "request_id": "req-44f683a8"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T11:03:00Z",
+    "request_id": "req-03afdbd6"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:04:00Z",
+    "request_id": "req-ea5d2f1c"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T11:05:00Z",
+    "request_id": "req-fc490ca4"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:06:00Z",
+    "request_id": "req-3295c76a"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:07:00Z",
+    "request_id": "req-735b90b4"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:08:00Z",
+    "request_id": "req-a3f390d8"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:09:00Z",
+    "request_id": "req-14bfa6bb"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:10:00Z",
+    "request_id": "req-7cbbc409"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:11:00Z",
+    "request_id": "req-e2c420d9"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:12:00Z",
+    "request_id": "req-32bb90e8"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:13:00Z",
+    "request_id": "req-d2ddea18"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:14:00Z",
+    "request_id": "req-ad61ab14"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:15:00Z",
+    "request_id": "req-d09bf415"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:16:00Z",
+    "request_id": "req-fbd7939d"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:17:00Z",
+    "request_id": "req-28dd2c79"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:18:00Z",
+    "request_id": "req-35f4a8d4"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:19:00Z",
+    "request_id": "req-d1fe173d"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:20:00Z",
+    "request_id": "req-f033ab37"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:21:00Z",
+    "request_id": "req-43ec517d"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:22:00Z",
+    "request_id": "req-9778d5d2"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:23:00Z",
+    "request_id": "req-fe9fc289"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:24:00Z",
+    "request_id": "req-68d30a95"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:25:00Z",
+    "request_id": "req-3ef81541"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:26:00Z",
+    "request_id": "req-93db85ed"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:27:00Z",
+    "request_id": "req-c7e1249f"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:28:00Z",
+    "request_id": "req-2a38a4a9"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:29:00Z",
+    "request_id": "req-7647966b"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:30:00Z",
+    "request_id": "req-8613985e"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T11:31:00Z",
+    "request_id": "req-54229abf"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:32:00Z",
+    "request_id": "req-92cc2275"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:33:00Z",
+    "request_id": "req-98dce83d"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T11:34:00Z",
+    "request_id": "req-f4b9ec30"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:35:00Z",
+    "request_id": "req-812b4ba2"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:36:00Z",
+    "request_id": "req-26657d5f"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:37:00Z",
+    "request_id": "req-e2ef524f"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:38:00Z",
+    "request_id": "req-ed3d2c21"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:39:00Z",
+    "request_id": "req-ac627ab1"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:40:00Z",
+    "request_id": "req-f899139d"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:41:00Z",
+    "request_id": "req-38b3eff8"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:42:00Z",
+    "request_id": "req-ec895663"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T11:43:00Z",
+    "request_id": "req-6974ce5a"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:44:00Z",
+    "request_id": "req-c9e1074f"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:45:00Z",
+    "request_id": "req-65b9eea6"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:46:00Z",
+    "request_id": "req-f0935e4c"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:47:00Z",
+    "request_id": "req-a97da629"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:48:00Z",
+    "request_id": "req-a3c65c29"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:49:00Z",
+    "request_id": "req-2723d092"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:50:00Z",
+    "request_id": "req-5f93f983"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:51:00Z",
+    "request_id": "req-698d51a1"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:52:00Z",
+    "request_id": "req-7f6ffaa6"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:53:00Z",
+    "request_id": "req-73278a4a"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:54:00Z",
+    "request_id": "req-5fd0b37c"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T11:55:00Z",
+    "request_id": "req-2b44928a"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:56:00Z",
+    "request_id": "req-c45147de"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T11:57:00Z",
+    "request_id": "req-eb160de1"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T11:58:00Z",
+    "request_id": "req-5ef05993"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T11:59:00Z",
+    "request_id": "req-07e1cd7d"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:00:00Z",
+    "request_id": "req-da4fb5c6"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:01:00Z",
+    "request_id": "req-4c56ff4c"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:02:00Z",
+    "request_id": "req-a0a080f4"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:03:00Z",
+    "request_id": "req-202cb962"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:04:00Z",
+    "request_id": "req-c8ffe9a5"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:05:00Z",
+    "request_id": "req-3def184a"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:06:00Z",
+    "request_id": "req-069059b7"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:07:00Z",
+    "request_id": "req-ec5decca"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:08:00Z",
+    "request_id": "req-76dc611d"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:09:00Z",
+    "request_id": "req-d1f491a4"
+  },
+  {
+    "level": "ERROR",
+    "message": "Timeout waiting for response from inventory-service after 30000ms",
+    "service": "order-processor",
+    "error_code": "INVENTORY_TIMEOUT",
+    "trace_id": "def456",
+    "timestamp": "2024-01-15T12:10:00Z",
+    "request_id": "req-9b861925"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:11:00Z",
+    "request_id": "req-1afa34a7"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:12:00Z",
+    "request_id": "req-65ded535"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:13:00Z",
+    "request_id": "req-9fc3d715"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:14:00Z",
+    "request_id": "req-02522a2b"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:15:00Z",
+    "request_id": "req-7f1de29e"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:16:00Z",
+    "request_id": "req-42a0e188"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:17:00Z",
+    "request_id": "req-3988c7f8"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:18:00Z",
+    "request_id": "req-013d4071"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:19:00Z",
+    "request_id": "req-e00da03b"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:20:00Z",
+    "request_id": "req-1385974e"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:21:00Z",
+    "request_id": "req-0f28b5d4"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:22:00Z",
+    "request_id": "req-a8baa565"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:23:00Z",
+    "request_id": "req-903ce922"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:24:00Z",
+    "request_id": "req-0a09c884"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:25:00Z",
+    "request_id": "req-2b24d495"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:26:00Z",
+    "request_id": "req-a5e00132"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:27:00Z",
+    "request_id": "req-8d5e957f"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:28:00Z",
+    "request_id": "req-47d1e990"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:29:00Z",
+    "request_id": "req-f2217062"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:30:00Z",
+    "request_id": "req-7ef605fc"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:31:00Z",
+    "request_id": "req-a8f15eda"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:32:00Z",
+    "request_id": "req-37a749d8"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:33:00Z",
+    "request_id": "req-b3e3e393"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:34:00Z",
+    "request_id": "req-1d7f7abc"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:35:00Z",
+    "request_id": "req-2a79ea27"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:36:00Z",
+    "request_id": "req-1c9ac015"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:37:00Z",
+    "request_id": "req-6c4b761a"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:38:00Z",
+    "request_id": "req-06409663"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:39:00Z",
+    "request_id": "req-140f6969"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:40:00Z",
+    "request_id": "req-b73ce398"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:41:00Z",
+    "request_id": "req-bd4c9ab7"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:42:00Z",
+    "request_id": "req-82aa4b0a"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:43:00Z",
+    "request_id": "req-0777d5c1"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:44:00Z",
+    "request_id": "req-fa7cdfad"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:45:00Z",
+    "request_id": "req-9766527f"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:46:00Z",
+    "request_id": "req-7e7757b1"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:47:00Z",
+    "request_id": "req-5878a7ab"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:48:00Z",
+    "request_id": "req-006f52e9"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:49:00Z",
+    "request_id": "req-36366388"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:50:00Z",
+    "request_id": "req-149e9677"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:51:00Z",
+    "request_id": "req-a4a042cf"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:52:00Z",
+    "request_id": "req-1ff8a7b5"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:53:00Z",
+    "request_id": "req-f7e6c855"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:54:00Z",
+    "request_id": "req-bf822969"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:55:00Z",
+    "request_id": "req-82161242"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T12:56:00Z",
+    "request_id": "req-38af8613"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T12:57:00Z",
+    "request_id": "req-96da2f59"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T12:58:00Z",
+    "request_id": "req-8f855179"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T12:59:00Z",
+    "request_id": "req-8f53295a"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:00:00Z",
+    "request_id": "req-045117b0"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:01:00Z",
+    "request_id": "req-fc221309"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:02:00Z",
+    "request_id": "req-4c5bde74"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:03:00Z",
+    "request_id": "req-cedebb6e"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:04:00Z",
+    "request_id": "req-6cdd60ea"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:05:00Z",
+    "request_id": "req-eecca5b6"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:06:00Z",
+    "request_id": "req-9872ed9f"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:07:00Z",
+    "request_id": "req-31fefc0e"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:08:00Z",
+    "request_id": "req-9dcb88e0"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:09:00Z",
+    "request_id": "req-a2557a7b"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:10:00Z",
+    "request_id": "req-cfecdb27"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:11:00Z",
+    "request_id": "req-0aa1883c"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:12:00Z",
+    "request_id": "req-58a2fc6e"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:13:00Z",
+    "request_id": "req-bd686fd6"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:14:00Z",
+    "request_id": "req-a597e505"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:15:00Z",
+    "request_id": "req-0336dcba"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:16:00Z",
+    "request_id": "req-084b6fbb"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:17:00Z",
+    "request_id": "req-85d8ce59"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:18:00Z",
+    "request_id": "req-0e65972d"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:19:00Z",
+    "request_id": "req-84d9ee44"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:20:00Z",
+    "request_id": "req-3644a684"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:21:00Z",
+    "request_id": "req-757b505c"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:22:00Z",
+    "request_id": "req-854d6fae"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:23:00Z",
+    "request_id": "req-e2c0be24"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:24:00Z",
+    "request_id": "req-274ad478"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:25:00Z",
+    "request_id": "req-eae27d77"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:26:00Z",
+    "request_id": "req-7eabe3a1"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:27:00Z",
+    "request_id": "req-69adc1e1"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:28:00Z",
+    "request_id": "req-091d584f"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:29:00Z",
+    "request_id": "req-b1d10e7b"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:30:00Z",
+    "request_id": "req-6f3ef77a"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:31:00Z",
+    "request_id": "req-eb163727"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:32:00Z",
+    "request_id": "req-1534b76d"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:33:00Z",
+    "request_id": "req-979d472a"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:34:00Z",
+    "request_id": "req-ca46c1b9"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:35:00Z",
+    "request_id": "req-3b8a6142"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:36:00Z",
+    "request_id": "req-45fbc6d3"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:37:00Z",
+    "request_id": "req-63dc7ed1"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:38:00Z",
+    "request_id": "req-e96ed478"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:39:00Z",
+    "request_id": "req-c0e190d8"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:40:00Z",
+    "request_id": "req-ec8ce6ab"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:41:00Z",
+    "request_id": "req-060ad924"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:42:00Z",
+    "request_id": "req-bcbe3365"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:43:00Z",
+    "request_id": "req-115f8950"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:44:00Z",
+    "request_id": "req-13fe9d84"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:45:00Z",
+    "request_id": "req-d1c38a09"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:46:00Z",
+    "request_id": "req-9cfdf10e"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:47:00Z",
+    "request_id": "req-705f2172"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:48:00Z",
+    "request_id": "req-74db120f"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:49:00Z",
+    "request_id": "req-57aeee35"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:50:00Z",
+    "request_id": "req-6da9003b"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:51:00Z",
+    "request_id": "req-9b04d152"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:52:00Z",
+    "request_id": "req-be83ab3e"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T13:53:00Z",
+    "request_id": "req-e1654211"
+  },
+  {
+    "level": "INFO",
+    "message": "Database query completed",
+    "service": "postgres",
+    "timestamp": "2024-01-15T13:54:00Z",
+    "request_id": "req-289dff07"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:55:00Z",
+    "request_id": "req-577ef115"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:56:00Z",
+    "request_id": "req-01161aaa"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:57:00Z",
+    "request_id": "req-539fd53b"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T13:58:00Z",
+    "request_id": "req-ac1dd209"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T13:59:00Z",
+    "request_id": "req-555d6702"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:00:00Z",
+    "request_id": "req-335f5352"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T14:01:00Z",
+    "request_id": "req-f340f1b1"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T14:02:00Z",
+    "request_id": "req-e4a6222c"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:03:00Z",
+    "request_id": "req-cb70ab37"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T14:04:00Z",
+    "request_id": "req-9188905e"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:05:00Z",
+    "request_id": "req-0266e33d"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:06:00Z",
+    "request_id": "req-38db3aed"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:07:00Z",
+    "request_id": "req-3cec07e9"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T14:08:00Z",
+    "request_id": "req-621bf66d"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Connection pool stats: active=5, idle=15",
+    "service": "postgres",
+    "timestamp": "2024-01-15T14:09:00Z",
+    "request_id": "req-077e29b1"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:10:00Z",
+    "request_id": "req-6c9882bb"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:11:00Z",
+    "request_id": "req-19f3cd30"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:12:00Z",
+    "request_id": "req-03c6b069"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:13:00Z",
+    "request_id": "req-c24cd76e"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T14:14:00Z",
+    "request_id": "req-c52f1bd6"
+  },
+  {
+    "level": "CRITICAL",
+    "message": "Out of memory: Java heap space - killing process",
+    "service": "recommendation-engine",
+    "error_code": "OOM_KILLED",
+    "trace_id": "ghi789",
+    "timestamp": "2024-01-15T14:15:00Z",
+    "request_id": "req-fe131d7f"
+  },
+  {
+    "level": "INFO",
+    "message": "Health check passed",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:16:00Z",
+    "request_id": "req-f718499c"
+  },
+  {
+    "level": "INFO",
+    "message": "Authentication successful",
+    "service": "auth",
+    "timestamp": "2024-01-15T14:17:00Z",
+    "request_id": "req-d96409bf"
+  },
+  {
+    "level": "INFO",
+    "message": "Request processed successfully",
+    "service": "api-gateway",
+    "timestamp": "2024-01-15T14:18:00Z",
+    "request_id": "req-502e4a16"
+  },
+  {
+    "level": "INFO",
+    "message": "Cache hit for user session",
+    "service": "redis",
+    "timestamp": "2024-01-15T14:19:00Z",
+    "request_id": "req-cfa0860e"
+  }
+]

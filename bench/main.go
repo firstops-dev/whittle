@@ -39,9 +39,16 @@ func main() {
 
 	eng := whittle.New(whittle.Options{ModelURL: os.Getenv("WHITTLE_MODEL_URL"), MinTokens: 0})
 	var rows []row
-	root := "bench/corpus"
+	for _, root := range []string{"bench/corpus", "bench/corpus_headroom"} {
+		walk(eng, root, &rows)
+	}
+	_ = eng
+	report(rows, *update)
+}
+
+func walk(eng *whittle.Engine, root string, rows *[]row) {
 	_ = filepath.Walk(root, func(p string, info os.FileInfo, err error) error {
-		if err != nil || info.IsDir() || strings.HasSuffix(p, "LICENSES.md") {
+		if err != nil || info.IsDir() || strings.HasSuffix(p, ".md") {
 			return err
 		}
 		b, err := os.ReadFile(p) // raw bytes — never newline-translated
@@ -55,16 +62,19 @@ func main() {
 		if in > 0 {
 			red = float64(in-o) / float64(in)
 		}
-		rows = append(rows, row{
-			File: strings.TrimPrefix(p, root+"/"), SHA: hex.EncodeToString(sum[:6]),
+		*rows = append(*rows, row{
+			File: p, SHA: hex.EncodeToString(sum[:6]),
 			Detected: string(out.Detected), Action: out.Action, Skip: out.SkipReason,
 			Strategy: out.Strategy, Reduction: float64(int(red*1000)) / 1000,
 		})
 		return nil
 	})
+}
+
+func report(rows []row, update bool) {
 	sort.Slice(rows, func(a, b int) bool { return rows[a].File < rows[b].File })
 
-	if *update {
+	if update {
 		bl, _ := json.MarshalIndent(rows, "", " ")
 		must(os.WriteFile("bench/baseline.json", bl, 0o644))
 		writeReport(rows)
