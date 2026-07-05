@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/fs"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -153,9 +154,34 @@ func cmdDaemon(_ []string) {
 		os.Setenv("WHITTLE_MODEL_URL", "http://"+modelAddr)
 		go superviseSidecar(dir, venvUvicorn)
 	}
+	go superviseHook()
 	if err := server.ListenAndServe(":" + strings.Split(routerAddr, ":")[1]); err != nil {
 		fmt.Fprintln(os.Stderr, "whittle daemon:", err)
 		os.Exit(1)
+	}
+}
+
+// superviseHook keeps the Claude Code PostToolUse hook installed for as long as
+// the daemon runs. The entry can be dropped by an external settings rewrite (we
+// have observed it vanish); once it is gone, whittle silently stops compressing.
+// The daemon re-asserts it on startup and every 5 minutes, LOGGING each repair
+// so recovery is never silent. `whittle stop` and `whittle cleanup` both stop the
+// daemon, so this can never fight an intentional teardown - a running daemon is
+// itself the signal that whittle is meant to be active.
+func superviseHook() {
+	heal := func() {
+		if hookInstalled() {
+			return
+		}
+		if err := installClaudeHook(); err != nil {
+			log.Printf("hook self-heal: reinstall failed: %v", err)
+			return
+		}
+		log.Printf("hook self-heal: PostToolUse hook was missing from %s, reinstalled", claudeSettingsPath())
+	}
+	heal()
+	for range time.NewTicker(5 * time.Minute).C {
+		heal()
 	}
 }
 
@@ -290,7 +316,15 @@ func saveSettings(s map[string]any) error {
 		return err
 	}
 	must(os.MkdirAll(filepath.Dir(claudeSettingsPath()), 0o755))
-	return os.WriteFile(claudeSettingsPath(), b, 0o644)
+	// Atomic write: temp + rename, so a concurrent Claude Code read never sees a
+	// half-written settings file - the daemon writes this from a background
+	// goroutine (hook self-heal), so a partial write could corrupt the user's
+	// settings.
+	tmp := claudeSettingsPath() + ".whittle.tmp"
+	if err := os.WriteFile(tmp, b, 0o644); err != nil {
+		return err
+	}
+	return os.Rename(tmp, claudeSettingsPath())
 }
 
 // installClaudeHook merges (never clobbers) a PostToolUse entry into the user's
