@@ -84,7 +84,7 @@ serve flags:
 env:
   WHITTLE_MODEL_URL        enable the ML prose path (model sidecar URL)
   WHITTLE_MAX_CHARS        global size ceiling (default 262144)
-  WHITTLE_PROSE_MAX_CHARS  prose-path ceiling (default 4500)`)
+  WHITTLE_PROSE_MAX_CHARS  prose-path ceiling (default 100000; lower on CPU-only machines)`)
 }
 
 func cmdCompress(args []string) {

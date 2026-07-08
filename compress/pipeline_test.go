@@ -124,7 +124,7 @@ func TestPipelineLargeDeterministicCompresses(t *testing.T) {
 // ProseMaxChars is skipped (the LLMLingua model can't take it), without
 // affecting the deterministic paths above.
 func TestPipelineProseTooLarge(t *testing.T) {
-	body := strings.Repeat("the team reviewed the plan and agreed on the next milestone today. ", 600) // ~40k chars prose
+	body := strings.Repeat("the team reviewed the plan and agreed on the next milestone today. ", 1650) // ~112k chars: above the 100k prose ceiling, below the 256KiB global bound
 	in := Input{Content: body, ContentType: TypeProse, MinTokens: DefaultMinTokens}
 	p := NewPipeline(NewRegistry(map[ContentType][]Compressor{}), DefaultGateConfig(), nil)
 	out := p.Compress(context.Background(), in)

@@ -13,17 +13,20 @@ import (
 //     pathological input. Deterministic structural compressors (Log/JSON/ANSI)
 //     crush large tool output cheaply, so this is generous, not the prose limit.
 //   - DefaultProseMaxChars is a LATENCY-BUDGET ceiling for the prose path, NOT a
-//     model-context one. Measured end-to-end (prod, llmlingua-2 xlm-roberta-large
-//     on 4 vCPU, single-flight): latency ≈ 0.3s + 0.3s/KB, so 4.5KB ≈ 1.5s,
-//     6KB ≈ 2.1s (breaches the edge hook's 2s budget), ≥9KB always times out.
-//     The old 30000 value admitted 5x more than the budget could serve - every
-//     6-30KB prose burned the full 2s and surfaced as an error. Above this
-//     ceiling prose skips CLEANLY upfront. Raise only after a faster model
-//     (bert-base ≈ 3x throughput) or chunked-parallel inference lands.
+//     model-context one. Measured end-to-end (llmlingua-2 xlm-roberta-large,
+//     single-flight): Apple-silicon MPS (2026-07 sweep, 1-20KB varied prose)
+//     ≈ 0.07s + 0.04s/KB — 100KB ≈ 4s, inside the 8s adapter timeout with 2x
+//     headroom; CPU (4 vCPU) ≈ 0.3s + 0.3s/KB — times out past ~25KB. The
+//     default is sized for GPU/MPS inference (the sidecar auto-selects
+//     CUDA > MPS > CPU); CPU-bound machines should lower it via
+//     WHITTLE_PROSE_MAX_CHARS (~12000 keeps worst-case under 4s there).
+//     Above the ceiling prose skips CLEANLY upfront rather than burning the
+//     timeout budget. Also below the global 256 KiB bound and the sidecar's
+//     MAX_CHARS (daemon sets 300000; standalone app.py defaults to 60000).
 const (
 	DefaultMinTokens     = 64
 	DefaultMaxChars      = 262144 // 256 KiB (~64k tokens): global, deterministic-safe
-	DefaultProseMaxChars = 4500   // LLMLingua-only ceiling: what fits the 2s hook budget
+	DefaultProseMaxChars = 100000 // LLMLingua-only ceiling: ~4s on MPS at 0.04s/KB
 	minProseRatio        = 0.55
 	// heuristicProseMax gates the weak codeSignal backstop: above this letter/space
 	// ratio the text is clearly prose, so a few incidental file/command tokens do

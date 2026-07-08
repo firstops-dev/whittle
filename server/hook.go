@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -45,23 +46,27 @@ func hookHandler(p *compress.Pipeline, store *Store) http.HandlerFunc {
 		if err != nil || json.Unmarshal(body, &ev) != nil || ev.HookEventName != "PostToolUse" {
 			return
 		}
-		text := ev.ToolOutput
-		if text == "" {
-			text, _ = extractHookText(ev.ToolResponse)
+		text, rebuild, ok := ExtractHookText(ev.ToolResponse, ev.ToolOutput)
+		if !ok {
+			// A big tool_response we cannot extract from is the signature of shape
+			// drift in a new Claude Code version - if that ever happens compression
+			// stops wholesale, so it must be loud in the daemon log, not silent.
+			if len(ev.ToolResponse) >= 1024 {
+				log.Printf("hook: no known text carrier in %d-byte tool_response (tool=%s) - shape drift? output not compressed", len(ev.ToolResponse), ev.ToolName)
+			}
+			return
 		}
 		if len(text) < 256 {
 			return
 		}
-		ctx, cancel := context.WithTimeout(r.Context(), 4*time.Second)
+		// 9s: above the LLMLingua adapter's 8s (its timeout must fire first, see
+		// llmlingua.go), below Claude Code's 10s hook timeout (setup.go).
+		ctx, cancel := context.WithTimeout(r.Context(), 9*time.Second)
 		defer cancel()
 		out := p.Compress(ctx, compress.Input{Content: text, ToolName: ev.ToolName, MinTokens: -1})
 		if out.Action != "compressed" || len(out.Output) >= len(text) {
 			return
 		}
-		// Docs-verified: the 10,000-char cap on updatedToolOutput applies to HTTP
-		// hooks as well as command hooks. Fail open above ~9.5k until the content
-		// store + retrieval pointer lands (PLAN P2).
-		final := out.Output
 		// Retrieval hint - ONLY where content was actually reduced. Copy is
 		// deliberately discouraging: the summary is complete; raw is for
 		// byte-exact needs. Alias integers cost ~2 tokens (measured).
@@ -71,38 +76,8 @@ func hookHandler(p *compress.Pipeline, store *Store) http.HandlerFunc {
 		}
 		logEvent(ev.SessionID, ev.ToolName, out.Strategy, storeID,
 			compress.EstimateTokens(text), compress.EstimateTokens(final))
-		_ = json.NewEncoder(w).Encode(map[string]any{
-			"hookSpecificOutput": map[string]any{
-				"hookEventName":     "PostToolUse",
-				"updatedToolOutput": final,
-			},
-		})
+		_ = json.NewEncoder(w).Encode(HookReply(rebuild(final)))
 	}
-}
-
-func extractHookText(raw json.RawMessage) (string, bool) {
-	var s string
-	if json.Unmarshal(raw, &s) == nil {
-		return s, true
-	}
-	var obj map[string]json.RawMessage
-	if json.Unmarshal(raw, &obj) != nil {
-		return "", false
-	}
-	for _, k := range []string{"stdout", "output", "result"} {
-		if v, ok := obj[k]; ok && json.Unmarshal(v, &s) == nil && s != "" {
-			return s, true
-		}
-	}
-	if f, ok := obj["file"]; ok {
-		var file struct {
-			Content string `json:"content"`
-		}
-		if json.Unmarshal(f, &file) == nil && file.Content != "" {
-			return file.Content, true
-		}
-	}
-	return "", false
 }
 
 // getHandler serves originals back to the whittle_get MCP tool. Misses are
@@ -154,14 +129,17 @@ const hintFmt = "\n… [trimmed; content above is complete in substance. Raw ori
 
 // finalizeReplacement enforces the POST-HINT invariant (review B1): whatever is
 // emitted - with hint or without - must be strictly smaller than the original in
-// BOTH bytes and estimated tokens, and within Claude Code's 10k output cap.
-// Order of preference: compressed+hint; compressed alone (marginal wins keep the
-// win, just without retrieval); nothing (fail open). The store alias is only
-// spent when the hint actually emits (review O6).
+// BOTH bytes and estimated tokens. Order of preference: compressed+hint;
+// compressed alone (marginal wins keep the win, just without retrieval);
+// nothing (fail open). The store alias is only spent when the hint actually
+// emits (review O6). There is deliberately NO size cap here: Claude Code's 10k
+// hook-output cap applies to the context-injection channels (additionalContext,
+// systemMessage, plain stdout), NOT to updatedToolOutput - verified live on
+// 2.1.203 with a 20.6k replacement landing intact (docs/hook-output-cap.md).
 func finalizeReplacement(text, output, strategy string, store *Store) (string, int64) {
+	origTok := compress.EstimateTokens(text) // hot path: scan the original once
 	fits := func(s string) bool {
-		return len(s) < len(text) && len(s) <= 9500 &&
-			compress.EstimateTokens(s) < compress.EstimateTokens(text)
+		return len(s) < len(text) && compress.EstimateTokens(s) < origTok
 	}
 	if store != nil && lossyStrategy(strategy) {
 		// probe with a worst-case-width alias before spending one
