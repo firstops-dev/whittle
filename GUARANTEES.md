@@ -14,10 +14,11 @@ violated guarantee become pinned regression tests before they are closed.
 | terminal CR collapse never corrupts UTF-8 and never destroys `\r`-delimited data | `TestCROverwriteCollapse_UTF8` (utf8.ValidString), `TestCROverwriteCollapse_DataRecordsSafe` |
 | output is never larger than input — in bytes AND estimated tokens | pipeline guardrail tests incl. `TestPipelineTokenGuardrail` |
 | every failure fails open: original bytes, never an error, never partial output | pipeline fail-open/empty-output/panic-recovery contract tests; hook exits 0 silently on any problem |
-| the Claude Code hook can never break a tool call | `cmd/whittle` hook: fail-open on malformed events, router downtime, oversized output (Claude Code's 10k hook-stdout cap) |
+| the Claude Code hook can never break a tool call | `cmd/whittle` hook: fail-open on malformed events, router downtime, unrecognized response shapes; `TestHookHandler_FailOpenCases` |
+| replacements preserve the tool's output shape (schema-validated by Claude Code; mismatches are silently dropped) | `TestExtractToolText_*`, `TestHookHandler_BashShapePreserved_NoSizeCap`, `TestHookHandler_ReadFileShapePreserved` |
 | retrieval store is local-only, bounded (256MB/24h TTL), and honest on miss ("expired — re-run the tool"); aliases are never reissued across restarts | `server`: `TestStoreRoundtripDedupEvict` |
 | stats are local-only | `whittle stats` reads `~/.whittle/stats.jsonl`; nothing is transmitted, ever (see PLAN.md non-goals) |
 
-Known, documented limitations: compressed outputs larger than ~9.5k chars are
-not replaced via the hook (upstream 10k hook-output cap); the ML prose path is
-lossy by design and opt-in.
+Known, documented limitations: the ML prose path is lossy by design and opt-in.
+(The former ~9.5k replacement ceiling is gone: Claude Code's 10k hook-output cap
+was verified NOT to apply to `updatedToolOutput` — docs/hook-output-cap.md.)

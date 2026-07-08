@@ -17,13 +17,15 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/firstops-dev/whittle/server"
 )
 
 type hookEvent struct {
 	HookEventName string          `json:"hook_event_name"`
 	ToolName      string          `json:"tool_name"`
-	ToolOutput    string          `json:"tool_output"`   // documented shape (string)
-	ToolResponse  json.RawMessage `json:"tool_response"` // fallback: older/object shapes
+	ToolOutput    string          `json:"tool_output"`   // legacy string-only field; real events omit it
+	ToolResponse  json.RawMessage `json:"tool_response"` // primary: carries the tool's output shape
 }
 
 func cmdHook(_ []string) {
@@ -38,16 +40,15 @@ func cmdHook(_ []string) {
 	if json.Unmarshal(raw, &ev) != nil || ev.HookEventName != "PostToolUse" {
 		return
 	}
-	text := ev.ToolOutput
-	if text == "" {
-		text, _ = extractText(ev.ToolResponse)
-	}
-	if len(text) < 256 { // tiny outputs are never worth the round-trip
+	// Shape-preserving extraction: Claude Code schema-validates updatedToolOutput
+	// and silently keeps the original on mismatch - see server/toolresponse.go.
+	text, rebuild, ok := server.ExtractHookText(ev.ToolResponse, ev.ToolOutput)
+	if !ok || len(text) < 256 { // unknown shape / tiny output: not worth the round-trip
 		return
 	}
 
 	body, _ := json.Marshal(map[string]any{"content": text, "tool_name": ev.ToolName})
-	client := http.Client{Timeout: 4 * time.Second}
+	client := http.Client{Timeout: 9 * time.Second} // > adapter's 8s: its skip fires first
 	resp, err := client.Post("http://"+routerAddr+"/v1/compress", "application/json", bytes.NewReader(body))
 	if err != nil {
 		return
@@ -64,15 +65,9 @@ func cmdHook(_ []string) {
 		out.Action != "compressed" || out.Compressed == "" || len(out.Compressed) >= len(text) {
 		return
 	}
-	// Claude Code caps hook stdout at 10,000 chars - larger output is diverted to
-	// a file and replaced with a preview, which would corrupt the result. Fail
-	// open instead of emitting a replacement that cannot land intact.
-	if len(out.Compressed) > 9500 {
-		return
-	}
-
+	// No size cap on the replacement - see docs/hook-output-cap.md.
 	logStat(ev.ToolName, out.Strategy, out.OriginalTokens, out.CompressedTokens)
-	emitReplacement(out.Compressed)
+	emitReplacement(rebuild(out.Compressed))
 }
 
 // logStat appends one compression event to ~/.whittle/stats.jsonl - LOCAL ONLY,
@@ -93,43 +88,11 @@ func logStat(tool, strategy string, inTok, outTok int) {
 	f.Write(append(b, '\n'))
 }
 
-// extractText pulls the compressible text out of the tool_response, which may be
-// a bare string or an object ({"stdout": ...}, {"file": {"content": ...}},
-// {"content": [{"type":"text","text":...}]}). Anything else: not ours to touch.
-func extractText(raw json.RawMessage) (string, bool) {
-	var s string
-	if json.Unmarshal(raw, &s) == nil {
-		return s, true
-	}
-	var obj map[string]json.RawMessage
-	if json.Unmarshal(raw, &obj) != nil {
-		return "", false
-	}
-	for _, key := range []string{"stdout", "output", "result"} {
-		if v, ok := obj[key]; ok && json.Unmarshal(v, &s) == nil && s != "" {
-			return s, true
-		}
-	}
-	if f, ok := obj["file"]; ok {
-		var file struct {
-			Content string `json:"content"`
-		}
-		if json.Unmarshal(f, &file) == nil && file.Content != "" {
-			return file.Content, true
-		}
-	}
-	return "", false
-}
-
 // emitReplacement prints the PostToolUse hook output that replaces the persisted
-// tool output (docs-verified contract: hookSpecificOutput.updatedToolOutput).
-func emitReplacement(compressed string) {
-	out := map[string]any{
-		"hookSpecificOutput": map[string]any{
-			"hookEventName":     "PostToolUse",
-			"updatedToolOutput": compressed,
-		},
-	}
-	b, _ := json.Marshal(out)
+// tool output. `compressed` is the rebuilt value in the tool's own output
+// shape, not necessarily a string; the envelope is server.HookReply, shared
+// with the HTTP path so the wire contract lives in one place.
+func emitReplacement(compressed any) {
+	b, _ := json.Marshal(server.HookReply(compressed))
 	fmt.Println(string(b))
 }

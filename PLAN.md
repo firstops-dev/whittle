@@ -7,7 +7,7 @@
 - [x] P0.4 CONTRIBUTING + issue templates + non-goals
 - [ ] P0.5 CI live (blocked: `gh auth refresh -h github.com -s workflow`, then push .github/workflows/ci.yml)
 - [ ] P0.6 supervised clean-machine `whittle setup` run (needs operator)
-- [ ] P0.7 10k hook-cap: document limitation + upstream feature request; engineering options doc
+- [x] P0.7 10k hook-cap: RESOLVED 2026-07-08 — cap verified not to apply to updatedToolOutput (lifted); real constraint is output-schema validation, fixed via shape-preserving rebuild (docs/hook-output-cap.md)
 
 ## Publish-ready order (2026-07-04, supersedes queue below)
 1. [ ] v0.2.1 release (contains snippet-misroute fix)
