@@ -39,8 +39,9 @@ type Options struct {
 	// MaxChars is the global safety ceiling; larger inputs skip before
 	// classification (default 256 KiB).
 	MaxChars int
-	// ProseMaxChars caps only the ML prose path (default 4500 — a latency
-	// budget, not a correctness bound).
+	// ProseMaxChars caps only the ML prose path (default 100000 — a latency
+	// budget sized for GPU/MPS inference, not a correctness bound; CPU-bound
+	// machines should lower it, see compress/gate.go).
 	ProseMaxChars int
 	// Logger receives pipeline diagnostics (nil = silent).
 	Logger compress.Logger

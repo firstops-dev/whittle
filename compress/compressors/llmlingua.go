@@ -27,11 +27,13 @@ type LLMLinguaAdapter struct {
 func NewLLMLinguaAdapterWithURL(url string) *LLMLinguaAdapter {
 	return &LLMLinguaAdapter{
 		url: strings.TrimRight(url, "/"),
-		// MUST stay under the edge hook's 2s budget: with both at 2s they race,
-		// the edge cancels first, and a slow inference surfaces as a transport
-		// error at the edge instead of this pipeline's clean skip path. 1.5s
-		// leaves the pipeline time to answer inside the edge deadline.
-		client: &http.Client{Timeout: 1500 * time.Millisecond},
+		// Timeout ordering invariant: adapter < hook-handler ctx (9s) < Claude
+		// Code's hook timeout (10s), so a slow inference surfaces as THIS
+		// adapter's clean error -> pipeline skip, never as an edge cancellation.
+		// 8s covers the 100k prose ceiling on GPU/MPS (measured ~0.07s+0.04s/KB
+		// => ~4s at 100KB); CPU-bound machines (~0.3s/KB) time out past ~25KB
+		// and should lower WHITTLE_PROSE_MAX_CHARS instead (see gate.go).
+		client: &http.Client{Timeout: 8 * time.Second},
 	}
 }
 

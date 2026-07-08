@@ -60,8 +60,7 @@ whittle setup
 That's the whole thing. `setup`:
 
 - installs the **Claude Code PostToolUse hook** - tool outputs your agent reads
-  are whittled from now on (known limit: compressed results larger than ~9.5k
-  chars pass through uncompressed, a Claude Code hook-output cap; see GUARANTEES.md) (Claude Code is the supported agent today;
+  are whittled from now on (Claude Code is the supported agent today;
   Cursor, Codex and OpenCode adapters are on the roadmap);
 - materializes the ML prose sidecar (embedded in the binary) into `~/.whittle`,
   builds its venv, and uses your GPU automatically (CUDA > Apple MPS > CPU) -
@@ -142,7 +141,7 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 |---|---|---|
 | `WHITTLE_MODEL_URL` | *(unset - prose off)* | model sidecar URL |
 | `WHITTLE_MAX_CHARS` | 262144 | global size ceiling (skip before classify) |
-| `WHITTLE_PROSE_MAX_CHARS` | 4500 | prose-path latency ceiling |
+| `WHITTLE_PROSE_MAX_CHARS` | 100000 | prose-path latency ceiling (lower on CPU-only machines) |
 
 
 
@@ -325,14 +324,19 @@ python bench/calibrate_tokens.py   # reproduces the token-estimator MAE (needs t
 
 ## Known limitations
 
-- **10k hook-output cap.** Claude Code caps a hook's replacement at 10,000 chars;
-  compressed results above ~9.5k pass through uncompressed today. Retrieval-backed
-  chunking is the planned fix ([docs/hook-output-cap.md](docs/hook-output-cap.md)).
+- **Replacements must match the tool's output shape.** Claude Code schema-validates
+  `updatedToolOutput` and silently keeps the original on mismatch; whittle rebuilds
+  the tool's own response shape around the compressed text (verified live on Claude
+  Code 2.1.203 — see [docs/hook-output-cap.md](docs/hook-output-cap.md), which also
+  documents why the once-assumed 10k output cap does NOT apply to replacements).
 - **Prose needs the sidecar.** Without it, prose and markdown docs pass through
   unchanged; deterministic strategies are unaffected.
 - **launchd is macOS-only.** Linux runs the daemon under systemd (unit above).
-- **Prose latency ceiling** (default 4500 chars) trades a hard cap for predictable
-  in-path latency; raise it with `WHITTLE_PROSE_MAX_CHARS`.
+- **Prose latency ceiling** (default 100000 chars) trades a hard cap for predictable
+  in-path latency, sized for GPU/MPS inference (measured ~0.07s + 0.04s/KB on Apple
+  silicon: 100KB ≈ 4s, within the 8s prose timeout). CPU-only machines run ~8x
+  slower (~0.3s/KB) and should lower `WHITTLE_PROSE_MAX_CHARS` to ~12000, or large
+  prose burns the timeout and passes through unchanged.
 
 ## Contributing
 

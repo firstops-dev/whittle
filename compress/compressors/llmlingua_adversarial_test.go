@@ -149,19 +149,25 @@ func TestPipeline_SidecarSkip_IsCleanSkip(t *testing.T) {
 
 func TestPipeline_FailOpen_SlowUpstreamTimesOut(t *testing.T) {
 	if testing.Short() {
-		t.Skip("slow: relies on the adapter's 1.5s client timeout")
+		t.Skip("slow: waits out a deliberate 1s deadline")
 	}
 	release := make(chan struct{})
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		<-release // hang past the adapter's 1.5s timeout
+		<-release // hang past the caller's deadline
 	}))
 	defer srv.Close()
 	defer close(release)
 
 	body := proseBody()
 	p := prosePipeline(srv.URL)
+	// Drive the deadline through the caller's ctx (as the hook handler does)
+	// rather than waiting out the adapter's own 8s client timeout - the
+	// contract under test is "any timeout maps to a clean budget skip",
+	// whichever bound fires first.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
 	start := time.Now()
-	out := p.Compress(context.Background(), compress.Input{Content: body, MinTokens: compress.DefaultMinTokens})
+	out := p.Compress(ctx, compress.Input{Content: body, MinTokens: compress.DefaultMinTokens})
 	elapsed := time.Since(start)
 
 	// A timeout is a latency-BUDGET outcome, not a failure: the adapter maps it
