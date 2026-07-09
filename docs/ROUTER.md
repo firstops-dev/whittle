@@ -166,9 +166,14 @@ prints errors and cost-lint warnings.
 ## 5. Signals
 
 Two small models power three signals. Both run in the sidecar; the Go engine
-holds only thresholds. If the sidecar is down or smart mode is off, ML leaves
-evaluate false and the keyword/context heuristics still route (a route whose
-match *depended* on an errored signal never fires — so a `not` over an
+holds only thresholds. Smart mode is automatic: the router probes the standard
+sidecar address (`127.0.0.1:45872`, installed by `whittle setup`) — no
+configuration. An absent sidecar reads as smart-off (quiet; heuristics still
+route, and signals activate the moment it appears); a present-but-broken one is
+surfaced loudly (`err` traces + `ml-degraded`). Set
+`WHITTLE_ROUTER_MODEL_URL=off` to disable ML entirely, or point it elsewhere to
+override. When ML is unavailable, leaves evaluate false (a route whose match
+*depended* on an errored signal never fires — so a `not` over an
 unavailable signal can't invert fail-open; the log gains an `ml-degraded` tag).
 
 ### 5.1 `domain` — subject classification with mass thresholding
