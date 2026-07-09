@@ -35,6 +35,8 @@ func main() {
 		cmdCompress(os.Args[2:])
 	case "serve":
 		cmdServe(os.Args[2:])
+	case "route":
+		cmdRoute(os.Args[2:])
 	case "setup":
 		cmdSetup(os.Args[2:])
 	case "daemon":
@@ -70,7 +72,9 @@ usage:
   whittle stop                      stop background services
   whittle cleanup                   stop + remove hook + unregister service
   whittle compress [flags] [file]   compress a file (or stdin) to stdout
-  whittle serve    [flags]          run the HTTP API in the foreground
+  whittle serve    [flags]          run the compress HTTP API in the foreground
+  whittle route    [flags]          run the model-router daemon (opt-in) on
+                                    ANTHROPIC_BASE_URL
   whittle version
 
 compress flags:
@@ -80,6 +84,15 @@ compress flags:
 
 serve flags:
   -addr string     listen address (default ":45871")
+
+route flags:
+  -addr string     listen address (default "127.0.0.1:45873")
+  -policy string   policy file path (default ~/.whittle/router.json)
+                   missing/invalid → transparent passthrough (never bricks Claude Code)
+  -install         register the router as a background launchd agent (opt-in), then exit
+  -uninstall       stop + unregister the router launchd agent, then exit
+  env WHITTLE_ROUTER_UPSTREAM    upstream API (default api.anthropic.com)
+  env WHITTLE_ROUTER_MODEL_URL   classifier sidecar URL (unset → smart mode off)
 
 env:
   WHITTLE_MODEL_URL        enable the ML prose path (model sidecar URL)

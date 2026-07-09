@@ -11,7 +11,7 @@ import logging
 import os
 import threading
 import time
-from typing import Optional
+from typing import List, Optional
 
 import tiktoken
 from fastapi import FastAPI, HTTPException
@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 
 import gate
 import fidelity
+import route
 
 VERSION = "1.0.3"
 MODEL_NAME = os.environ.get("COMPRESSOR_MODEL", "microsoft/llmlingua-2-xlm-roberta-large-meetingbank")
@@ -54,6 +55,33 @@ _lock = threading.Lock()
 # full thread width; raise only with more vCPUs.
 _INFER_SEM = threading.Semaphore(max(1, int(os.environ.get("MAX_CONCURRENCY", "1") or "1")))
 _INFER_WAIT_S = float(os.environ.get("INFER_WAIT_S", "0.25") or "0.25")
+
+# Router smart-mode signals (vSR's two mmBERT models, separate from the compressor).
+# Lazy + independent: the embedding model loads on the first /v1/route/embedding or
+# /complexity call, the classifier on the first /v1/route/domain call — a sidecar used
+# only for compression never pays for either.
+_route_scorer = None
+_route_domain = None
+_route_lock = threading.Lock()
+
+
+def _get_route_scorer():
+    global _route_scorer
+    if _route_scorer is None:
+        with _route_lock:
+            if _route_scorer is None:
+                emb = route.Embedder()
+                _route_scorer = route.Scorer(emb, emb.version())
+    return _route_scorer
+
+
+def _get_route_domain():
+    global _route_domain
+    if _route_domain is None:
+        with _route_lock:
+            if _route_domain is None:
+                _route_domain = route.DomainClassifier()
+    return _route_domain
 
 
 class _FidelitySkip(Exception):
@@ -167,6 +195,54 @@ def info():
             "method": "extractive (LLMLingua-2) + metadata-first gate + expansion guardrail",
             "default_rate": DEFAULT_RATE["prose"], "max_chars": MAX_CHARS,
             "int8": INT8, "intra_op_threads": _NUM_THREADS}
+
+
+# vSR routing signals. Errors (missing model, etc.) raise → the router's Go client
+# reads the non-200 and fails open, so a broken sidecar never blocks routing.
+class RouteDomainRequest(BaseModel):
+    text: str = ""
+
+
+class RouteDomainResponse(BaseModel):
+    label: str
+    confidence: float
+
+
+class RouteEmbeddingRequest(BaseModel):
+    text: str = ""
+    candidates: List[str] = Field(default_factory=list)
+
+
+class RouteEmbeddingResponse(BaseModel):
+    score: float
+
+
+class RouteComplexityRequest(BaseModel):
+    text: str = ""
+    hard: List[str] = Field(default_factory=list)
+    easy: List[str] = Field(default_factory=list)
+
+
+class RouteComplexityResponse(BaseModel):
+    margin: float
+
+
+@app.post("/v1/route/domain", response_model=RouteDomainResponse)
+def route_domain(req: RouteDomainRequest):
+    label, conf = _get_route_domain().classify(req.text)
+    return RouteDomainResponse(label=label, confidence=conf)
+
+
+@app.post("/v1/route/embedding", response_model=RouteEmbeddingResponse)
+def route_embedding(req: RouteEmbeddingRequest):
+    score = _get_route_scorer().score_embedding(req.text, req.candidates)
+    return RouteEmbeddingResponse(score=score)
+
+
+@app.post("/v1/route/complexity", response_model=RouteComplexityResponse)
+def route_complexity(req: RouteComplexityRequest):
+    margin = _get_route_scorer().score_complexity(req.text, req.hard, req.easy)
+    return RouteComplexityResponse(margin=margin)
 
 
 @app.post("/v1/compress", response_model=CompressResponse)

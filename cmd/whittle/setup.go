@@ -28,13 +28,18 @@ import (
 	"time"
 
 	"github.com/firstops-dev/whittle"
+	"github.com/firstops-dev/whittle/router"
 	"github.com/firstops-dev/whittle/server"
 )
 
 const (
-	routerAddr = "127.0.0.1:45871"
-	modelAddr  = "127.0.0.1:45872"
+	routerAddr = "127.0.0.1:45871" // compress HTTP server (content-aware router)
+	modelAddr  = "127.0.0.1:45872" // Python model sidecar (compress + /v1/route/* signals)
 	agentLabel = "dev.firstops.whittle"
+
+	// routerAgentLabel is the OPT-IN model-router service, a separate launchd agent
+	// from the compress daemon (installed by `whittle route -install`, not setup).
+	routerAgentLabel = "dev.firstops.whittle.router"
 )
 
 func whittleHome() string {
@@ -227,10 +232,88 @@ func installLaunchAgent(dir string) error {
 	return exec.Command("launchctl", "bootstrap", fmt.Sprintf("gui/%d", os.Getuid()), launchPlistPath()).Run()
 }
 
+// --- opt-in model router service (separate launchd agent) ---
+
+func routerPlistPath() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, "Library", "LaunchAgents", routerAgentLabel+".plist")
+}
+
+// routerInstall registers the opt-in model-router as a background launchd agent
+// and prints the ANTHROPIC_BASE_URL the user must set. It is deliberately NOT part
+// of `whittle setup` — routing is opt-in, turned on only when the user asks.
+func routerInstall() {
+	if runtime.GOOS != "darwin" {
+		fmt.Println("whittle: launchd is macOS-only. Run `whittle route` under your supervisor (e.g. systemd),\n" +
+			"  then set  ANTHROPIC_BASE_URL=http://" + router.DefaultAddr)
+		return
+	}
+	dir := whittleHome()
+	must(os.MkdirAll(filepath.Join(dir, "logs"), 0o755))
+	self, err := os.Executable()
+	if err != nil {
+		fmt.Println("whittle:", err)
+		return
+	}
+	// Point smart mode at the compress sidecar (it also serves /v1/route/*). If the
+	// sidecar is down, the router fails open to heuristics-only — never blocks.
+	plist := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>%s</string>
+  <key>ProgramArguments</key><array><string>%s</string><string>route</string></array>
+  <key>EnvironmentVariables</key><dict>
+    <key>WHITTLE_ROUTER_MODEL_URL</key><string>http://%s</string>
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>%s/logs/router.log</string>
+  <key>StandardErrorPath</key><string>%s/logs/router.log</string>
+</dict></plist>
+`, routerAgentLabel, self, modelAddr, dir, dir)
+	if err := os.WriteFile(routerPlistPath(), []byte(plist), 0o644); err != nil {
+		fmt.Println("whittle: router agent registration failed:", err)
+		return
+	}
+	_ = exec.Command("launchctl", "bootout", fmt.Sprintf("gui/%d/%s", os.Getuid(), routerAgentLabel)).Run()
+	if err := exec.Command("launchctl", "bootstrap", fmt.Sprintf("gui/%d", os.Getuid()), routerPlistPath()).Run(); err != nil {
+		fmt.Println("whittle: router agent bootstrap failed:", err)
+		return
+	}
+	fmt.Println("  ✓ model-router launchd agent registered (" + routerAgentLabel + ") — starts at login, kept alive")
+	waitHealthy("http://"+router.DefaultAddr+"/health", 15*time.Second, "model-router")
+	fmt.Printf("\nRoute Claude Code through the router by setting:\n"+
+		"  export ANTHROPIC_BASE_URL=http://%s\n"+
+		"Author a policy at ~/.whittle/router.json (a missing/invalid one → transparent passthrough,\n"+
+		"so it never bricks Claude Code). Disable anytime with:  whittle route -uninstall\n", router.DefaultAddr)
+}
+
+// routerUninstall stops + unregisters the router agent (idempotent).
+func routerUninstall() {
+	if runtime.GOOS != "darwin" {
+		fmt.Println("whittle: stop your supervisor's whittle-route unit (launchd is macOS-only)")
+		return
+	}
+	_ = exec.Command("launchctl", "bootout", fmt.Sprintf("gui/%d/%s", os.Getuid(), routerAgentLabel)).Run()
+	_ = os.Remove(routerPlistPath())
+	fmt.Println("whittle: model-router stopped + unregistered (unset ANTHROPIC_BASE_URL to stop routing through it)")
+}
+
+// routerInstalled reports whether the opt-in router agent is registered.
+func routerInstalled() bool {
+	_, err := os.Stat(routerPlistPath())
+	return err == nil
+}
+
 func cmdStop(_ []string) {
 	if runtime.GOOS == "darwin" {
+		// Stop the opt-in router agent too, if it was installed (idempotent).
+		if routerInstalled() {
+			_ = exec.Command("launchctl", "bootout", fmt.Sprintf("gui/%d/%s", os.Getuid(), routerAgentLabel)).Run()
+			fmt.Println("whittle: model-router stopped (still registered; `whittle route -uninstall` removes it)")
+		}
 		if err := exec.Command("launchctl", "bootout", fmt.Sprintf("gui/%d/%s", os.Getuid(), agentLabel)).Run(); err != nil {
-			fmt.Println("whittle: nothing to stop (launchd agent not loaded)")
+			fmt.Println("whittle: compress daemon not loaded")
 			return
 		}
 		fmt.Println("whittle: stopped (hook still installed - outputs pass through uncompressed; `whittle cleanup` removes it)")
@@ -241,6 +324,7 @@ func cmdStop(_ []string) {
 
 func cmdCleanup(_ []string) {
 	cmdStop(nil)
+	routerUninstall() // remove the opt-in router agent too (idempotent)
 	if err := removeClaudeHook(); err != nil {
 		fmt.Println("whittle: hook removal:", err)
 	} else {
@@ -260,8 +344,13 @@ func cmdStatus(_ []string) {
 			fmt.Printf("  ✗ %s not responding (%s)\n", name, url)
 		}
 	}
-	check("router ", "http://"+routerAddr+"/health")
-	check("sidecar", "http://"+modelAddr+"/health")
+	check("compress ", "http://"+routerAddr+"/health")
+	check("sidecar  ", "http://"+modelAddr+"/health")
+	if routerInstalled() {
+		check("model-router", "http://"+router.DefaultAddr+"/health")
+	} else {
+		fmt.Println("  · model-router not enabled (opt-in: `whittle route -install`)")
+	}
 	if hookInstalled() {
 		fmt.Println("  ✓ Claude Code hook installed")
 	} else {
