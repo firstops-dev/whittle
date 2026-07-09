@@ -64,9 +64,13 @@ Walkthrough of one request:
 
 1. **Extract.** The body is parsed once into `Signals`: estimated context tokens
    (whole body ÷ 4), message count, tool-loop shape, the requested model
-   (canonicalized — dated snapshots match bare ids), and the recent user text
-   (`inspect` window; tool results and system prompt excluded from keyword/ML
-   text).
+   (canonicalized — dated snapshots match bare ids), and the user text (tool
+   results and the system prompt are never signal input). Two text scopes are
+   kept deliberately: **keywords scan the `inspect` window** (a hard keyword two
+   turns back keeps protecting), while **ML signals classify only the latest
+   user turn** — averaging turns dilutes a classifier (measured live: a turn
+   scoring complexity +0.17 alone fell to +0.03 joined with two trivial turns,
+   silently suppressing mid-session escalation).
 2. **Decide.** A pin header (if configured) wins outright. Otherwise the routes
    run top-down, **first match wins**; if nothing matches, the static `default`
    tier applies. Inside a route's condition tree, cheap heuristic leaves evaluate

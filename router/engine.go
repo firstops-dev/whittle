@@ -344,6 +344,20 @@ func (st *evalState) matchRegexKeywords(pats []string) bool {
 	return false
 }
 
+// mlText is what the ML signals classify: the LATEST user turn, not the joined
+// inspect window. Averaging turns dilutes the classifiers — measured live: a turn
+// scoring complexity +0.171 (hard) alone fell to +0.025 (medium) once joined with
+// two earlier trivial turns, silently suppressing mid-session escalation. Keywords
+// deliberately KEEP the window (matchLiteralKeywords) — persistence is a feature
+// there (a hard keyword two turns back keeps protecting); for a classifier it is
+// noise. Falls back to the window text when the last turn has no user text.
+func (st *evalState) mlText() string {
+	if st.s.LastUserText != "" {
+		return st.s.LastUserText
+	}
+	return st.s.RecentText
+}
+
 // matchDomain fires when the classifier's predicted label is in the named
 // domain's category set. The classification is computed once per request; on
 // ML-disabled/error the leaf is false (the route simply won't fire).
@@ -353,7 +367,7 @@ func (st *evalState) matchDomain(name string) bool {
 		return false // validation guarantees the reference resolves
 	}
 	if !st.domainDone {
-		st.domainLabel, _, st.domainProbs, st.domainErr = st.cl.Domain(st.s.RecentText)
+		st.domainLabel, _, st.domainProbs, st.domainErr = st.cl.Domain(st.mlText())
 		st.domainDone = true
 	}
 	if st.domainErr != nil {
@@ -432,7 +446,7 @@ func (st *evalState) embedScore(name string, candidates []string) (float64, erro
 	if r, ok := st.embed[name]; ok {
 		return r.val, r.err
 	}
-	score, err := st.cl.EmbeddingScore(st.s.RecentText, candidates)
+	score, err := st.cl.EmbeddingScore(st.mlText(), candidates)
 	st.embed[name] = mlResult{score, err}
 	return score, err
 }
@@ -445,7 +459,7 @@ func (st *evalState) complexMargin(name string, hard, easy []string) (float64, e
 	if r, ok := st.complex[name]; ok {
 		return r.val, r.err
 	}
-	margin, err := st.cl.ComplexityMargin(st.s.RecentText, hard, easy)
+	margin, err := st.cl.ComplexityMargin(st.mlText(), hard, easy)
 	st.complex[name] = mlResult{margin, err}
 	return margin, err
 }
