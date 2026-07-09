@@ -66,7 +66,10 @@
           "what is the date today",
           "what time is it right now",
           "what is the capital of that country",
-          "how do you spell this word"
+          "how do you spell this word",
+          "where is that place located",
+          "who wrote that famous book",
+          "when did that event happen"
         ]
       }
     ]
