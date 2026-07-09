@@ -1,6 +1,6 @@
 # whittle
 
-**Cut your AI agent's token bill twice: compress every tool output the moment it's created, and route each request to the cheapest model that can handle it. Local, fail-open, and every claim in this README is verifiable from a clone.**
+**Carve your AI agent's context down to what matters — and route every request to the cheapest model that can handle it. Local, fail-open, and every claim in this README is verifiable from a clone.**
 
 [![CI](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml/badge.svg)](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/firstops-dev/whittle)](https://github.com/firstops-dev/whittle/releases)
@@ -70,7 +70,7 @@ Whittle's second surface: a local proxy on `ANTHROPIC_BASE_URL` that sends each 
 - **Fail-open by construction** — bad policy, dead classifier, or a rejected rewrite all fall back to your original request. Unset the env var and you're direct again.
 - **Savings you can measure** — every request logs requested model, served model, and real token usage.
 
-Architecture, signal math, and precise credits (the classifier models come from [vLLM Semantic Router](https://github.com/vllm-project/semantic-router)): [docs/ROUTER.md](docs/ROUTER.md).
+The router — engine, policy design, signal composition — is whittle's own; two pretrained models power its ML signals (the 14-subject `domain` classifier and the text embedder, both from [vLLM Semantic Router](https://github.com/vllm-project/semantic-router)). Architecture, signal math, and precise credits: [docs/ROUTER.md](docs/ROUTER.md).
 
 ## Why write-time?
 
@@ -106,7 +106,7 @@ The bar: guarantees are executable — see [CONTRIBUTING.md](CONTRIBUTING.md). F
 
 ## Acknowledgments
 
-Whittle's log-selection strategy, several detection heuristics, and the tabular parser were adapted from [Headroom](https://github.com/headroomlabs-ai/headroom) (Apache-2.0) — their compaction work is excellent; we wanted the write-time position and the stricter fidelity contract it demands. The router's classifier and embedding models come from [vLLM Semantic Router](https://github.com/vllm-project/semantic-router) ([whitepaper](https://vllm-semantic-router.com/white-paper)). See [NOTICE](NOTICE).
+Whittle's log-selection strategy, several detection heuristics, and the tabular parser were adapted from [Headroom](https://github.com/headroomlabs-ai/headroom) (Apache-2.0) — their compaction work is excellent; we wanted the write-time position and the stricter fidelity contract it demands. The router's two pretrained models — the `domain` classifier and the text embedder behind the similarity signals — come from [vLLM Semantic Router](https://github.com/vllm-project/semantic-router) ([whitepaper](https://vllm-semantic-router.com/white-paper)); the routing engine and policy design are whittle's own. See [NOTICE](NOTICE).
 
 ## License
 
