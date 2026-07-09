@@ -9,10 +9,11 @@ import (
 )
 
 // DefaultAddr is the router daemon's listen address. It is distinct from the
-// compress service (:45871): the router is a separate front door that Claude Code
-// points ANTHROPIC_BASE_URL at, while the compress service backs the PostToolUse
-// hook. Running both is the full whittle install.
-const DefaultAddr = "127.0.0.1:45872"
+// compress service (:45871) and the prose model sidecar (:45872): the router is a
+// separate front door that Claude Code points ANTHROPIC_BASE_URL at, while the
+// compress service backs the PostToolUse hook. Running all three is the full
+// whittle install.
+const DefaultAddr = "127.0.0.1:45873"
 
 // ListenAndServe builds the router Proxy from the policy file at policyPath and
 // serves it on addr. Cold-start safety (R3): a missing or invalid policy is NOT

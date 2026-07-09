@@ -86,7 +86,7 @@ serve flags:
   -addr string     listen address (default ":45871")
 
 route flags:
-  -addr string     listen address (default "127.0.0.1:45872")
+  -addr string     listen address (default "127.0.0.1:45873")
   -policy string   policy file path (default ~/.whittle/router.json)
                    missing/invalid → transparent passthrough (never bricks Claude Code)
 

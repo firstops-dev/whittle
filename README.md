@@ -28,6 +28,13 @@ are on the roadmap); the same daemon also exposes a Go library, an HTTP API, and
 an MCP retrieval tool. See [Why whittle](#why-whittle---compress-at-write-time-not-read-time)
 and [Architecture](#architecture) for the reasoning and the diagram.
 
+Whittle has a **second, independent surface: an opt-in model router**
+(`whittle route`). It runs a local proxy on `ANTHROPIC_BASE_URL` that routes each
+request to the cheapest model tier that can still handle it, per a policy you
+write. It's off by default, rewrites the *model* and never your conversation
+history, forwards your own credentials untouched, and fails open (down → your
+request passes straight through). See [Model routing](#model-routing-opt-in).
+
 ## See it
 
 ![whittle compressing a noisy build log](demo/compress.gif)
@@ -91,6 +98,7 @@ your agent sees original outputs, never an error.
 whittle compress output.json                 # compressed to stdout
 cat build.log | whittle compress -stats      # stats to stderr
 whittle serve -addr :45871                    # HTTP: POST /v1/compress
+whittle route -addr 127.0.0.1:45873           # opt-in model router (ANTHROPIC_BASE_URL)
 ```
 
 As a library:
@@ -135,6 +143,46 @@ cd model && python -m venv .venv && .venv/bin/pip install -r requirements.txt
 export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 ```
 
+## Model routing (opt-in)
+
+Whittle's second surface is a **local model router** - separate from the
+compression hook, off by default, turned on deliberately. `whittle route` runs a
+proxy on `ANTHROPIC_BASE_URL` that inspects each request and routes it to the
+cheapest model tier that can still serve it, per a policy you author
+(`~/.whittle/router.json`):
+
+```
+whittle route                                  # proxy on 127.0.0.1:45873
+export ANTHROPIC_BASE_URL=http://127.0.0.1:45873
+```
+
+- **You write the policy.** Tiers, first-match routes (keywords, context size,
+  tool-loop, requested model), and a default - a precedence ladder of
+  pin → routes → classify → default. See
+  [docs/ROUTER_POLICY_SCHEMA.md](docs/ROUTER_POLICY_SCHEMA.md).
+- **It rewrites the model, not your history.** The router swaps the target model
+  and reconciles capabilities for it (dropping features the cheaper model can't
+  serve). It never mutates conversation history, so prompt-cache prefixes stay
+  intact - the failure mode that makes read-time proxies painful.
+- **Your credentials pass through untouched.** The proxy forwards your own auth
+  to Anthropic; whittle never sees or stores a key.
+- **Fail-open by construction.** A missing/invalid policy, a parse error, or a
+  rewrite the upstream rejects all fall back to your original request. If the
+  router is down, unset `ANTHROPIC_BASE_URL` and you're direct again - nothing is
+  trapped behind it.
+
+The router is **new** and not on the battle-tested footing the compression hook
+is - run it when you want tier routing, leave it off and nothing changes. Today
+it routes on deterministic signals; opt-in **smart routing** (an ML intent
+classifier and few-shot classify, hosted in the same sidecar) is landing behind
+the same switch. Configure the upstream with `WHITTLE_ROUTER_UPSTREAM` (defaults
+to `api.anthropic.com`; point it at a corporate Anthropic gateway if you have
+one).
+
+> Not yet wired into `whittle setup`/`status`/launchd - run it in the foreground
+> (or your own supervisor) for now. Background-service integration is on the
+> roadmap.
+
 ## Configuration
 
 | env | default | meaning |
@@ -142,6 +190,7 @@ export WHITTLE_MODEL_URL=http://127.0.0.1:45872
 | `WHITTLE_MODEL_URL` | *(unset - prose off)* | model sidecar URL |
 | `WHITTLE_MAX_CHARS` | 262144 | global size ceiling (skip before classify) |
 | `WHITTLE_PROSE_MAX_CHARS` | 100000 | prose-path latency ceiling (lower on CPU-only machines) |
+| `WHITTLE_ROUTER_UPSTREAM` | `api.anthropic.com` | model router upstream (opt-in `whittle route`) |
 
 
 
@@ -256,20 +305,38 @@ roadmap) - and the same library embeds in gateways or pipelines if that is
 where you need it. The position is the point: compression happens where output
 is born, whatever surface delivers it there.
 
+**This argument is about compression, not about routing.** Whittle's opt-in
+[model router](#model-routing-opt-in) *is* a request-path proxy - but it exists
+for a different job (send each request to the cheapest capable tier), and it is
+deliberately the minimal kind. It rewrites only the model field and reconciles
+capabilities; it never rewrites conversation history, so it inherits none of the
+prompt-cache surgery above. It forwards your credentials untouched rather than
+terminating them, and it fails open to your original request, so an outage is a
+passthrough, not an agent outage. The read-time-compression proxy is the pattern
+whittle rejects; a minimal, history-preserving, fail-open router is a different
+tool that happens to share the address bar.
+
 ## Architecture
 
 ```
 Claude Code ──PostToolUse (HTTP)──▶ whittle daemon  (:45871, launchd-kept)
                                        │
-                                       ├─ router ─▶ json · log · terminal · markdown
+                                       ├─ dispatch ▶ json · log · terminal · markdown
                                        │            (deterministic, in-process)
                                        └─ prose ─▶ model sidecar (:45872, optional GPU)
                                        │
    whittle_get(id) ◀──MCP tool────────┘  reduced originals, retrievable on demand
+
+  ── opt-in, separate process, off by default ──
+Claude Code ──ANTHROPIC_BASE_URL──▶ whittle route (:45873) ──▶ Anthropic API
+                                      policy-based model-tier routing;
+                                      rewrites the model, not history; fail-open
 ```
 
-One resident daemon, three surfaces (hook · HTTP · MCP). Compression happens
-where output is born, off the model-request path entirely.
+The compression surfaces are one resident daemon, three ways in (hook · HTTP ·
+MCP) - compression happens where output is born, off the model-request path
+entirely. The model router is a **separate, opt-in** process on the request path;
+you run it only when you want tier routing.
 
 ## Performance
 
