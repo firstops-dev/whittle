@@ -31,13 +31,11 @@
         "min_mass": 0.7
       },
       {
-        "name": "high-stakes",
+        "name": "casual",
         "categories": [
-          "law",
-          "health",
-          "business",
-          "economics"
-        ]
+          "other"
+        ],
+        "min_mass": 0.9
       }
     ],
     "complexity": [
@@ -90,20 +88,32 @@
       "to": "smart"
     },
     {
-      "name": "de-escalate",
+      "name": "casual-easy",
       "when": {
         "all": [
           {
-            "complexity": "reasoning:easy"
+            "domain": "casual"
           },
           {
-            "not": {
-              "domain": "high-stakes"
-            }
+            "complexity": "reasoning:easy"
           }
         ]
       },
       "to": "fast"
+    },
+    {
+      "name": "casual-medium",
+      "when": {
+        "all": [
+          {
+            "domain": "casual"
+          },
+          {
+            "complexity": "reasoning:medium"
+          }
+        ]
+      },
+      "to": "main"
     }
   ],
   "session": {

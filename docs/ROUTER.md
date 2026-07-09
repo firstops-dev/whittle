@@ -108,7 +108,7 @@ bad edit keeps the running policy.
   "signals": {
     "domains": [
       {"name": "quantitative", "categories": ["math", "physics", "chemistry"], "min_mass": 0.7},
-      {"name": "high-stakes",  "categories": ["law", "health", "business", "economics"]}
+      {"name": "casual",       "categories": ["other"], "min_mass": 0.9}
     ],
     "complexity": [
       {"name": "reasoning", "threshold": 0.15,
@@ -117,12 +117,13 @@ bad edit keeps the running policy.
     ]
   },
   "routes": [
-    {"name": "escalate",    "when": {"any": [
+    {"name": "escalate",      "when": {"any": [
         {"complexity": "reasoning:hard"},
-        {"domain": "quantitative"}]},                  "to": "smart"},
-    {"name": "de-escalate", "when": {"all": [
-        {"complexity": "reasoning:easy"},
-        {"not": {"domain": "high-stakes"}}]},          "to": "fast"}
+        {"domain": "quantitative"}]},                    "to": "smart"},
+    {"name": "casual-easy",   "when": {"all": [
+        {"domain": "casual"}, {"complexity": "reasoning:easy"}]},   "to": "fast"},
+    {"name": "casual-medium", "when": {"all": [
+        {"domain": "casual"}, {"complexity": "reasoning:medium"}]}, "to": "main"}
   ],
   "session":   {"sticky": false},
   "overrides": {"pin_header": "x-whittle-route"}
