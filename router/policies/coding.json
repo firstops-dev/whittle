@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "tiers": [
+    {"name": "fast",  "model": "claude-haiku-4-5"},
+    {"name": "main",  "model": "claude-sonnet-4-5"},
+    {"name": "smart", "model": "claude-opus-4-8"}
+  ],
+  "default": "main",
+  "inspect": {"scope": "recent_turns", "turns": 3},
+  "signals": {
+    "embeddings": [
+      {"name": "architecture", "threshold": 0.55,
+       "candidates": [
+         "design a scalable architecture for this system",
+         "plan a migration strategy across services",
+         "compare design tradeoffs and recommend an approach"
+       ]}
+    ],
+    "complexity": [
+      {"name": "reasoning", "threshold": 0.15,
+       "hard": ["debug this intermittent race condition", "analyze the root cause of this failure", "reason step by step through this problem", "design the data model and api for this feature"],
+       "easy": ["rename this variable", "fix this typo", "add a docstring", "reformat this file"]}
+    ]
+  },
+  "routes": [
+    {"name": "hard-work", "when": {"any": [
+        {"keywords": ["migrate", "race condition", "root cause", "architecture", "refactor", "deadlock", "concurrency"]},
+        {"context_tokens": {"gt": 120000}},
+        {"complexity": "reasoning:hard"},
+        {"embedding": "architecture"}
+    ]}, "to": "smart"},
+    {"name": "quick-edit", "when": {"any": [
+        {"keywords": ["rename", "typo", "reformat", "docstring", "lint"]},
+        {"complexity": "reasoning:easy"}
+    ]}, "to": "fast"}
+  ],
+  "session": {"sticky": true, "min_band_jump": 2},
+  "overrides": {"pin_header": "x-whittle-route"}
+}

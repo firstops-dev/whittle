@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "tiers": [
+    {"name": "fast",  "model": "claude-haiku-4-5"},
+    {"name": "main",  "model": "claude-sonnet-4-5"},
+    {"name": "smart", "model": "claude-opus-4-8"}
+  ],
+  "default": "main",
+  "inspect": {"scope": "recent_turns", "turns": 3},
+  "routes": [
+    {"name": "hard-work", "when": {"any": [
+        {"keywords": ["migrate", "race condition", "root cause", "architecture", "refactor", "deadlock", "concurrency", "design the"]},
+        {"context_tokens": {"gt": 120000}}
+    ]}, "to": "smart"},
+    {"name": "quick-edit", "when": {"keywords": ["rename", "typo", "reformat", "docstring", "lint", "comment"]}, "to": "fast"}
+  ],
+  "session": {"sticky": true, "min_band_jump": 2},
+  "overrides": {"pin_header": "x-whittle-route"}
+}

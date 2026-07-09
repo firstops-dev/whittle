@@ -152,13 +152,18 @@ cheapest model tier that can still serve it, per a policy you author
 (`~/.whittle/router.json`):
 
 ```
+whittle policy init                            # write a starter coding policy to ~/.whittle/router.json
 whittle route                                  # proxy on 127.0.0.1:45873
 export ANTHROPIC_BASE_URL=http://127.0.0.1:45873
 ```
 
-- **You write the policy.** Tiers, first-match routes (keywords, context size,
-  tool-loop, requested model), and a default - a precedence ladder of
-  pin → routes → classify → default. See
+- **Start from a built-in policy.** `whittle policy list` shows the presets
+  (`coding`, `heuristic`); `whittle policy init [name]` writes one to
+  `~/.whittle/router.json`; `whittle policy validate <file>` checks your edits
+  against the real loader. Or write your own from scratch.
+- **The policy is yours.** Tiers, first-match routes (keywords, context size,
+  tool-loop, requested model, ML signals), and a default - a precedence ladder of
+  pin → routes → default. See
   [docs/ROUTER_POLICY_SCHEMA.md](docs/ROUTER_POLICY_SCHEMA.md).
 - **It rewrites the model, not your history.** The router swaps the target model
   and reconciles capabilities for it (dropping features the cheaper model can't
