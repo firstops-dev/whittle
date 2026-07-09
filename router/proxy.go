@@ -3,6 +3,7 @@ package router
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -106,8 +107,8 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p.serve(rec, r)
 	// One structured line per request — routing verdict + outcome, NEVER prompt
 	// text (review C1: the router must not persist request content to disk).
-	p.log.Printf(`{"tier":%q,"reason":%q,"status":%d,"latency_ms":%d,"ctx_tokens":%d,"session":%q}`,
-		rec.Header().Get("X-Whittle-Route"), rec.Header().Get("X-Whittle-Reason"),
+	p.log.Printf(`{"tier":%q,"requested":%q,"reason":%q,"status":%d,"latency_ms":%d,"ctx_tokens":%d,"session":%q}`,
+		rec.Header().Get("X-Whittle-Route"), rec.requested, rec.Header().Get("X-Whittle-Reason"),
 		rec.status, time.Since(start).Milliseconds(), rec.ctxTokens,
 		shortSession(r.Header.Get("X-Claude-Code-Session-Id")))
 }
@@ -146,6 +147,7 @@ func (p *Proxy) serve(rec *statusRecorder, r *http.Request) {
 	}
 
 	sig, err := Extract(body, r.Header.Get("X-Claude-Code-Session-Id"), pol.Inspect)
+	rec.requested = sig.RequestedModel // for the log line (model id is not prompt text)
 	if err != nil {
 		// Our parse error → Mode A: forward the ORIGINAL untouched.
 		p.passthrough(w, r, body, "fail-open:parse")
@@ -261,14 +263,20 @@ func (p *Proxy) modeBRetry(w http.ResponseWriter, r *http.Request, originalBody 
 		reason += " entitlement-blocked"
 	}
 
+	// Surface WHICH rewrite the upstream rejected — otherwise a bad tier model id
+	// (e.g. an invalid/undated model) fails on every request and is silently bailed
+	// out by the retry, with no clue in the log. The model id is not prompt text, so
+	// it is safe to record.
+	detail := fmt.Sprintf("(rewrote→%s got %d:%s)", dec.Model, status, orDash(parseErrorType(errBody)))
+
 	retry, err := p.sendUpstream(r, originalBody, r.Header)
 	if err != nil {
 		// Retry can't even be sent → relay the buffered original 4xx verbatim.
-		p.relayBytes(w, status, hdr, errBody, dec.Tier, reason+" mode-b:relay(retry-failed)")
+		p.relayBytes(w, status, hdr, errBody, dec.Tier, reason+" mode-b:relay-original"+detail)
 		return
 	}
 	defer retry.Body.Close()
-	p.relay(w, retry, dec.Tier, reason+" mode-b:retried-original")
+	p.relay(w, retry, dec.Tier, reason+" mode-b:retried-original"+detail)
 }
 
 func (p *Proxy) modeC(w http.ResponseWriter, err error) {
@@ -478,6 +486,7 @@ func (discardLogger) Printf(string, ...any) {}
 type statusRecorder struct {
 	http.ResponseWriter
 	status    int
+	requested string // the client's requested model (canonicalized), for the log
 	ctxTokens int
 	wrote     bool
 }
@@ -496,6 +505,14 @@ func (s *statusRecorder) Write(b []byte) (int, error) {
 }
 
 func (s *statusRecorder) Unwrap() http.ResponseWriter { return s.ResponseWriter }
+
+// orDash returns "-" for an empty string, so log fields are never blank.
+func orDash(s string) string {
+	if s == "" {
+		return "-"
+	}
+	return s
+}
 
 // shortSession returns a non-sensitive prefix of the session UUID for the log
 // (enough to correlate a session's requests; not the full id, no prompt text).

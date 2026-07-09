@@ -1,13 +1,114 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 
 	"github.com/firstops-dev/whittle/router"
 )
+
+var (
+	anyModelID   = regexp.MustCompile(`claude-(?:haiku|sonnet|opus)-\d[0-9a-z-]*`)
+	modelValueID = regexp.MustCompile(`"model"\s*:\s*"(claude-(?:haiku|sonnet|opus)-\d[0-9a-z-]*)"`)
+	datedID      = regexp.MustCompile(`-\d{8}$`)
+)
+
+func modelFamily(id string) string {
+	switch {
+	case strings.Contains(id, "haiku"):
+		return "haiku"
+	case strings.Contains(id, "sonnet"):
+		return "sonnet"
+	case strings.Contains(id, "opus"):
+		return "opus"
+	}
+	return ""
+}
+
+// detectClaudeModels scans Claude Code's config for the model id per family
+// (haiku/sonnet/opus) the account actually uses, so `policy init` fills the tiers
+// with ids Anthropic will accept — not the guessable placeholders that 4xx on
+// every rewrite. Ranking: an id used as a "model": value (proven-valid, what
+// Claude Code sends) beats a dated id beats a bare/lower one.
+func detectClaudeModels() map[string]string {
+	home, _ := os.UserHomeDir()
+	files := []string{filepath.Join(home, ".claude.json"), filepath.Join(home, ".claude", "settings.json")}
+
+	type cand struct {
+		id      string
+		isValue bool
+	}
+	best := map[string]cand{}
+	consider := func(id string, isValue bool) {
+		fam := modelFamily(id)
+		if fam == "" {
+			return
+		}
+		cur, ok := best[fam]
+		if !ok || betterModel(id, isValue, cur.id, cur.isValue) {
+			best[fam] = cand{id, isValue}
+		}
+	}
+	for _, f := range files {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			continue
+		}
+		s := string(b)
+		for _, m := range modelValueID.FindAllStringSubmatch(s, -1) {
+			consider(m[1], true)
+		}
+		for _, id := range anyModelID.FindAllString(s, -1) {
+			consider(id, false)
+		}
+	}
+	out := map[string]string{}
+	for fam, c := range best {
+		out[fam] = c.id
+	}
+	return out
+}
+
+func betterModel(aID string, aVal bool, bID string, bVal bool) bool {
+	if aVal != bVal {
+		return aVal // an actually-used "model": value is guaranteed valid
+	}
+	if ad, bd := datedID.MatchString(aID), datedID.MatchString(bID); ad != bd {
+		return ad // prefer the full dated id (Anthropic accepts it; bare often 404s)
+	}
+	return aID > bID // newer date / higher version
+}
+
+// fillModels substitutes the model ids detected from Claude Code's config.
+func fillModels(preset []byte) ([]byte, []string) {
+	return fillModelsWith(preset, detectClaudeModels())
+}
+
+// fillModelsWith substitutes the given family→id map into a preset's tiers, by
+// family. Returns the (possibly unchanged) JSON and human-readable notes.
+func fillModelsWith(preset []byte, detected map[string]string) ([]byte, []string) {
+	var doc struct {
+		Tiers []struct{ Name, Model string } `json:"tiers"`
+	}
+	if json.Unmarshal(preset, &doc) != nil {
+		return preset, nil
+	}
+	out := preset
+	var notes []string
+	for _, t := range doc.Tiers {
+		if id, ok := detected[modelFamily(t.Model)]; ok && id != t.Model {
+			out = bytes.ReplaceAll(out, []byte(`"`+t.Model+`"`), []byte(`"`+id+`"`))
+			notes = append(notes, fmt.Sprintf("%s: %s → %s", t.Name, t.Model, id))
+		}
+	}
+	return out, notes
+}
 
 // cmdPolicy manages router policies: list/show built-in presets, write one to
 // ~/.whittle/router.json, or validate a policy file with the real loader.
@@ -61,9 +162,12 @@ func policyInit(args []string) {
 		fmt.Fprintln(os.Stderr, "whittle:", err)
 		os.Exit(1)
 	}
-	// Defensive: a shipped preset must load (TestPresets_AllValid guards this too).
+	// Fill the tiers with the real model ids the account uses (from Claude Code's
+	// config) so the policy works on first request instead of 4xx-ing every rewrite.
+	b, notes := fillModels(b)
+	// Defensive: the result must still load (TestPresets_AllValid guards the base).
 	if _, _, verr := router.Load(b); verr != nil {
-		fmt.Fprintln(os.Stderr, "whittle: built-in policy failed to validate (bug):", verr)
+		fmt.Fprintln(os.Stderr, "whittle: policy failed to validate (bug):", verr)
 		os.Exit(1)
 	}
 	if _, err := os.Stat(*out); err == nil && !*force {
@@ -73,7 +177,17 @@ func policyInit(args []string) {
 	must(os.MkdirAll(filepath.Dir(*out), 0o755))
 	must(os.WriteFile(*out, b, 0o644))
 	fmt.Printf("  ✓ wrote %q policy → %s\n", name, *out)
-	fmt.Println("  Next: adjust the tier model IDs to match your account, then start the router —")
+	if len(notes) > 0 {
+		fmt.Println("  set tier models from your Claude Code config (verify these are right):")
+		for _, n := range notes {
+			fmt.Println("      " + n)
+		}
+	} else {
+		fmt.Println("  ⚠ could not detect your model IDs — the tiers use PLACEHOLDER IDs that")
+		fmt.Println("    Anthropic will reject. Edit the tier \"model\" values to real IDs (the full")
+		fmt.Println("    dated form, e.g. claude-sonnet-4-5-20250929), then `whittle policy validate`.")
+	}
+	fmt.Println("  Then start the router:")
 	fmt.Printf("    whittle route -install    # or `whittle route` in the foreground\n")
 	fmt.Printf("    export ANTHROPIC_BASE_URL=http://%s\n", router.DefaultAddr)
 }
