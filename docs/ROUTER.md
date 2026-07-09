@@ -300,7 +300,9 @@ fail-open; validation rejects what it doesn't understand rather than ignoring it
 ## 10. Prior art & credits
 
 The ML layer stands on [vLLM Semantic Router](https://github.com/vllm-project/semantic-router)
-(Apache-2.0), and we want to be precise about the debt:
+(Apache-2.0; their design is described in the whitepaper
+[*Signal-driven decision routing for mixture-of-modality models*](https://vllm-semantic-router.com/white-paper)),
+and we want to be precise about the debt:
 
 - **Models**: we use their two trained models directly —
   `llm-semantic-router/mmbert32k-intent-classifier-merged` (the MMLU-Pro domain
@@ -309,9 +311,10 @@ The ML layer stands on [vLLM Semantic Router](https://github.com/vllm-project/se
 - **Math**: the bank-score blend (`0.75·best + 0.25·mean(top-2)`) and the
   contrastive hard/easy margin are their mechanisms, replicated exactly.
 - **Ideas**: the signal taxonomy (domain / embedding-similarity / complexity as
-  composable routing inputs) and the insight that per-category routing should be
-  grounded in measured accuracy-vs-cost (their reasoning benchmark) shaped this
-  design.
+  composable routing inputs, per their
+  [whitepaper](https://vllm-semantic-router.com/white-paper)) and the insight
+  that per-category routing should be grounded in measured accuracy-vs-cost
+  (their reasoning benchmark) shaped this design.
 
 The architecture around those pieces is our own and intentionally much smaller:
 a single-file boolean policy instead of a category→model-score projection

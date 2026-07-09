@@ -29,11 +29,16 @@ an MCP retrieval tool. See [Why whittle](#why-whittle---compress-at-write-time-n
 and [Architecture](#architecture) for the reasoning and the diagram.
 
 Whittle has a **second, independent surface: an opt-in model router**
-(`whittle route`). It runs a local proxy on `ANTHROPIC_BASE_URL` that routes each
-request to the cheapest model tier that can still handle it, per a policy you
-write. It's off by default, rewrites the *model* and never your conversation
-history, forwards your own credentials untouched, and fails open (down → your
-request passes straight through). See [Model routing](#model-routing-opt-in).
+(`whittle route`). It runs a local proxy on `ANTHROPIC_BASE_URL` that sends each
+request to the cheapest model tier that can still handle it — hard reasoning
+stays on your strongest model, trivial edits drop to the cheapest, the broad
+middle rides a capable default. Decisions come from one auditable policy file
+you own, driven by real signals: a trained subject classifier, a contrastive
+difficulty score, and your own keywords. It's off by default, rewrites the
+*model* and never your conversation history, forwards your credentials
+untouched, and fails open on every path. See
+[Model routing](#model-routing-opt-in) and the full design in
+[docs/ROUTER.md](docs/ROUTER.md).
 
 ## See it
 
@@ -158,32 +163,44 @@ export ANTHROPIC_BASE_URL=http://127.0.0.1:45873
 ```
 
 - **Start from a built-in policy.** `whittle policy list` shows the presets
-  (`default` for mixed use, `coding`, `heuristic`); `whittle policy init [name]` writes one to
-  `~/.whittle/router.json`; `whittle policy validate <file>` checks your edits
-  against the real loader. Or write your own from scratch.
-- **The policy is yours.** Tiers, first-match routes (keywords, context size,
-  tool-loop, requested model, ML signals), and a default - a precedence ladder of
-  pin → routes → default. See
+  (`default` for mixed use, `coding`, `heuristic`); `whittle policy init [name]`
+  writes one with the model ids your account actually uses (auto-detected);
+  `whittle policy validate <file>` checks your edits against the real loader.
+- **One auditable policy file.** Tiers, first-match routes over a boolean
+  condition tree, and a default - you can read the file and predict every
+  decision, and the per-request log names the rule that fired. The full grammar,
+  the signal math, and the design rationale live in
   [docs/ROUTER.md](docs/ROUTER.md).
+- **Multi-signal, not keyword-matching.** With smart mode on
+  (`WHITTLE_ROUTER_MODEL_URL` → the sidecar), routes can test a trained
+  14-subject classifier (thresholding its full probability mass, so an
+  *uncertain* classification falls to your default tier - never up to the
+  expensive one), a contrastive hard/easy difficulty score, and semantic
+  similarity to your own example phrases - alongside whole-word keywords and
+  context-size heuristics. Smart mode off → the heuristics still route,
+  everything else rides the default.
 - **It rewrites the model, not your history.** The router swaps the target model
-  and reconciles capabilities for it (dropping features the cheaper model can't
-  serve). It never mutates conversation history, so prompt-cache prefixes stay
-  intact - the failure mode that makes read-time proxies painful.
+  and reconciles capabilities for it (stripping betas and features the cheaper
+  model rejects). It never mutates conversation history, so prompt-cache
+  prefixes stay intact - the failure mode that makes read-time proxies painful.
 - **Your credentials pass through untouched.** The proxy forwards your own auth
   to Anthropic; whittle never sees or stores a key.
-- **Fail-open by construction.** A missing/invalid policy, a parse error, or a
-  rewrite the upstream rejects all fall back to your original request. If the
-  router is down, unset `ANTHROPIC_BASE_URL` and you're direct again - nothing is
-  trapped behind it.
+- **Fail-open by construction.** A missing/invalid policy, a parse error, a dead
+  classifier, or a rewrite the upstream rejects all fall back to your original
+  request. If the router is down, unset `ANTHROPIC_BASE_URL` and you're direct
+  again - nothing is trapped behind it.
+- **Savings you can measure.** Every request logs the requested model, the model
+  that actually served it, and the response's real token usage - enough to
+  compute exactly what routing saved you.
 
-The router is **new** and not on the battle-tested footing the compression hook
-is - run it when you want tier routing, leave it off and nothing changes. Today
-it routes on deterministic signals; opt-in **smart routing** (an ML intent
-classifier and few-shot classify, hosted in the same sidecar) turns on when you
-set `WHITTLE_ROUTER_MODEL_URL` to the classifier sidecar - unset, routing is
-heuristics-only and the ML paths cleanly fall through to your default. Configure
-the upstream with `WHITTLE_ROUTER_UPSTREAM` (defaults to `api.anthropic.com`;
-point it at a corporate Anthropic gateway if you have one).
+The classifier and embedding models (and the scoring math behind the difficulty
+signal) come from [vLLM Semantic Router](https://github.com/vllm-project/semantic-router)
+([whitepaper](https://vllm-semantic-router.com/white-paper)); the architecture
+around them - the single-file policy, the probability-mass thresholding, the
+fail-open model - is whittle's own, and [docs/ROUTER.md](docs/ROUTER.md)
+credits the line between the two precisely. Configure the upstream with
+`WHITTLE_ROUTER_UPSTREAM` (defaults to `api.anthropic.com`; point it at a
+corporate Anthropic gateway if you have one).
 
 Run it in the foreground, or install it as a background service (opt-in, separate
 from the compress daemon):
