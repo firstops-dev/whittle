@@ -11,7 +11,7 @@ import logging
 import os
 import threading
 import time
-from typing import Optional
+from typing import Dict, List, Optional
 
 import tiktoken
 from fastapi import FastAPI, HTTPException
@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 
 import gate
 import fidelity
+import route
 
 VERSION = "1.0.3"
 MODEL_NAME = os.environ.get("COMPRESSOR_MODEL", "microsoft/llmlingua-2-xlm-roberta-large-meetingbank")
@@ -54,6 +55,22 @@ _lock = threading.Lock()
 # full thread width; raise only with more vCPUs.
 _INFER_SEM = threading.Semaphore(max(1, int(os.environ.get("MAX_CONCURRENCY", "1") or "1")))
 _INFER_WAIT_S = float(os.environ.get("INFER_WAIT_S", "0.25") or "0.25")
+
+# Router smart-mode classifier (separate, lightweight embedding model). Lazy: the
+# embedding model loads on the first /v1/route/classify call, independent of the
+# compressor — a sidecar used only for compression never pays for it.
+_route_classifier = None
+_route_lock = threading.Lock()
+
+
+def _get_route_classifier():
+    global _route_classifier
+    if _route_classifier is None:
+        with _route_lock:
+            if _route_classifier is None:
+                emb = route.Embedder()
+                _route_classifier = route.Classifier(emb, emb.version())
+    return _route_classifier
 
 
 class _FidelitySkip(Exception):
@@ -167,6 +184,25 @@ def info():
             "method": "extractive (LLMLingua-2) + metadata-first gate + expansion guardrail",
             "default_rate": DEFAULT_RATE["prose"], "max_chars": MAX_CHARS,
             "int8": INT8, "intra_op_threads": _NUM_THREADS}
+
+
+class RouteClassifyRequest(BaseModel):
+    text: str = ""
+    examples: Dict[str, List[str]] = Field(default_factory=dict)  # tier -> example prompts
+
+
+class RouteClassifyResponse(BaseModel):
+    tier: str
+    confidence: float
+
+
+@app.post("/v1/route/classify", response_model=RouteClassifyResponse)
+def route_classify(req: RouteClassifyRequest):
+    # Few-shot nearest-example over the policy's per-tier examples. Errors (missing
+    # model, etc.) raise → the router's Go client reads the non-200 and falls open
+    # to the static default, so a broken sidecar never blocks routing.
+    tier, conf = _get_route_classifier().classify(req.text, req.examples)
+    return RouteClassifyResponse(tier=tier, confidence=conf)
 
 
 @app.post("/v1/compress", response_model=CompressResponse)

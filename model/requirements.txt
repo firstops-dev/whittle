@@ -5,3 +5,4 @@ pydantic==2.10.4
 tiktoken==0.8.0
 llmlingua==0.2.2
 huggingface_hub==0.27.0
+sentence-transformers==3.3.1  # router smart-mode few-shot classify (all-MiniLM-L6-v2)
