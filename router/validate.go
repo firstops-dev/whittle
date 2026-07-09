@@ -293,6 +293,9 @@ func (v *validator) validateSignals() {
 		if len(d.Categories) == 0 {
 			v.errf("%s (%s): no categories", loc, d.Name)
 		}
+		if d.MinMass < 0 || d.MinMass > 1 {
+			v.errf("%s (%s): min_mass must be in [0,1] (got %g)", loc, d.Name, d.MinMass)
+		}
 		for _, c := range d.Categories {
 			if !mmluCategories[c] {
 				v.warnf("%s (%s): %q is not a known MMLU-Pro category — the classifier will never emit it, so this is inert", loc, d.Name, c)

@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "tiers": [
+    {"name": "fast",  "model": "claude-haiku-4-5"},
+    {"name": "main",  "model": "claude-sonnet-4-5"},
+    {"name": "smart", "model": "claude-opus-4-8"}
+  ],
+  "default": "main",
+  "inspect": {"scope": "recent_turns", "turns": 3},
+  "signals": {
+    "domains": [
+      {"name": "quantitative", "categories": ["math", "physics", "chemistry"], "min_mass": 0.7},
+      {"name": "high-stakes",  "categories": ["law", "health", "business", "economics"]}
+    ],
+    "complexity": [
+      {"name": "reasoning", "threshold": 0.15,
+       "hard": [
+         "analyze the root cause of this failure",
+         "reason step by step through this multi-part problem",
+         "weigh the tradeoffs and recommend an approach",
+         "debug this intermittent race condition",
+         "critique this argument and find the flaws",
+         "assess the risks in this contract or decision",
+         "design the architecture for this system",
+         "synthesize these sources into a coherent brief"
+       ],
+       "easy": [
+         "fix this typo",
+         "rephrase this sentence",
+         "summarize this in one line",
+         "what does this word mean",
+         "reformat this list",
+         "give me a quick yes or no",
+         "translate this short phrase",
+         "make this a little more concise"
+       ]}
+    ]
+  },
+  "routes": [
+    {"name": "escalate", "when": {"any": [
+        {"complexity": "reasoning:hard"},
+        {"domain": "quantitative"}
+    ]}, "to": "smart"},
+    {"name": "de-escalate", "when": {"all": [
+        {"complexity": "reasoning:easy"},
+        {"not": {"domain": "high-stakes"}}
+    ]}, "to": "fast"}
+  ],
+  "session": {"sticky": false},
+  "overrides": {"pin_header": "x-whittle-route"}
+}

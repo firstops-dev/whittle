@@ -52,7 +52,7 @@ func TestClient_EmptyOrMissingFieldsAreNotError(t *testing.T) {
 		c := fakeSidecar(t, func(w http.ResponseWriter, r *http.Request) {
 			io.WriteString(w, `{}`)
 		})
-		label, conf, err := c.Domain("x")
+		label, conf, _, err := c.Domain("x")
 		if err != nil {
 			t.Fatalf("empty domain reply must not error: %v", err)
 		}
@@ -179,7 +179,7 @@ func TestClient_DomainRequestWireContract(t *testing.T) {
 		_ = json.Unmarshal(body, &wire)
 		io.WriteString(w, `{"label":"math","confidence":0.9}`)
 	})
-	label, conf, err := c.Domain("prove this theorem")
+	label, conf, _, err := c.Domain("prove this theorem")
 	if err != nil {
 		t.Fatal(err)
 	}

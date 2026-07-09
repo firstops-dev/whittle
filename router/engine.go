@@ -20,8 +20,11 @@ var ErrMLDisabled = errors.New("router: ML classifier disabled")
 // thresholds/membership; the classifier only computes raw scores from text +
 // candidates (compute where the data lives).
 type Classifier interface {
-	// Domain returns the intent classifier's category label for text + confidence.
-	Domain(text string) (label string, conf float64, err error)
+	// Domain returns the intent classifier's argmax label + confidence AND the
+	// full softmax distribution over its categories. The engine thresholds
+	// probability MASS over a policy-defined category set (matchDomain); nil/empty
+	// probs (older sidecar, degraded mode) falls back to argmax membership.
+	Domain(text string) (label string, conf float64, probs map[string]float64, err error)
 	// EmbeddingScore returns the bank score of text against candidates
 	// (0.75·best + 0.25·mean(top-2) cosine).
 	EmbeddingScore(text string, candidates []string) (score float64, err error)
@@ -32,8 +35,8 @@ type Classifier interface {
 // noopClassifier is the smart-off implementation: every call reports disabled.
 type noopClassifier struct{}
 
-func (noopClassifier) Domain(string) (string, float64, error) {
-	return "", 0, ErrMLDisabled
+func (noopClassifier) Domain(string) (string, float64, map[string]float64, error) {
+	return "", 0, nil, ErrMLDisabled
 }
 func (noopClassifier) EmbeddingScore(string, []string) (float64, error) {
 	return 0, ErrMLDisabled
@@ -171,6 +174,7 @@ type evalState struct {
 
 	// domain classification: computed once (the classifier emits one label).
 	domainLabel string
+	domainProbs map[string]float64
 	domainDone  bool
 	domainErr   error
 	// embedding/complexity results memoized by signal name.
@@ -294,16 +298,41 @@ func (st *evalState) recentLower() string {
 	return st.loweredRecent
 }
 
-// matchLiteralKeywords: case-insensitive substring OR over the inspect-window
-// text. Literal (not regex) — a coder's "c++" never explodes.
+// matchLiteralKeywords: case-insensitive WHOLE-WORD/PHRASE OR over the
+// inspect-window text. Literal (not regex) — a coder's "c++" never explodes.
+// Whole-word means the occurrence is not embedded inside a larger alphanumeric
+// run: "migration" no longer matches "immigration", "refactor" no longer matches
+// "refactored" (list the variants you want). A boundary is any non-alphanumeric
+// rune or the string edge, so "c++" still matches in "use c++ here".
 func (st *evalState) matchLiteralKeywords(kws []string) bool {
 	hay := st.recentLower()
 	for _, kw := range kws {
-		if kw != "" && strings.Contains(hay, strings.ToLower(kw)) {
+		if kw != "" && containsWord(hay, strings.ToLower(kw)) {
 			return true
 		}
 	}
 	return false
+}
+
+// containsWord reports whether needle occurs in hay with non-alphanumeric (or
+// edge) boundaries on both sides. Both inputs must already be lowercased.
+func containsWord(hay, needle string) bool {
+	for from := 0; ; {
+		i := strings.Index(hay[from:], needle)
+		if i < 0 {
+			return false
+		}
+		start := from + i
+		end := start + len(needle)
+		if (start == 0 || !isAlnum(hay[start-1])) && (end == len(hay) || !isAlnum(hay[end])) {
+			return true
+		}
+		from = start + 1
+	}
+}
+
+func isAlnum(b byte) bool {
+	return b >= 'a' && b <= 'z' || b >= 'A' && b <= 'Z' || b >= '0' && b <= '9'
 }
 
 func (st *evalState) matchRegexKeywords(pats []string) bool {
@@ -324,12 +353,28 @@ func (st *evalState) matchDomain(name string) bool {
 		return false // validation guarantees the reference resolves
 	}
 	if !st.domainDone {
-		st.domainLabel, _, st.domainErr = st.cl.Domain(st.s.RecentText)
+		st.domainLabel, _, st.domainProbs, st.domainErr = st.cl.Domain(st.s.RecentText)
 		st.domainDone = true
 	}
 	if st.domainErr != nil {
 		return st.mlFailed(st.domainErr)
 	}
+	// Mass thresholding (preferred): fire iff the total probability the classifier
+	// assigns to the signal's categories clears MinMass. One scalar subsumes
+	// entropy handling — mass concentrates only on a CONFIDENT in-set
+	// classification; an ambiguous/flat distribution fails the threshold, so an
+	// uncertain classification falls to the policy default (the safe middle tier),
+	// never up. Invariant to which in-set category won (math 0.4 + physics 0.4
+	// passes 0.7 without a special top-2 case).
+	if sig.MinMass > 0 && len(st.domainProbs) > 0 {
+		mass := 0.0
+		for _, c := range sig.Categories {
+			mass += st.domainProbs[c]
+		}
+		return mass >= sig.MinMass
+	}
+	// Argmax membership fallback: MinMass unset, or the sidecar didn't return a
+	// distribution (older sidecar) — degrade gracefully rather than never firing.
 	for _, c := range sig.Categories {
 		if c == st.domainLabel {
 			return true

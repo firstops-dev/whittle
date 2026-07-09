@@ -12,7 +12,7 @@ import math
 
 from pytest import approx
 
-from route import (Scorer, bank_score, complexity_margin, domain_label,
+from route import (Scorer, bank_score, complexity_margin, domain_distribution, domain_label,
                    embedding_score, DomainClassifier)
 
 
@@ -127,7 +127,7 @@ def test_domain_classifier_uses_injected_predict():
     # Inject a predict fn so no transformers/torch is needed; classify wires argmax.
     predict = lambda text: ([0.0, 5.0], ["easy_domain", "hard_domain"])
     clf = DomainClassifier(predict=predict)
-    label, conf = clf.classify("anything")
+    label, conf, probs = clf.classify("anything")
     assert label == "hard_domain"
     assert conf > 0.9
 
@@ -135,7 +135,7 @@ def test_domain_classifier_uses_injected_predict():
 def test_domain_classifier_empty_text_short_circuits():
     called = []
     clf = DomainClassifier(predict=lambda t: called.append(t) or ([1.0], ["x"]))
-    assert clf.classify("") == ("", 0.0)
+    assert clf.classify("") == ("", 0.0, {})
     assert called == []  # model is never consulted for empty text
 
 
@@ -203,3 +203,24 @@ def test_complexity_one_sided_bank_still_scores():
     # Only an easy bank present → hard bank scores 0.0 → margin is negative.
     margin = scorer.score_complexity("say hi", hard=[], easy=["say hi"])
     assert margin < 0.0
+
+
+def test_domain_distribution_sums_to_one_and_matches_argmax():
+    labels = ["biology", "law", "math"]
+    probs = domain_distribution([0.1, 3.0, 0.2], labels)
+    assert abs(sum(probs.values()) - 1.0) < 1e-9
+    label, conf = domain_label([0.1, 3.0, 0.2], labels)
+    assert max(probs, key=probs.get) == label == "law"
+    assert probs["law"] == conf
+
+
+def test_domain_distribution_empty():
+    assert domain_distribution([], []) == {}
+
+
+def test_classify_returns_full_distribution():
+    predict = lambda text: ([0.0, 1.0, 2.0], ["a", "b", "c"])
+    clf = DomainClassifier(predict=predict)
+    label, conf, probs = clf.classify("x")
+    assert label == "c" and set(probs) == {"a", "b", "c"}
+    assert abs(sum(probs.values()) - 1.0) < 1e-9

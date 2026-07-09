@@ -98,7 +98,7 @@ type Rule struct {
     MessageCount   *NumBand `yaml:"message_count,omitempty"`
     ToolLoop       *bool    `yaml:"tool_loop,omitempty"`
     HasTools       *bool    `yaml:"has_tools,omitempty"`
-    Keywords       []string `yaml:"keywords,omitempty"`        // LITERAL substring, case-insensitive
+    Keywords       []string `yaml:"keywords,omitempty"`        // LITERAL whole-word/phrase, case-insensitive
     KeywordsRegex  []string `yaml:"keywords_regex,omitempty"`  // explicit regex, when you mean it
     RequestedModel []string `yaml:"requested_model,omitempty"` // membership (canonicalized both sides)
 
@@ -121,7 +121,15 @@ type NumBand struct{ Eq, Gt, Gte, Lt, Lte *int }
   data, so one signal is authored once and referenced by many routes and computed
   at most once per request. `complexity` additionally carries the level after a
   colon (`needs_reasoning:hard`). Replaces the old single `intent:[labels]` leaf.
-- **`keywords` is literal + case-insensitive by default** (review H6): a coder
+- **`keywords` is literal, case-insensitive, WHOLE-WORD/PHRASE** (v5): an
+  occurrence embedded in a larger alphanumeric run does not match — "migration"
+  never fires on "immigration", "refactor" never fires on "refactored" (list the
+  variants you want). Boundaries are non-alphanumeric runes or string edges, so
+  "c++" still matches. Chosen over bm25/ngram/fuzzy (vSR's methods) from first
+  principles: within-word collision was the observed failure class and boundary
+  matching fixes it with zero config; the residual keyword failure
+  (phrase-in-larger-context) is inherent to keywords and is mitigated by the ML
+  signals + route ordering, not by fuzzier matching. Previously (review H6): a coder
   typing `["c++"]` or `["a.b"]` must not hit a regex-metachar explosion or a
   silent over-match. Regex is opt-in via `keywords_regex`.
 - **No `Score` field.** v1 reserved a `score:` leaf; removed (review H4).
@@ -347,7 +355,17 @@ signals:
   complexity:   [{ name, threshold, hard: [<phrases>], easy: [<phrases>] }]  # embedding model
 ```
 
-- **`domain`** — the intent classifier (ModernBERT, 14 MMLU-Pro categories:
+- **`domain`** — supports two forms. With `min_mass` (0 < m ≤ 1): fires iff the
+  classifier's total softmax MASS on `categories` ≥ `min_mass` — one scalar that
+  subsumes entropy handling (vSR routes reasoning via an entropy ladder over the
+  same distribution; thresholding in-set mass is formally equivalent at every
+  branch we need, minus vSR's accuracy-first "very-uncertain → escalate" override,
+  which is wrong for a cost-first router: here an ambiguous distribution simply
+  fails the threshold and falls to the default middle tier). It is also invariant
+  to which in-set category won (math 0.4 + physics 0.4 clears 0.7 with no top-2
+  special case). Without `min_mass`: argmax label ∈ categories (legacy; also the
+  graceful fallback when the sidecar returns no distribution). The classifier
+  (ModernBERT, 14 MMLU-Pro categories:
   biology, business, chemistry, computer science, economics, engineering, health,
   history, law, math, other, philosophy, physics, psychology) predicts one label;
   the leaf fires when that label ∈ `categories`. Unknown categories warn (a

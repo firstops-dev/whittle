@@ -11,7 +11,7 @@ import logging
 import os
 import threading
 import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import tiktoken
 from fastapi import FastAPI, HTTPException
@@ -206,6 +206,11 @@ class RouteDomainRequest(BaseModel):
 class RouteDomainResponse(BaseModel):
     label: str
     confidence: float
+    # Full softmax over the classifier's categories. The router thresholds
+    # probability MASS over policy-defined category sets — a scalar that subsumes
+    # entropy handling (a flat/ambiguous distribution simply fails the threshold
+    # and falls to the safe middle tier). argmax kept for logging/back-compat.
+    probs: Dict[str, float] = Field(default_factory=dict)
 
 
 class RouteEmbeddingRequest(BaseModel):
@@ -229,8 +234,8 @@ class RouteComplexityResponse(BaseModel):
 
 @app.post("/v1/route/domain", response_model=RouteDomainResponse)
 def route_domain(req: RouteDomainRequest):
-    label, conf = _get_route_domain().classify(req.text)
-    return RouteDomainResponse(label=label, confidence=conf)
+    label, conf, probs = _get_route_domain().classify(req.text)
+    return RouteDomainResponse(label=label, confidence=conf, probs=probs)
 
 
 @app.post("/v1/route/embedding", response_model=RouteEmbeddingResponse)

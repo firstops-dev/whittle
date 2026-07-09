@@ -66,12 +66,21 @@ type SignalSet struct {
 	Complexity []ComplexitySignal `json:"complexity,omitempty"`
 }
 
-// DomainSignal fires when the intent classifier's predicted MMLU-Pro category is
-// one of Categories. It groups raw classifier labels under a policy-friendly name
-// (coding = {computer science, engineering}).
+// DomainSignal fires on the intent classifier's output over Categories.
+//
+// With MinMass set (0 < m ≤ 1): fires iff the TOTAL softmax probability mass the
+// classifier assigns to Categories is ≥ MinMass. Mass thresholding is the
+// preferred form — it only passes on a confident in-set classification, is
+// invariant to which in-set category won, and an ambiguous (high-entropy)
+// distribution simply fails the threshold so routing falls to the policy default
+// (cost-first: uncertainty lands on the middle tier, never escalates).
+//
+// With MinMass unset: fires iff the argmax label ∈ Categories (legacy behavior,
+// also the graceful fallback when the sidecar returns no distribution).
 type DomainSignal struct {
 	Name       string   `json:"name"`
 	Categories []string `json:"categories"`
+	MinMass    float64  `json:"min_mass,omitempty"`
 }
 
 // EmbeddingSignal fires when the query's bank score against Candidates
