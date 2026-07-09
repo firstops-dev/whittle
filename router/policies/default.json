@@ -62,7 +62,11 @@
           "reformat this list",
           "give me a quick yes or no",
           "translate this short phrase",
-          "make this a little more concise"
+          "make this a little more concise",
+          "what is the date today",
+          "what time is it right now",
+          "what is the capital of that country",
+          "how do you spell this word"
         ]
       }
     ]
