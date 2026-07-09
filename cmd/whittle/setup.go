@@ -255,22 +255,19 @@ func routerInstall() {
 		fmt.Println("whittle:", err)
 		return
 	}
-	// Point smart mode at the compress sidecar (it also serves /v1/route/*). If the
-	// sidecar is down, the router fails open to heuristics-only — never blocks.
+	// Smart mode is automatic (the router probes the standard sidecar address and
+	// degrades to heuristics if absent) — no env plumbing needed here.
 	plist := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
   <key>Label</key><string>%s</string>
   <key>ProgramArguments</key><array><string>%s</string><string>route</string></array>
-  <key>EnvironmentVariables</key><dict>
-    <key>WHITTLE_ROUTER_MODEL_URL</key><string>http://%s</string>
-  </dict>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
   <key>StandardOutPath</key><string>%s/logs/router.log</string>
   <key>StandardErrorPath</key><string>%s/logs/router.log</string>
 </dict></plist>
-`, routerAgentLabel, self, modelAddr, dir, dir)
+`, routerAgentLabel, self, dir, dir)
 	if err := os.WriteFile(routerPlistPath(), []byte(plist), 0o644); err != nil {
 		fmt.Println("whittle: router agent registration failed:", err)
 		return
