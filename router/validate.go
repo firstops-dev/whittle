@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // validate checks a decoded Policy against the schema rules
@@ -313,6 +314,11 @@ func (v *validator) validateSignals() {
 		c := &s.Complexity[i]
 		loc := fmt.Sprintf("signals.complexity[%d]", i)
 		v.checkSignalName(c.Name, loc, cxNames)
+		// A colon in a complexity name is unreferenceable: a `name:level` leaf
+		// splits on the LAST colon, so `foo:bar` would parse as name `foo`, level `bar`.
+		if strings.Contains(c.Name, ":") {
+			v.errf("%s: complexity signal name %q must not contain ':' (the leaf ref is `name:level`)", loc, c.Name)
+		}
 		v.checkCandidates(c.Hard, loc+".hard")
 		v.checkCandidates(c.Easy, loc+".easy")
 		if c.Threshold < 0 {
@@ -342,14 +348,22 @@ func (v *validator) checkCandidates(cands []string, loc string) {
 		v.warnf("%s: %d candidates (>%d) — usually a signal-design smell", loc, len(cands), candidatesSoftCap)
 	}
 	seen := map[string]bool{}
+	nonEmpty := 0
 	for _, c := range cands {
 		if c == "" {
-			v.warnf("%s: empty candidate string is inert", loc)
+			continue // filtered out sidecar-side; counted below
 		}
+		nonEmpty++
 		if seen[c] {
 			v.warnf("%s: duplicate candidate %q", loc, c)
 		}
 		seen[c] = true
+	}
+	// A bank of only empty strings is filtered to nothing sidecar-side; for a
+	// complexity bank that silently skews the margin (score 0 on that side), so
+	// reject it rather than warn.
+	if len(cands) > 0 && nonEmpty == 0 {
+		v.errf("%s: all candidates are empty strings (the list is effectively empty)", loc)
 	}
 }
 

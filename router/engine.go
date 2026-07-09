@@ -96,26 +96,30 @@ func Decide(s Signals, p *Policy, cl Classifier, sess SessionStore, pin string) 
 		// the request on a bad header). Recorded as a reason suffix if we log.
 	}
 
-	// 2. Routes — ordered waterfall, first match wins.
+	// 2. Routes — ordered waterfall, first match wins. A route only fires on a
+	// DEFINITIVE match: if evaluating its condition consulted a signal that
+	// errored (mlErr), the match is not trustworthy (an unavailable signal must
+	// never cause a route to fire, directly or via `not`) — skip it, fail open.
 	for i := range p.Routes {
 		r := &p.Routes[i]
-		if st.eval(&r.When) {
+		st.mlErr = false
+		if st.eval(&r.When) && !st.mlErr {
 			name := r.Name
 			if name == "" {
 				name = fmt.Sprintf("[%d]", i) // index fallback keeps reasons distinct
 			}
 			reason := "route:" + name
 			if r.To == keepTier {
-				return p.decideKeep(reason+"→keep", sess, s)
+				return st.annotate(p.decideKeep(reason+"→keep", sess, s))
 			}
-			return p.decide(r.To, reason, srcRoute, s, sess)
+			return st.annotate(p.decide(r.To, reason, srcRoute, s, sess))
 		}
 	}
 
 	// 3. Static default. The ML now lives inside route conditions (signal leaves),
 	// not a separate "smart default" step — matching vSR, where the default is
 	// just the last rule.
-	return p.decide(p.Default, "default", srcDefault, s, sess)
+	return st.annotate(p.decide(p.Default, "default", srcDefault, s, sess))
 }
 
 // decide resolves a tier name to a Decision, applies stickiness for fuzzy
@@ -173,8 +177,39 @@ type evalState struct {
 	embed   map[string]mlResult
 	complex map[string]mlResult
 
+	// mlErr is set when an ML leaf actually consulted for the CURRENT route
+	// errored (reset per route). A route whose match depended on an unavailable
+	// signal must NOT fire — otherwise a `not` over a failed leaf inverts fail-open
+	// (down sidecar → leaf false → not → true → route fires → misroute). anyMLErr
+	// is the sticky per-request version, surfaced as an `ml-degraded` reason so a
+	// degraded sidecar is observable, not silently indistinguishable from "no match".
+	mlErr    bool
+	anyMLErr bool
+
 	loweredRecent string
 	loweredOnce   bool
+}
+
+// mlFailed records an unavailable ML signal and reports the leaf as not-firing.
+// The per-route skip (mlErr) applies to ANY unavailability so a `not` over an
+// unresolved signal never fires a route. But smart mode simply being OFF (the
+// noop classifier → ErrMLDisabled) is the expected heuristics-only mode, NOT a
+// degradation — only a real sidecar failure marks the request ml-degraded.
+func (st *evalState) mlFailed(err error) bool {
+	st.mlErr = true
+	if !errors.Is(err, ErrMLDisabled) {
+		st.anyMLErr = true
+	}
+	return false
+}
+
+// annotate tags a decision as ml-degraded when any signal errored this request,
+// so the reason/log distinguishes "sidecar down" from "signal legitimately didn't fire".
+func (st *evalState) annotate(d Decision) Decision {
+	if st.anyMLErr {
+		d.Reason += " ml-degraded"
+	}
+	return d
 }
 
 // mlResult memoizes one signal computation (a score/margin and its error) so a
@@ -293,7 +328,7 @@ func (st *evalState) matchDomain(name string) bool {
 		st.domainDone = true
 	}
 	if st.domainErr != nil {
-		return false
+		return st.mlFailed(st.domainErr)
 	}
 	for _, c := range sig.Categories {
 		if c == st.domainLabel {
@@ -310,7 +345,10 @@ func (st *evalState) matchEmbedding(name string) bool {
 		return false
 	}
 	score, err := st.embedScore(name, sig.Candidates)
-	return err == nil && score >= sig.Threshold
+	if err != nil {
+		return st.mlFailed(err)
+	}
+	return score >= sig.Threshold
 }
 
 // matchComplexity fires when the named signal's contrastive level equals the
@@ -323,7 +361,7 @@ func (st *evalState) matchComplexity(ref string) bool {
 	}
 	margin, err := st.complexMargin(name, sig.Hard, sig.Easy)
 	if err != nil {
-		return false
+		return st.mlFailed(err)
 	}
 	return complexityLevel(margin, sig.Threshold) == level
 }

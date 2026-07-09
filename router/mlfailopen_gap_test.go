@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/firstops-dev/whittle/router/ml"
@@ -40,10 +41,36 @@ func TestSmartMode_SignalFailsOpenWhenSidecarDown(t *testing.T) {
 		d = Decide(reachSignalSig, p, downClient(), NewMemSessionStore(), "")
 	}()
 
-	// The domain leaf's failed model call evaluates FALSE, so hard-work does not
-	// fire and routing falls open to the static default — never an error.
-	if d.Tier != "main" || d.Reason != "default" {
-		t.Fatalf("down sidecar must fail open to the static default (main), got tier=%q reason=%q", d.Tier, d.Reason)
+	// The signal leaf's failed model call evaluates FALSE, so hard-work does not
+	// fire and routing falls open to the static default — never an error. Because
+	// a REAL sidecar failure (not smart-off) drove it, the reason is tagged
+	// ml-degraded so oncall can tell "sidecar down" from "signal didn't fire".
+	if d.Tier != "main" || !strings.Contains(d.Reason, "default") || !strings.Contains(d.Reason, "ml-degraded") {
+		t.Fatalf("down sidecar must fail open to the static default (main) tagged ml-degraded, got tier=%q reason=%q", d.Tier, d.Reason)
+	}
+}
+
+// C1 regression: a `not` over an ML leaf must NOT invert fail-open. With the
+// sidecar down the signal is unavailable; "not hard" cannot be confirmed, so the
+// route must NOT fire (else not(false)=true routes a genuinely hard prompt to the
+// cheap tier during an outage). Routing falls open to the default instead.
+func TestSmartMode_NegatedSignalDoesNotFireWhenSidecarDown(t *testing.T) {
+	const negPolicy = `{
+      "version": 1,
+      "tiers": [{"name":"fast","model":"claude-haiku-4-5"},{"name":"smart","model":"claude-opus-4-8"}],
+      "default": "smart", "inspect": {"scope": "full"},
+      "signals": {"complexity": [{"name":"reasoning","threshold":0.15,
+        "hard":["debug this race condition"],"easy":["fix a typo"]}]},
+      "routes": [{"name":"downgrade-nonhard","when":{"not":{"complexity":"reasoning:hard"}},"to":"fast"}]
+    }`
+	p, _ := mustLoad(t, negPolicy)
+	d := Decide(Signals{RecentText: "debug this deadlock", ContextTokens: 100, SessionID: "n1"},
+		p, downClient(), NewMemSessionStore(), "")
+	if d.Tier != "smart" {
+		t.Fatalf("negated ML leaf over an unavailable signal must not fire (fail-open to default smart), got tier=%q reason=%q", d.Tier, d.Reason)
+	}
+	if !strings.Contains(d.Reason, "ml-degraded") {
+		t.Errorf("a real sidecar failure should tag the reason ml-degraded, got %q", d.Reason)
 	}
 }
 
