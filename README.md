@@ -7,7 +7,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/firstops-dev/whittle.svg)](https://pkg.go.dev/github.com/firstops-dev/whittle)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-![whittle stats: tokens carved across real agent sessions](demo/stats.gif)
+![whittle live: routing each request to the right model while carving tool outputs](demo/hero.gif)
 
 Long agent sessions drown in tokens — and most compressors buy their ratio by silently destroying what agents need: array rows vanish, file reads get gutted, identifiers come back mangled. Whittle holds one hard line: **lossless or clearly marked, code never touched, every anomaly fails open to the original bytes.**
 
