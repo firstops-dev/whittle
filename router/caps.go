@@ -1,5 +1,7 @@
 package router
 
+import "strings"
+
 // Capability is a model feature that a request may use and a target model may or
 // may not support. Reconciliation strips a feature only when the target is
 // KNOWN to lack the capability (blocklist, not allowlist — see
@@ -56,21 +58,45 @@ var baselineCaps = map[string]ModelCaps{
 }
 
 // fullyCapable is the unknown-model sentinel: every capability supported, window
-// unbounded.
+// unbounded. Reached only when a model matches no known FAMILY either.
 var fullyCapable = ModelCaps{allSupported: true, MaxContextTokens: unboundedContext}
 
-// capsFor returns the capabilities of a model. The critical rule (review B1): a
-// lookup MISS (an unknown model — Anthropic ships a new id, or a user pins one
-// we don't know) returns the FULLY-CAPABLE, UNBOUNDED sentinel — strip nothing,
-// forward as-is, let Mode B catch any real 400. The zero ModelCaps value would
-// do the opposite (support nothing, MaxContextTokens 0 ⇒ unroutable), so we must
-// never return it on a miss. Two distinct safe defaults, never conflated:
+// familyCaps is the conservative per-FAMILY fallback for a model not in
+// baselineCaps — Anthropic ships versioned ids faster than we enumerate, and the
+// common case is DOWN-routing to a cheaper same-family model. Ordered
+// most-specific first. Conservative by design (under-state → strip): a newer
+// sonnet/haiku we don't recognize gets the family floor rather than the
+// fully-capable sentinel, which would forward incompatible betas (e.g. context-1m
+// from an opus[1m] request) to a model that rejects them → a 400 on every
+// down-route. haiku supports nothing; sonnet supports thinking/effort/mid-conv
+// system but NOT the context-1m beta (an older sonnet lacks it, and stripping it
+// is safe since the request still fits the 200k window); opus supports all four.
+var familyCaps = []struct {
+	sub  string
+	caps ModelCaps
+}{
+	{"haiku", ModelCaps{Supports: map[Capability]bool{}, MaxContextTokens: 200_000}},
+	{"sonnet", ModelCaps{Supports: map[Capability]bool{CapEffortParam: true, CapThinking: true, CapMidConvSystem: true}, MaxContextTokens: 200_000}},
+	{"opus", ModelCaps{Supports: map[Capability]bool{CapLongContext: true, CapEffortParam: true, CapThinking: true, CapMidConvSystem: true}, MaxContextTokens: 200_000}},
+}
+
+// capsFor returns the capabilities of a model. Resolution order:
 //
-//	unknown CAPABILITY on a KNOWN model → false (strip)
-//	entirely UNKNOWN model              → fully capable (forward)
+//	exact canonical id in baselineCaps → its caps
+//	else a known FAMILY (haiku/sonnet/opus) → conservative family floor (strip)
+//	else entirely unknown → fully capable (forward, let Mode B catch a real 400)
+//
+// The family step is what fixes the silent-down-route-400: an unrecognized but
+// same-family model no longer masquerades as fully capable.
 func capsFor(model string) ModelCaps {
-	if c, ok := baselineCaps[canonicalModel(model)]; ok {
+	canon := canonicalModel(model)
+	if c, ok := baselineCaps[canon]; ok {
 		return c
+	}
+	for _, f := range familyCaps {
+		if strings.Contains(canon, f.sub) {
+			return f.caps
+		}
 	}
 	return fullyCapable
 }

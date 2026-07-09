@@ -267,7 +267,8 @@ func (p *Proxy) modeBRetry(w http.ResponseWriter, r *http.Request, originalBody 
 	// (e.g. an invalid/undated model) fails on every request and is silently bailed
 	// out by the retry, with no clue in the log. The model id is not prompt text, so
 	// it is safe to record.
-	detail := fmt.Sprintf("(rewrote→%s got %d:%s)", dec.Model, status, orDash(parseErrorType(errBody)))
+	detail := fmt.Sprintf("(rewrote→%s got %d %s: %s)", dec.Model, status,
+		orDash(parseErrorType(errBody)), truncate(parseErrorMessage(errBody), 160))
 
 	retry, err := p.sendUpstream(r, originalBody, r.Header)
 	if err != nil {
@@ -301,6 +302,28 @@ func parseErrorType(b []byte) string {
 	}
 	_ = json.Unmarshal(b, &e)
 	return e.Error.Type
+}
+
+// parseErrorMessage extracts error.message from an Anthropic error body. It is an
+// API-structure message (which feature/model was rejected), never prompt text, so
+// it is safe to log — and it turns a silent down-route 400 into a one-line
+// diagnosis ("model X does not support the context-1m beta").
+func parseErrorMessage(b []byte) string {
+	var e struct {
+		Error struct {
+			Message string `json:"message"`
+		} `json:"error"`
+	}
+	_ = json.Unmarshal(b, &e)
+	return e.Error.Message
+}
+
+// truncate bounds a string for a log field, appending an ellipsis if cut.
+func truncate(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	return s[:n] + "…"
 }
 
 // sendUpstream builds and executes the upstream request: client headers minus
