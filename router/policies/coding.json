@@ -18,14 +18,31 @@
     ],
     "complexity": [
       {"name": "reasoning", "threshold": 0.15,
-       "hard": ["debug this intermittent race condition", "analyze the root cause of this failure", "reason step by step through this problem", "design the data model and api for this feature"],
-       "easy": ["rename this variable", "fix this typo", "add a docstring", "reformat this file"]}
+       "hard": [
+         "debug this intermittent race condition",
+         "analyze the root cause of this failure",
+         "reason step by step through this problem",
+         "design the data model and api for this feature",
+         "why does this fail only sometimes",
+         "trace through this logic and find the subtle bug",
+         "investigate this performance regression",
+         "figure out why these numbers do not add up"
+       ],
+       "easy": [
+         "rename this variable",
+         "fix this typo",
+         "add a docstring",
+         "reformat this file",
+         "add a comment",
+         "update the readme",
+         "bump the version number",
+         "change this label text"
+       ]}
     ]
   },
   "routes": [
     {"name": "hard-work", "when": {"any": [
-        {"keywords": ["migrate", "race condition", "root cause", "architecture", "refactor", "deadlock", "concurrency"]},
-        {"context_tokens": {"gt": 120000}},
+        {"keywords": ["migrate", "migration", "race condition", "root cause", "refactor", "deadlock", "concurrency"]},
         {"complexity": "reasoning:hard"},
         {"embedding": "architecture"}
     ]}, "to": "smart"},
