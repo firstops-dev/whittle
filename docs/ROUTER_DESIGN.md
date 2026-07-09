@@ -67,7 +67,7 @@ Claude Code ──(Anthropic Messages, streaming)──▶ whittle proxy (localh
                           │    a. pin-header override        ─▶ done               │
                           │    b. guards waterfall (heuristic) ─▶ maybe done       │
                           │    c. [smart] lazy ML only if unresolved:              │
-                          │       intent classifier · few-shot embedding           │
+                          │       intent classifier · text embedding    (signals)   │
                           │    d. session stickiness gate                          │
                           │    e. default tier                                     │
                           │    ⇒ Decision{tier, model, reason}                     │
@@ -172,37 +172,32 @@ with JSON-Schema, not a compiler.
 ```go
 type Policy struct {
     Version   int
-    Tiers     map[string]string        // logical -> provider model id
+    Tiers     []Tier          // ORDERED cheap→capable; index = band rank
     Default   string
     Inspect   InspectCfg
-    Guards    []Guard
-    Classify  ClassifyCfg
+    Signals   *SignalSet      // named ML signals referenced by route leaves
+    Routes    []Route         // ordered waterfall; When is a recursive bool tree
     Session   SessionCfg
     Overrides OverrideCfg
 }
-type Guard struct {
-    Name  string
-    Match MatchCfg     // AND of set fields; Any []MatchCfg for OR
-    Route string       // tier name | "keep"
-    Sticky *bool       // nil=inherit; false=hard switch even mid-session (§4.2)
-}
-type MatchCfg struct {
-    ContextTokens  *NumBand  // {gt,gte,lt,lte}
-    ToolLoop       *bool
-    MessageCount   *NumBand
-    Keywords       []string  // regex, OR
-    RequestedModel []string  // membership
-    Intent         []string  // membership — ML signal (triggers lazy classify)
-}
-type ClassifyCfg struct {
-    MinConfidence float64
-    Examples      map[string][]string  // tier -> few-shot prompts
+// A route's When is a recursive Rule tree (all/any/not + one leaf per node). Leaves
+// are the heuristic ones (context_tokens, message_count, tool_loop, has_tools,
+// keywords, keywords_regex, requested_model) PLUS three ML SIGNAL leaves that name
+// an entry in Signals:
+//   Domain     string   // domain signal: classifier label ∈ its categories
+//   Embedding  string   // embedding signal: bank score ≥ its threshold
+//   Complexity string   // "name:hard|easy|medium"
+type SignalSet struct {          // vSR-aligned; exact JSON in ROUTER_POLICY_SCHEMA.md
+    Domains    []DomainSignal     // {name, categories}              — intent classifier
+    Embeddings []EmbeddingSignal  // {name, threshold, candidates}   — embedding model
+    Complexity []ComplexitySignal // {name, threshold, hard, easy}   — embedding (contrastive)
 }
 ```
 
 Loaded behind `atomic.Pointer[Policy]` for SIGHUP hot-reload: parse → validate →
-(recompute example centroids, §2.4) → atomic swap. Invalid reload keeps the old
-policy and logs. Hot path reads the pointer once per request.
+atomic swap. Invalid reload keeps the old policy and logs. Hot path reads the
+pointer once per request. (Signal embeddings are NOT precomputed at load — the
+sidecar caches candidate embeddings by content hash on first use; §2.4.)
 
 ### 2.3 Decider — `route/engine.go`
 
@@ -211,33 +206,29 @@ except for the session store.
 
 ```go
 type Decision struct {
-    Tier, Model, Reason string   // Reason: "guard:huge-context" | "classify:smart@0.71"
-    Signals Signals              // carried for the log line
+    Tier, Model, Reason string   // Reason: "route:hard-work" | "default" | "… ml-degraded"
 }
-func (e *Engine) Decide(ctx context.Context, s Signals) Decision
+func Decide(s Signals, p *Policy, cl Classifier, sess SessionStore, pin string) Decision
 ```
 
 Ordered algorithm:
 
 1. **pin override** (`Overrides.PinHeader`) → done.
-2. **guards, top-down.** First `Match` that holds wins. A guard referencing
-  `Intent` triggers a **lazy** classifier call (memoized on `Signals` for the
-   request); non-ML guards above it already short-circuited.
-   ⚠️ **Ordering hazard (§4.4):** an `intent` guard placed above all heuristic
-   guards forces ML on every request. Validation should warn.
-3. **classify** (only if unresolved, `smart` on, `Examples` present): embed
-  `LastUserText`, cosine vs each tier's **precomputed centroid**, argmax if
-   `≥ MinConfidence` else `Default`.
-4. **stickiness** (§2.5): wrap the result — if sticky and band-jump from the
-  session's current tier `< MinBandJump`, keep current. A `Guard.Sticky==false`
-   forces the switch.
-5. **default**.
-
-**Scorer seam (honoring the "score evaluator" in the original pipeline):** the
-classify step is realized by a `Scorer` interface. v1 ships `FewShotScorer`
-(embedding similarity → tier). A future `WeightedScorer` (additive weighted
-dimensions → banded tier) drops in without touching the engine. So "score
-evaluator" exists as a strategy, not a mandatory stage.
+2. **routes, top-down.** First route whose `When` tree holds wins. A signal leaf
+   (domain/embedding/complexity) triggers a **lazy** classifier call, memoized per
+   request; cheap heuristic leaves in the same node evaluate first, so a matched
+   sibling skips the model entirely. A route fires only on a **definitive** match:
+   if a signal it consulted errored (sidecar down), the route is **skipped**
+   (fail-open) — so a `not` over an unavailable signal never fires, and the reason
+   is tagged `ml-degraded`.
+   ⚠️ **Cost lint (§4.4):** a route with a signal leaf runs a model on every
+   request reaching it; validation warns. Put cheap routes above it.
+3. **stickiness** (§2.5): damp a fuzzy (default) downgrade from the session's
+   current tier when band-jump `< MinBandJump`.
+4. **default** — the static fallback. There is **no separate "classify" stage**:
+   the ML lives inside route conditions as signal leaves, matching vSR (the
+   default is just the last rung). If weighted scoring is ever added it is another
+   signal leaf that thresholds inside a route, never a competing stage.
 
 **Failure mode = fail-open to the ORIGINAL request (corrected, review B3).**
 Any error (bad signals, ML panic, timeout, body too large to parse, malformed
@@ -245,53 +236,41 @@ JSON) → **forward the client's request untouched, honoring its `requested_mode
 — never block, and never silently substitute `Default`. This matches the
 compressor's convention (`pipeline.go` / `hook.go` fail-open to the *original*,
 not to a chosen alternative). `Default` is reserved for the ONE case where
-routing *succeeds* but no guard/classify rule matched — it is a routing outcome,
+routing *succeeds* but no route matched — it is a routing outcome,
 not an error path. The distinction matters: "route to Default on error" would
 silently downgrade every request to a weaker tier on any bug, and is literally
 impossible on the paths where we can't read the body at all.
 
-### 2.4 Classifier — `route/ml.go`
+### 2.4 Classifier — `router/ml` (HTTP client to the sidecar)
 
 ```go
 type Classifier interface {
-    Intent(text string) (label string, conf float64, err error)
-    Embed(text string) ([]float32, error)                 // config-load + per-request query
+    Domain(text string) (label string, conf float64, err error)              // intent classifier
+    EmbeddingScore(text string, candidates []string) (score float64, err error)   // bank score
+    ComplexityMargin(text string, hard, easy []string) (margin float64, err error) // contrastive
 }
-// Match: nearest EXAMPLE (max cosine) over a tier's precomputed matrix, not a centroid.
-func Nearest(q []float32, ex map[string][][]float32) (tier string, conf float64)
 ```
 
-- Impls: `noop` (smart off → `ErrDisabled`), `onnx` (two int8 models loaded
-**once at startup** when the models are present — see Smart mode).
-- **Nearest-example, not centroid (corrected).** The prior "compare to one
-  averaged centroid per tier" is wrong for few-shot: a tier like `smart`
-  holds diverse hard prompts ("debug a race condition", "design a migration")
-  whose *mean* points nowhere useful. Match = **max cosine over that tier's
-  example vectors** (few-shot / kNN-style). The per-tier cap (below) keeps this
-  O(examples) match sub-millisecond, so we don't have to trade accuracy for the
-  centroid shortcut.
-- **Per-tier example cap** (also enforced in schema validation): **soft ~32,
-  hard ceiling 256.** The cap is about *quality + load-time*, not runtime — at
-  768-dim, 32×3 tiers ≈ 300KB and <1ms/request. Hundreds of examples per tier is
-  a taxonomy smell and adds cold-start embedding seconds. Reject over the hard
-  cap; warn over the soft cap.
-- **Precompute + cache, keyed by (example text hash + model id + model version +
-  dim).** Embed every example **once at policy load**, normalize to unit length
-  (so runtime similarity = a dot product, and `min_confidence` is a clean cosine
-  threshold), and persist the matrix to `~/.whittle/route/emb-cache/`. On daemon
-  restart or hot-reload: only re-embed examples whose text hash changed;
-  unchanged ones hit cache. ⚠️ **The model version MUST be in the cache key** —
-  embeddings from model v1 compared against a v2-embedded query are silent
-  garbage; a model upgrade invalidates the whole cache.
-- **Lives inside the atomic Policy snapshot** (review C4): the precomputed matrix
-  is part of the immutable snapshot the hot-reload pointer-swaps to, so a reload
-  can't tear (new policy referencing a not-yet-computed matrix).
-- **Panic/error isolation (R8, corrected):** inference wrapped with `recover`;
-a panic/error is a **Mode A process error → forward the ORIGINAL request
-untouched**, NOT a fall to `default` (falling to default silently downgrades
-every request on a classifier bug — the thing §2.3 forbids). Only a *low-
-confidence* result (not an error) resolves to `default`. A model bug must never
-crash the proxy and must never silently downgrade traffic.
+- Impls: `noop` (smart off → `ErrMLDisabled`) and the `router/ml` HTTP client to
+  the Python sidecar. **The models live in the sidecar** (vSR's two mmBERT models —
+  a ModernBERT intent classifier + a 32k text embedder); the Go engine carries no
+  model runtime and owns the **thresholds** (score ≥ T; margin band → level).
+- **vSR's exact scoring, sidecar-side.** Bank score = `0.75·best + 0.25·mean(top-2)`
+  over per-candidate cosine (candidates are the policy's `candidates`/`hard`/`easy`
+  lists). `EmbeddingScore` returns the bank score; `ComplexityMargin` returns
+  `score(hard) − score(easy)`. Compute where the data lives.
+- **Cache is sidecar-side, keyed by (candidate text hash + model version).** The
+  engine passes candidates on every call; the sidecar embeds them once and reuses.
+  No Go-side centroid/matrix/emb-cache — the design is simpler than the earlier
+  few-shot plan, which precomputed per-tier example matrices at load. The model
+  version in the key guards against silent v1-vs-v2 embedding garbage.
+- **Per-list candidate cap** (schema validation): soft ~32, hard 256 — quality +
+  cold-start cost, not runtime.
+- **Fail-open, two levels.** A classifier error makes the signal leaf evaluate
+  false AND marks the route non-firing (§2.3), so an unavailable signal never
+  routes anywhere — routing falls to `default`, never blocks, never panics. A
+  request-level parse/transport error is still Mode A at the proxy (forward the
+  ORIGINAL untouched, §2.3); the engine itself only decides.
 
 ### 2.5 Session store — `route/session.go`  (DE-RISKED by GATE-2 experiment)
 
@@ -390,8 +369,8 @@ request untouched** (B3), never a substituted model.
 
 ## 3. Cross-cutting
 
-- **Config hot-reload:** SIGHUP/file-watch → parse → validate → recompute
-centroids → atomic swap. Invalid → keep old + log.
+- **Config hot-reload:** SIGHUP → parse → validate → atomic swap. Invalid → keep
+old + log. (No precompute step — the sidecar caches candidate embeddings lazily.)
 - **Observability (the 90% that matters):** `x-whittle-route: <tier>` +
 `x-whittle-reason` response headers, and one structured JSON log line per
 request. The log line carries **token counts, tier, reason, matched-rule
@@ -446,9 +425,10 @@ cold-cache loss).
 1. **Tier ordering.** `min_band_jump` stickiness assumes tiers have rank, but
    `Tiers` is an unordered `map` → the parameter is currently undefined. Make
    tiers an ordered list / add explicit rank. (Schema §2.)
-2. **`classify.strategy` discriminator.** Add now (only `few_shot` in v1) so a
-   future weighted/learned scorer is an additive change, not a breaking rename
-   of every policy's `classify:` block. (Schema §7.)
+2. **~~`classify.strategy` discriminator~~ — SUPERSEDED (v5).** The `classify`
+   block was removed entirely; ML now lives in route conditions as named signal
+   leaves (domain/embedding/complexity), matching vSR. A future weighted scorer is
+   just another signal leaf, additive by construction. (Schema §7.)
 
 ## 5. Ranked findings from review (fixes folded in above)
 
@@ -461,7 +441,7 @@ cold-cache loss).
 | C1    | high    | proxy sees creds; log leaked prompt text                                                                                    | **fixed**: §0 trust note; log excludes content (§3)                            |
 | C2    | high    | routing to a model the user's plan can't access → 400/403 + CC-retry fail-loop                                              | **open** — needs entitlement handling; B3 at least breaks the loop             |
 | C3    | med     | cheap-first under-specified: intra-`MatchCfg` field order, two separate ML models, warn-scope too narrow                    | **open** — spec exact eval order; cost-warn ANY intent guard                   |
-| C4    | med     | centroids must live *inside* the swapped Policy snapshot; `Current→Set` not atomic per key                                  | **open** — make centroids part of the immutable snapshot; lock per session key |
+| C4    | med     | centroids must live *inside* the swapped Policy snapshot; `Current→Set` not atomic per key                                  | **moot** — no Go-side centroids/matrix (sidecar caches embeddings); session store locks per op |
 | C5    | med     | user regexes = ReDoS on hot path; is `Any` recursive?                                                                       | **open** — bound/timeout regexes; declare `Any` single-level                   |
 | C6    | med     | `count_tokens` passes through on original model, but request runs on routed model → tokenizer mismatch in CC's context math | **open** — tied to GATE-1                                                      |
 | O1    | obs     | relay upstream status, not always-200                                                                                       | **fixed** (§2.7)                                                               |
@@ -484,9 +464,9 @@ Signal-extraction precision (R4/R5/R6/R7) folded into §2.1; three-mode fail-ope
 | id | decision |
 |----|----------|
 | R9  | Streaming: connect + idle timeout only; **no total-response deadline** on the streamed body (LLM gens run minutes). Upstream drop mid-stream → propagate close. |
-| R10 | Smart off / models absent: an `intent` leaf evaluates **false** and `classify`→`default`; surfaced per-request in `reason` (`skipped:no-ml`), not just a startup warning. |
+| R10 | Smart off / models absent: a signal leaf (domain/embedding/complexity) evaluates **false** and its route is skipped → routing falls to `default`. Smart-off is the expected heuristics-only mode (NOT tagged); a real sidecar failure is surfaced per-request as an `ml-degraded` reason. |
 | R11 | **No-op short-circuit:** resolved model == canonicalized requested model → byte-passthrough, NO rewrite, NO reconciliation. Protects the common (happy-path) case. |
-| R12 | Intent-classifier label has its **own** confidence floor (softmax scale) — a **separate knob** from `classify.min_confidence` (cosine scale); the two are never compared. |
+| R12 | Each signal owns its own threshold on its own scale: `domain` is pure argmax membership (no floor), `embedding` a cosine-ish bank-score threshold, `complexity` a symmetric margin band — set per-signal in the policy, never a single global knob. |
 | R13 | Nearest-example tie → **cheaper tier wins** (lowest band rank), deterministic. |
 | R14 | `X-Claude-Code-Session-Id` absent → **skip stickiness** (stateless decide); never bucket session-less requests under `""`. |
 | R15 | `min_band_jump` damps **downgrades only**; upgrades are free. Stored "current" = tier actually used. |
@@ -496,7 +476,7 @@ Signal-extraction precision (R4/R5/R6/R7) folded into §2.1; three-mode fail-ope
 | R19 | Config file deleted at runtime → keep last-good policy + log (same as invalid reload). |
 | R20 | emb-cache version component = **model file content hash**, not a manual version string. |
 | R21 | Models → download-once to `~/.whittle/route/models/`, pinned version + SHA256 verify; corrupt/failed load → smart disabled + warn-and-degrade, never crash. |
-| R22 | `x-whittle-route`/`-reason` headers + log line emitted on **all** paths with distinct reasons (`fail-open:parse`, `relay:upstream-403`, `passthrough:unknown-path`, `skipped:no-ml`). Exact JSON log schema to be pinned; no prompt text. |
+| R22 | `x-whittle-route`/`-reason` headers + one JSON log line on **all** paths with distinct reasons (`route:<name>`, `default`, `fail-open:parse`, `passthrough:unroutable-path`, `mode-b:retried-original`, `… ml-degraded`). No prompt text. |
 | R24 | `count_tokens` tokenizer skew vs routed model: **accepted for v1** (documented, not fixed). |
 
 **Resolved this pass:**
