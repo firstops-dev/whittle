@@ -7,7 +7,7 @@ import (
 )
 
 // validate checks a decoded Policy against the schema rules
-// (docs/ROUTER_POLICY_SCHEMA.md §4). It returns non-fatal warnings and fatal
+// (docs/ROUTER.md §4). It returns non-fatal warnings and fatal
 // errors separately; Load turns any error into a failed load. Every problem
 // names its location so a hand-author can find it.
 //

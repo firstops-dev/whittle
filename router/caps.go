@@ -5,7 +5,7 @@ import "strings"
 // Capability is a model feature that a request may use and a target model may or
 // may not support. Reconciliation strips a feature only when the target is
 // KNOWN to lack the capability (blocklist, not allowlist — see
-// docs/ROUTER_RECONCILIATION.md).
+// docs/ROUTER.md §6).
 type Capability string
 
 const (

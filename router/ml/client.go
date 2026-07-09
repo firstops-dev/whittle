@@ -3,7 +3,7 @@
 // sidecar URL is configured; when it isn't, the engine uses the noop classifier
 // and this package is never touched.
 //
-// The classifier lives behind an HTTP boundary on purpose (docs/ROUTER_DESIGN.md):
+// The classifier lives behind an HTTP boundary on purpose (docs/ROUTER.md §5):
 // the models (~200-300MB of ONNX) stay in the Python sidecar where the compressor
 // already hosts model weight, so the Go daemon carries no model runtime and no
 // heavy dependency — this package is stdlib-only.

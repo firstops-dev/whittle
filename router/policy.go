@@ -59,7 +59,7 @@ type InspectCfg struct {
 // route actually reaches it — cheap-first evaluation keeps the models off any
 // request a heuristic sibling already decided. Mirrors vLLM Semantic Router's
 // signal model: `domain` from the intent classifier, `embedding` + `complexity`
-// from the text embedding model (docs/ROUTER_POLICY_SCHEMA.md).
+// from the text embedding model (docs/ROUTER.md).
 type SignalSet struct {
 	Domains    []DomainSignal     `json:"domains,omitempty"`
 	Embeddings []EmbeddingSignal  `json:"embeddings,omitempty"`

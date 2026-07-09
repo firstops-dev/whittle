@@ -12,7 +12,7 @@ import (
 // predicates in one node is invalid — enforced recursively by validate(), not
 // by the type, because "operator-as-key unmarshals 1:1 into an all-optional
 // struct" is the entire reason this grammar needs no custom parser (see
-// docs/ROUTER_POLICY_SCHEMA.md §1-2).
+// docs/ROUTER.md §4).
 //
 // Strict-key decoding (json.Decoder.DisallowUnknownFields) turns a typo'd leaf
 // key ("keywrods") into a load error rather than a silently-dropped predicate
@@ -112,7 +112,7 @@ func (r *Rule) combinatorCount() int {
 
 // isMLLeaf reports whether this node's single leaf needs a model call. Used by
 // the evaluator to order cheap heuristic children before ML children so an
-// already-decided node never pays for a classifier (docs ROUTER_DESIGN §2.3).
+// already-decided node never pays for a classifier (docs/ROUTER.md §5).
 func (r *Rule) isMLLeaf() bool {
 	ls := r.leaves()
 	if len(ls) != 1 {

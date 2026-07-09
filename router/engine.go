@@ -76,7 +76,7 @@ const (
 	srcDefault
 )
 
-// Decide runs the precedence ladder (docs/ROUTER_POLICY_SCHEMA.md §0):
+// Decide runs the precedence ladder (docs/ROUTER.md §4):
 //
 //	pin → routes (first match, ML signals evaluated in-condition) → static default
 //	then session stickiness damps a fuzzy (default) downgrade.
@@ -225,7 +225,7 @@ type mlResult struct {
 
 // eval evaluates a condition tree to a boolean. Pure predicates + short-circuit
 // + cheap-first child ordering keep the classifier off requests a cheap sibling
-// already decided (docs ROUTER_DESIGN §2.3).
+// already decided (docs/ROUTER.md §5).
 func (st *evalState) eval(r *Rule) bool {
 	switch {
 	case r.All != nil:

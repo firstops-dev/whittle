@@ -12,7 +12,7 @@ import (
 // reconciliation. Body is the parsed JSON as a generic map so strip transforms
 // can edit arbitrary fields and messages; Headers is the outbound header set
 // (anthropic-beta lives here). The proxy serializes Body back to bytes and
-// recomputes Content-Length AFTER reconciliation (docs/ROUTER_RECONCILIATION.md
+// recomputes Content-Length AFTER reconciliation (docs/ROUTER.md §6
 // "Strip mechanics": parse → strip → re-serialize, accepting the prompt-cache
 // miss on routed requests only).
 type Request struct {
