@@ -64,19 +64,23 @@ var fullyCapable = ModelCaps{allSupported: true, MaxContextTokens: unboundedCont
 // familyCaps is the conservative per-FAMILY fallback for a model not in
 // baselineCaps — Anthropic ships versioned ids faster than we enumerate, and the
 // common case is DOWN-routing to a cheaper same-family model. Ordered
-// most-specific first. Conservative by design (under-state → strip): a newer
-// sonnet/haiku we don't recognize gets the family floor rather than the
-// fully-capable sentinel, which would forward incompatible betas (e.g. context-1m
-// from an opus[1m] request) to a model that rejects them → a 400 on every
-// down-route. haiku supports nothing; sonnet supports thinking/effort/mid-conv
-// system but NOT the context-1m beta (an older sonnet lacks it, and stripping it
-// is safe since the request still fits the 200k window); opus supports all four.
+// most-specific first.
+//
+// The floor is deliberately AGGRESSIVE: an unrecognized haiku/sonnet supports
+// NOTHING optional, so every request rewritten to it is a plain request every
+// model accepts. Over-stripping on a down-route is safe (the request runs, just
+// without the betas — which the cheaper tier may not honor anyway); UNDER-
+// stripping 400s (confirmed live: an unknown sonnet rejected both the context-1m
+// beta AND adaptive thinking). Only opus — the top tier, reached by UP-routing,
+// where the source had fewer features to begin with — keeps the full set. A model
+// matching no family at all still gets the fully-capable sentinel (forward, let
+// Mode B catch a genuine 400).
 var familyCaps = []struct {
 	sub  string
 	caps ModelCaps
 }{
 	{"haiku", ModelCaps{Supports: map[Capability]bool{}, MaxContextTokens: 200_000}},
-	{"sonnet", ModelCaps{Supports: map[Capability]bool{CapEffortParam: true, CapThinking: true, CapMidConvSystem: true}, MaxContextTokens: 200_000}},
+	{"sonnet", ModelCaps{Supports: map[Capability]bool{}, MaxContextTokens: 200_000}},
 	{"opus", ModelCaps{Supports: map[Capability]bool{CapLongContext: true, CapEffortParam: true, CapThinking: true, CapMidConvSystem: true}, MaxContextTokens: 200_000}},
 }
 
