@@ -44,6 +44,36 @@ func TestReconcile_StripsOpenEndedThinkingBetas(t *testing.T) {
 	}
 }
 
+// A context_management edit that REQUIRES thinking (clear_thinking_…, confirmed
+// live via headless claude) must be dropped when thinking is disabled — a leftover
+// one 400s. Non-thinking edits stay.
+func TestReconcile_StripsThinkingContextEdit(t *testing.T) {
+	r := mkReq(t, `{"model":"claude-opus-4-8","thinking":{"type":"enabled"},
+	  "context_management":{"edits":[{"type":"clear_thinking_20251015"},{"type":"clear_tool_uses_20250919"}]},
+	  "messages":[{"role":"user","content":"hi"}]}`, "")
+	Reconcile(r, "claude-sonnet-4-5-20250929") // sonnet floor: thinking off
+	cm, ok := r.Body["context_management"].(map[string]any)
+	if !ok {
+		t.Fatal("a surviving non-thinking edit should keep context_management")
+	}
+	edits := cm["edits"].([]any)
+	if len(edits) != 1 || edits[0].(map[string]any)["type"] != "clear_tool_uses_20250919" {
+		t.Errorf("only the thinking edit should be dropped, got %v", edits)
+	}
+}
+
+// If every edit required thinking, context_management is removed entirely (an
+// empty edits array could itself be rejected).
+func TestReconcile_DropsContextMgmtWhenAllThinking(t *testing.T) {
+	r := mkReq(t, `{"model":"claude-opus-4-8","thinking":{"type":"enabled"},
+	  "context_management":{"edits":[{"type":"clear_thinking_20251015"}]},
+	  "messages":[{"role":"user","content":"hi"}]}`, "")
+	Reconcile(r, "claude-sonnet-4-5-20250929")
+	if _, has := r.Body["context_management"]; has {
+		t.Error("context_management with only thinking edits should be removed")
+	}
+}
+
 // B1: an UNKNOWN model is fully capable — Reconcile strips nothing, only sets
 // the model. The zero-value trap (strip everything / unroutable) must not happen.
 func TestReconcile_UnknownModelStripsNothing(t *testing.T) {

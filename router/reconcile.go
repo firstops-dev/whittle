@@ -1,5 +1,7 @@
 package router
 
+import "strings"
+
 // feature is one reconcilable capability: how to detect its use in a request and
 // how to strip it (across body AND headers, atomically). Reconcile applies a
 // strip only when the target model lacks the capability.
@@ -46,7 +48,7 @@ var reconcileFeatures = []feature{
 			if _, has := r.Body["thinking"]; has {
 				return true
 			}
-			return r.hasBetaContaining("thinking")
+			return r.hasBetaContaining("thinking") || hasThinkingContextEdit(r)
 		},
 		strip: func(r *Request) {
 			// Strip the config, the thinking blocks already in history (or a
@@ -59,6 +61,7 @@ var reconcileFeatures = []feature{
 			delete(r.Body, "thinking")
 			stripThinkingFromHistory(r)
 			r.removeBetaContaining("thinking")
+			stripThinkingContextEdits(r)
 		},
 	},
 	{
@@ -109,6 +112,59 @@ func Reconcile(req *Request, target string) []string {
 		repairAlternation(req)
 	}
 	return stripped
+}
+
+// hasThinkingContextEdit reports whether context_management carries an edit whose
+// type references thinking (e.g. clear_thinking_20251015) — such an edit REQUIRES
+// thinking to be enabled, so it must be removed when thinking is disabled.
+func hasThinkingContextEdit(r *Request) bool {
+	for _, e := range contextEdits(r) {
+		if m, ok := e.(map[string]any); ok {
+			if t, _ := m["type"].(string); strings.Contains(strings.ToLower(t), "thinking") {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// stripThinkingContextEdits drops context_management.edits that require thinking
+// (see hasThinkingContextEdit). A leftover such edit 400s ("requires thinking to
+// be enabled") once thinking is stripped. If edits becomes empty, context_management
+// is removed entirely so an empty edits array can't itself be rejected.
+func stripThinkingContextEdits(r *Request) {
+	edits := contextEdits(r)
+	if edits == nil {
+		return
+	}
+	kept := edits[:0:0]
+	for _, e := range edits {
+		if m, ok := e.(map[string]any); ok {
+			if t, _ := m["type"].(string); strings.Contains(strings.ToLower(t), "thinking") {
+				continue
+			}
+		}
+		kept = append(kept, e)
+	}
+	if len(kept) == len(edits) {
+		return
+	}
+	cm, _ := r.Body["context_management"].(map[string]any)
+	if len(kept) == 0 {
+		delete(r.Body, "context_management")
+	} else {
+		cm["edits"] = kept
+	}
+}
+
+// contextEdits returns body.context_management.edits as a slice, or nil.
+func contextEdits(r *Request) []any {
+	cm, ok := r.Body["context_management"].(map[string]any)
+	if !ok {
+		return nil
+	}
+	edits, _ := cm["edits"].([]any)
+	return edits
 }
 
 // stripThinkingFromHistory removes thinking / redacted_thinking blocks from every

@@ -76,13 +76,17 @@ func detectClaudeModels() map[string]string {
 }
 
 func betterModel(aID string, aVal bool, bID string, bVal bool) bool {
-	if aVal != bVal {
-		return aVal // an actually-used "model": value is guaranteed valid
-	}
+	// A full dated id first (bare aliases often 404). Then the highest version /
+	// newest date — the config's "model" field proved STALE (it named opus-4-7
+	// while Claude Code actually sent opus-4-8), so version outranks it; a "model":
+	// occurrence is only a final tiebreak between otherwise-identical ids.
 	if ad, bd := datedID.MatchString(aID), datedID.MatchString(bID); ad != bd {
-		return ad // prefer the full dated id (Anthropic accepts it; bare often 404s)
+		return ad
 	}
-	return aID > bID // newer date / higher version
+	if aID != bID {
+		return aID > bID
+	}
+	return aVal && !bVal
 }
 
 // fillModels substitutes the model ids detected from Claude Code's config.

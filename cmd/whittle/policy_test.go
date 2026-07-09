@@ -22,17 +22,18 @@ func TestModelFamily(t *testing.T) {
 }
 
 func TestBetterModel(t *testing.T) {
-	// A "model": value (proven-valid, what Claude Code sends) beats anything else.
-	if !betterModel("claude-opus-4-7", true, "claude-opus-4-8", false) {
-		t.Error("a model-value id should win over a higher-versioned plain id")
-	}
-	// Among plain ids, a dated id beats a bare one.
+	// A dated id beats a bare one (real haiku/sonnet ids are dated; bare 404s).
 	if !betterModel("claude-sonnet-4-5-20250929", false, "claude-sonnet-4-5", false) {
 		t.Error("a dated id should win over a bare id")
 	}
-	// Among equally-ranked, the higher version wins.
-	if !betterModel("claude-opus-4-8", false, "claude-opus-4-7", false) {
-		t.Error("higher version should win among equals")
+	// The highest version wins even over a lower-versioned config "model" value —
+	// the config field proved stale (named opus-4-7 while CC sent opus-4-8).
+	if !betterModel("claude-opus-4-8", false, "claude-opus-4-7", true) {
+		t.Error("higher opus version should win over a lower-versioned model-value")
+	}
+	// Same id: a "model": occurrence is the tiebreak.
+	if !betterModel("claude-opus-4-8", true, "claude-opus-4-8", false) {
+		t.Error("model-value should be the tiebreak for identical ids")
 	}
 }
 
