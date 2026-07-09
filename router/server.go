@@ -6,7 +6,13 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/firstops-dev/whittle/router/ml"
 )
+
+// ml.Client must satisfy Classifier — asserted here (at the import site) rather
+// than in package ml, which would import router back and form a cycle.
+var _ Classifier = (*ml.Client)(nil)
 
 // DefaultAddr is the router daemon's listen address. It is distinct from the
 // compress service (:45871) and the prose model sidecar (:45872): the router is a
@@ -35,7 +41,16 @@ func ListenAndServe(addr, policyPath string, lg Logger) error {
 		lg.Printf("router: policy warning: %s", w)
 	}
 
-	px := NewProxy(pol, nil, NewMemSessionStore(), lg)
+	// Smart mode is opt-in: with a sidecar URL, ML intent/classify leaves resolve
+	// against the model; without it, the noop classifier makes them evaluate to
+	// heuristics-only / static default (Decide handles nil as noop).
+	var cl Classifier
+	if u := os.Getenv("WHITTLE_ROUTER_MODEL_URL"); u != "" {
+		cl = ml.New(u)
+		lg.Printf("router: smart mode ON (classifier sidecar = %s)", u)
+	}
+
+	px := NewProxy(pol, cl, NewMemSessionStore(), lg)
 	// Optional upstream override (default is the real Anthropic host). Lets an
 	// operator point the router at a corporate Anthropic gateway — and lets a
 	// smoke test drive it against a local fake upstream.

@@ -89,6 +89,8 @@ route flags:
   -addr string     listen address (default "127.0.0.1:45873")
   -policy string   policy file path (default ~/.whittle/router.json)
                    missing/invalid → transparent passthrough (never bricks Claude Code)
+  env WHITTLE_ROUTER_UPSTREAM    upstream API (default api.anthropic.com)
+  env WHITTLE_ROUTER_MODEL_URL   classifier sidecar URL (unset → smart mode off)
 
 env:
   WHITTLE_MODEL_URL        enable the ML prose path (model sidecar URL)

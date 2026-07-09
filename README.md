@@ -174,10 +174,11 @@ export ANTHROPIC_BASE_URL=http://127.0.0.1:45873
 The router is **new** and not on the battle-tested footing the compression hook
 is - run it when you want tier routing, leave it off and nothing changes. Today
 it routes on deterministic signals; opt-in **smart routing** (an ML intent
-classifier and few-shot classify, hosted in the same sidecar) is landing behind
-the same switch. Configure the upstream with `WHITTLE_ROUTER_UPSTREAM` (defaults
-to `api.anthropic.com`; point it at a corporate Anthropic gateway if you have
-one).
+classifier and few-shot classify, hosted in the same sidecar) turns on when you
+set `WHITTLE_ROUTER_MODEL_URL` to the classifier sidecar - unset, routing is
+heuristics-only and the ML paths cleanly fall through to your default. Configure
+the upstream with `WHITTLE_ROUTER_UPSTREAM` (defaults to `api.anthropic.com`;
+point it at a corporate Anthropic gateway if you have one).
 
 > Not yet wired into `whittle setup`/`status`/launchd - run it in the foreground
 > (or your own supervisor) for now. Background-service integration is on the
@@ -191,6 +192,7 @@ one).
 | `WHITTLE_MAX_CHARS` | 262144 | global size ceiling (skip before classify) |
 | `WHITTLE_PROSE_MAX_CHARS` | 100000 | prose-path latency ceiling (lower on CPU-only machines) |
 | `WHITTLE_ROUTER_UPSTREAM` | `api.anthropic.com` | model router upstream (opt-in `whittle route`) |
+| `WHITTLE_ROUTER_MODEL_URL` | *(unset - smart off)* | router classifier sidecar URL (enables ML `intent`/`classify` routing) |
 
 
 
