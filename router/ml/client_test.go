@@ -29,7 +29,7 @@ func TestClient_DomainSuccess(t *testing.T) {
 		}
 		io.WriteString(w, `{"label":"math","confidence":0.94}`)
 	})
-	label, conf, err := c.Domain("prove every finite integral domain is a field")
+	label, conf, _, err := c.Domain("prove every finite integral domain is a field")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,14 +95,14 @@ func TestClient_MalformedJSONIsError(t *testing.T) {
 	c := fakeSidecar(t, func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, `{"label":`) // truncated
 	})
-	if _, _, err := c.Domain("x"); err == nil {
+	if _, _, _, err := c.Domain("x"); err == nil {
 		t.Fatal("a malformed reply must be an error")
 	}
 }
 
 func TestClient_TransportErrorIsError(t *testing.T) {
 	c := New("http://127.0.0.1:1") // nothing listening
-	if _, _, err := c.Domain("x"); err == nil {
+	if _, _, _, err := c.Domain("x"); err == nil {
 		t.Fatal("a transport failure must be an error")
 	}
 }

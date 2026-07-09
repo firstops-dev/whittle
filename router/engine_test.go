@@ -10,6 +10,7 @@ import (
 // already decided the node) and per-request memoization.
 type spyClassifier struct {
 	domainLabel   string
+	domainProbs   map[string]float64
 	embedScore    float64
 	complexMargin float64
 	domainCalls   int
@@ -17,9 +18,9 @@ type spyClassifier struct {
 	complexCalls  int
 }
 
-func (c *spyClassifier) Domain(string) (string, float64, error) {
+func (c *spyClassifier) Domain(string) (string, float64, map[string]float64, error) {
 	c.domainCalls++
-	return c.domainLabel, 1, nil
+	return c.domainLabel, 1, c.domainProbs, nil
 }
 func (c *spyClassifier) EmbeddingScore(string, []string) (float64, error) {
 	c.embedCalls++

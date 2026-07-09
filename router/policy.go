@@ -59,19 +59,28 @@ type InspectCfg struct {
 // route actually reaches it — cheap-first evaluation keeps the models off any
 // request a heuristic sibling already decided. Mirrors vLLM Semantic Router's
 // signal model: `domain` from the intent classifier, `embedding` + `complexity`
-// from the text embedding model (docs/ROUTER_POLICY_SCHEMA.md).
+// from the text embedding model (docs/ROUTER.md).
 type SignalSet struct {
 	Domains    []DomainSignal     `json:"domains,omitempty"`
 	Embeddings []EmbeddingSignal  `json:"embeddings,omitempty"`
 	Complexity []ComplexitySignal `json:"complexity,omitempty"`
 }
 
-// DomainSignal fires when the intent classifier's predicted MMLU-Pro category is
-// one of Categories. It groups raw classifier labels under a policy-friendly name
-// (coding = {computer science, engineering}).
+// DomainSignal fires on the intent classifier's output over Categories.
+//
+// With MinMass set (0 < m ≤ 1): fires iff the TOTAL softmax probability mass the
+// classifier assigns to Categories is ≥ MinMass. Mass thresholding is the
+// preferred form — it only passes on a confident in-set classification, is
+// invariant to which in-set category won, and an ambiguous (high-entropy)
+// distribution simply fails the threshold so routing falls to the policy default
+// (cost-first: uncertainty lands on the middle tier, never escalates).
+//
+// With MinMass unset: fires iff the argmax label ∈ Categories (legacy behavior,
+// also the graceful fallback when the sidecar returns no distribution).
 type DomainSignal struct {
 	Name       string   `json:"name"`
 	Categories []string `json:"categories"`
+	MinMass    float64  `json:"min_mass,omitempty"`
 }
 
 // EmbeddingSignal fires when the query's bank score against Candidates
@@ -108,6 +117,15 @@ const (
 	// keepTier is the reserved `to:` value meaning "hold the session's current
 	// model." It is rejected as a tier name so the two never collide.
 	keepTier = "keep"
+
+	// requestedDefault is the reserved `default:` value meaning "no route matched →
+	// keep the model the client asked for, untouched" (a guaranteed no-op
+	// passthrough). This is the fail-open posture applied to routing itself: with
+	// zero evidence about a request, whittle does not rewrite it — EVERY model
+	// change, up or down, must come from a rule the author wrote. It also protects
+	// mixed-model clients (Claude Code sends cheap-model background requests; a
+	// fixed-tier default would silently up-route them).
+	requestedDefault = "requested"
 
 	// Candidate-list caps for embedding/complexity signals: the cap is about
 	// prototype quality + cold-start embedding cost, not runtime.
@@ -175,6 +193,17 @@ func (p *Policy) complexitySignal(name string) *ComplexitySignal {
 		}
 	}
 	return nil
+}
+
+// policyUsesML reports whether any route references an ML signal leaf — used to
+// warn loudly when such a policy runs with smart mode off.
+func policyUsesML(p *Policy) bool {
+	for i := range p.Routes {
+		if ruleUsesML(&p.Routes[i].When) {
+			return true
+		}
+	}
+	return false
 }
 
 // dateSuffix matches an 8-digit date snapshot suffix on a model id

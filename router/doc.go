@@ -4,7 +4,7 @@
 // compress package (compress intercepts tool OUTPUTS; router intercepts LLM
 // REQUESTS) and is fully self-contained under this folder.
 //
-// Layering, inside-out (see docs/ROUTER_IMPLEMENTATION_PLAN.md):
+// Layering, inside-out (see docs/ROUTER.md §9):
 //   - policy/rule/validate — the policy schema, loading, and validation
 //   - signals              — heuristic extraction from a request body
 //   - engine/decide        — the precedence ladder that turns signals into a Decision

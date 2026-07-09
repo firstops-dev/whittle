@@ -92,16 +92,27 @@ def complexity_margin(query_vec: Sequence[float],
             - bank_score(query_vec, easy_vecs, best_weight, top_m))
 
 
-def domain_label(logits: Sequence[float], labels: Sequence[str]) -> Tuple[str, float]:
-    """argmax label + its softmax probability. Pure (no torch) so the label-selection
-    logic is testable from a plain list of logits. Empty logits -> ("", 0.0)."""
+def domain_distribution(logits: Sequence[float], labels: Sequence[str]) -> Dict[str, float]:
+    """Full softmax distribution as {label: prob}. Pure (no torch). The router
+    thresholds PROBABILITY MASS over a policy-defined category set — a single
+    scalar that subsumes entropy laddering: mass concentrates only when the
+    classifier is confidently in-set, and an ambiguous/flat distribution simply
+    fails the threshold (fail to the safe middle tier, cost-first). Empty -> {}."""
     if not logits:
-        return "", 0.0
+        return {}
     hi = max(logits)
     exps = [math.exp(x - hi) for x in logits]  # shift for numerical stability
     total = sum(exps)
-    idx = max(range(len(logits)), key=logits.__getitem__)
-    return labels[idx], exps[idx] / total
+    return {labels[i]: exps[i] / total for i in range(len(logits))}
+
+
+def domain_label(logits: Sequence[float], labels: Sequence[str]) -> Tuple[str, float]:
+    """argmax label + its softmax probability. Empty logits -> ("", 0.0)."""
+    probs = domain_distribution(logits, labels)
+    if not probs:
+        return "", 0.0
+    label = max(probs, key=probs.get)
+    return label, probs[label]
 
 
 # ---- lazy real models (injected in tests) -----------------------------------
@@ -169,12 +180,16 @@ class DomainClassifier:
         labels = [id2label.get(i, id2label.get(str(i), "")) for i in range(logits.shape[-1])]
         return logits.tolist(), labels
 
-    def classify(self, text: str) -> Tuple[str, float]:
+    def classify(self, text: str) -> Tuple[str, float, Dict[str, float]]:
+        """(argmax label, its prob, the FULL distribution). The distribution is the
+        payload — the router thresholds mass over category sets; argmax is kept for
+        logging/back-compat."""
         if not text:
-            return "", 0.0
+            return "", 0.0, {}
         predict = self._predict or self._predict_real
         logits, labels = predict(text)
-        return domain_label(logits, labels)
+        label, conf = domain_label(logits, labels)
+        return label, conf, domain_distribution(logits, labels)
 
 
 # ---- embedding-signal engine (embed + cache + score) ------------------------

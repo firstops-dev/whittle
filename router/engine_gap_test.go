@@ -47,7 +47,9 @@ func loadWhenSignals(t *testing.T, when string) *Policy {
 // fixedDomain is a deterministic classifier: Domain always returns `label`.
 type fixedDomain struct{ label string }
 
-func (f fixedDomain) Domain(string) (string, float64, error) { return f.label, 1, nil }
+func (f fixedDomain) Domain(string) (string, float64, map[string]float64, error) {
+	return f.label, 1, nil, nil
+}
 func (f fixedDomain) EmbeddingScore(string, []string) (float64, error) {
 	return 0, nil
 }
@@ -93,7 +95,7 @@ func naiveLeaf(r *Rule, s *Signals, cl Classifier, pol *Policy) bool {
 	case r.Keywords != nil:
 		hay := strings.ToLower(s.RecentText)
 		for _, kw := range r.Keywords {
-			if kw != "" && strings.Contains(hay, strings.ToLower(kw)) {
+			if kw != "" && containsWord(hay, strings.ToLower(kw)) {
 				return true
 			}
 		}
@@ -113,7 +115,7 @@ func naiveLeaf(r *Rule, s *Signals, cl Classifier, pol *Policy) bool {
 		}
 		return false
 	case r.Domain != "":
-		label, _, err := cl.Domain(s.RecentText)
+		label, _, _, err := cl.Domain(s.RecentText)
 		if err != nil {
 			return false
 		}

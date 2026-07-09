@@ -12,7 +12,7 @@ import (
 // reconciliation. Body is the parsed JSON as a generic map so strip transforms
 // can edit arbitrary fields and messages; Headers is the outbound header set
 // (anthropic-beta lives here). The proxy serializes Body back to bytes and
-// recomputes Content-Length AFTER reconciliation (docs/ROUTER_RECONCILIATION.md
+// recomputes Content-Length AFTER reconciliation (docs/ROUTER.md §6
 // "Strip mechanics": parse → strip → re-serialize, accepting the prompt-cache
 // miss on routed requests only).
 type Request struct {
@@ -97,6 +97,48 @@ func (r *Request) removeBetaPrefix(prefix string) bool {
 	removed := false
 	for _, t := range toks {
 		if strings.HasPrefix(t, prefix) {
+			removed = true
+			continue
+		}
+		kept = append(kept, t)
+	}
+	if !removed {
+		return false
+	}
+	if len(kept) == 0 {
+		r.Headers.Del(betaHeader)
+	} else {
+		r.Headers.Set(betaHeader, strings.Join(kept, ","))
+	}
+	return true
+}
+
+// hasBetaContaining reports whether any beta token contains substr (case-insensitive).
+func (r *Request) hasBetaContaining(substr string) bool {
+	substr = strings.ToLower(substr)
+	for _, t := range r.betaTokens() {
+		if strings.Contains(strings.ToLower(t), substr) {
+			return true
+		}
+	}
+	return false
+}
+
+// removeBetaContaining drops every beta token containing substr (case-insensitive)
+// and removes the header if empty. Used to strip an OPEN-ENDED family of dependent
+// betas — e.g. every "thinking" beta (interleaved-thinking, thinking-token-count,
+// clear_thinking_…) when the thinking capability is disabled — since a lone
+// dependent beta whose feature we removed 400s ("requires thinking to be enabled").
+func (r *Request) removeBetaContaining(substr string) bool {
+	toks := r.betaTokens()
+	if len(toks) == 0 {
+		return false
+	}
+	substr = strings.ToLower(substr)
+	kept := toks[:0:0]
+	removed := false
+	for _, t := range toks {
+		if strings.Contains(strings.ToLower(t), substr) {
 			removed = true
 			continue
 		}

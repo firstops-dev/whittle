@@ -147,11 +147,22 @@ func userTextOf(content json.RawMessage) string {
 	}
 	var parts []string
 	for _, b := range decodeBlocks(content) {
-		if b.Type == "text" && b.Text != "" {
+		if b.Type == "text" && b.Text != "" && !isInjectedBlock(b.Text) {
 			parts = append(parts, b.Text)
 		}
 	}
 	return strings.Join(parts, "\n")
+}
+
+// isInjectedBlock reports whether a text block is framework-injected rather than
+// user-authored. Claude Code prepends <system-reminder> blocks (context, memory,
+// task nudges) INSIDE user messages; captured live, they dominate the joined text
+// and make the classifier score the reminder instead of the human's question
+// ("what day is today?" read as computer-science@0.99 because the block above it
+// mentioned emails and dates). The Signals contract is user-authored text only,
+// so these blocks are excluded from BOTH classifier and keyword input.
+func isInjectedBlock(text string) bool {
+	return strings.HasPrefix(strings.TrimSpace(text), "<system-reminder>")
 }
 
 // decodeString returns the string value of a RawMessage if it is a JSON string.

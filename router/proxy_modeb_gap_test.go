@@ -95,7 +95,7 @@ func TestProxy_ModeB_RetryTransportFailure_RelaysBufferedOriginal(t *testing.T) 
 	if !strings.Contains(string(body), "ROUTED_400_BUFFERED") {
 		t.Errorf("client should receive the buffered original 400 body, got %q", string(body))
 	}
-	if r := resp.Header.Get("X-Whittle-Reason"); !strings.Contains(r, "mode-b:relay(retry-failed)") {
+	if r := resp.Header.Get("X-Whittle-Reason"); !strings.Contains(r, "mode-b:relay-original") {
 		t.Errorf("reason should record the retry-failed relay: %q", r)
 	}
 }

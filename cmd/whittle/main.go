@@ -37,6 +37,8 @@ func main() {
 		cmdServe(os.Args[2:])
 	case "route":
 		cmdRoute(os.Args[2:])
+	case "policy":
+		cmdPolicy(os.Args[2:])
 	case "setup":
 		cmdSetup(os.Args[2:])
 	case "daemon":
@@ -75,6 +77,7 @@ usage:
   whittle serve    [flags]          run the compress HTTP API in the foreground
   whittle route    [flags]          run the model-router daemon (opt-in) on
                                     ANTHROPIC_BASE_URL
+  whittle policy   <cmd>            manage router policies (list/show/init/validate)
   whittle version
 
 compress flags:

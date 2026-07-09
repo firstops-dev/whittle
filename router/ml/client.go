@@ -3,7 +3,7 @@
 // sidecar URL is configured; when it isn't, the engine uses the noop classifier
 // and this package is never touched.
 //
-// The classifier lives behind an HTTP boundary on purpose (docs/ROUTER_DESIGN.md):
+// The classifier lives behind an HTTP boundary on purpose (docs/ROUTER.md §5):
 // the models (~200-300MB of ONNX) stay in the Python sidecar where the compressor
 // already hosts model weight, so the Go daemon carries no model runtime and no
 // heavy dependency — this package is stdlib-only.
@@ -51,15 +51,16 @@ func New(baseURL string) *Client {
 // Intent classifies text into a single category label with a confidence. On any
 // sidecar error the engine's signal leaf simply evaluates false (the route won't
 // fire) — so the error is returned verbatim, not swallowed.
-func (c *Client) Domain(text string) (string, float64, error) {
+func (c *Client) Domain(text string) (string, float64, map[string]float64, error) {
 	var out struct {
-		Label      string  `json:"label"`
-		Confidence float64 `json:"confidence"`
+		Label      string             `json:"label"`
+		Confidence float64            `json:"confidence"`
+		Probs      map[string]float64 `json:"probs"`
 	}
 	if err := c.post("/v1/route/domain", domainReq{Text: text}, &out); err != nil {
-		return "", 0, err
+		return "", 0, nil, err
 	}
-	return out.Label, out.Confidence, nil
+	return out.Label, out.Confidence, out.Probs, nil
 }
 
 // EmbeddingScore returns the query's bank score against candidates (the sidecar

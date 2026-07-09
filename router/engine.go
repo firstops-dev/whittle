@@ -20,8 +20,11 @@ var ErrMLDisabled = errors.New("router: ML classifier disabled")
 // thresholds/membership; the classifier only computes raw scores from text +
 // candidates (compute where the data lives).
 type Classifier interface {
-	// Domain returns the intent classifier's category label for text + confidence.
-	Domain(text string) (label string, conf float64, err error)
+	// Domain returns the intent classifier's argmax label + confidence AND the
+	// full softmax distribution over its categories. The engine thresholds
+	// probability MASS over a policy-defined category set (matchDomain); nil/empty
+	// probs (older sidecar, degraded mode) falls back to argmax membership.
+	Domain(text string) (label string, conf float64, probs map[string]float64, err error)
 	// EmbeddingScore returns the bank score of text against candidates
 	// (0.75·best + 0.25·mean(top-2) cosine).
 	EmbeddingScore(text string, candidates []string) (score float64, err error)
@@ -32,8 +35,8 @@ type Classifier interface {
 // noopClassifier is the smart-off implementation: every call reports disabled.
 type noopClassifier struct{}
 
-func (noopClassifier) Domain(string) (string, float64, error) {
-	return "", 0, ErrMLDisabled
+func (noopClassifier) Domain(string) (string, float64, map[string]float64, error) {
+	return "", 0, nil, ErrMLDisabled
 }
 func (noopClassifier) EmbeddingScore(string, []string) (float64, error) {
 	return 0, ErrMLDisabled
@@ -54,12 +57,20 @@ type Decision struct {
 	Model    string
 	Reason   string
 	Stripped []string
+	// MLTrace records every ML signal actually computed for this request, with
+	// its raw value ("cplx:reasoning=-0.471 dom=other@1.00"), or "off"/"err" when
+	// unavailable — so the log shows WHY a route did or didn't fire. Empty when no
+	// ML leaf was reached (heuristics decided first).
+	MLTrace string
 }
 
 // IsNoOp reports whether the decision routes to the model the client already
 // requested (compared canonicalized). The proxy uses this to byte-passthrough
 // the request unchanged — no model rewrite, no capability reconciliation (R11).
 func IsNoOp(d Decision, s Signals) bool {
+	if d.Model == "" {
+		return true // no rewrite target (e.g. default:requested with no model field)
+	}
 	return s.RequestedModel != "" && canonicalModel(d.Model) == s.RequestedModel
 }
 
@@ -73,7 +84,7 @@ const (
 	srcDefault
 )
 
-// Decide runs the precedence ladder (docs/ROUTER_POLICY_SCHEMA.md §0):
+// Decide runs the precedence ladder (docs/ROUTER.md §4):
 //
 //	pin → routes (first match, ML signals evaluated in-condition) → static default
 //	then session stickiness damps a fuzzy (default) downgrade.
@@ -118,7 +129,12 @@ func Decide(s Signals, p *Policy, cl Classifier, sess SessionStore, pin string) 
 
 	// 3. Static default. The ML now lives inside route conditions (signal leaves),
 	// not a separate "smart default" step — matching vSR, where the default is
-	// just the last rule.
+	// just the last rule. `default: "requested"` short-circuits to a guaranteed
+	// no-op: no evidence → no rewrite (stickiness and session writes are skipped —
+	// there is no tier to remember).
+	if p.Default == requestedDefault {
+		return st.annotate(Decision{Tier: "-", Model: s.RequestedModel, Reason: "default:requested"})
+	}
 	return st.annotate(p.decide(p.Default, "default", srcDefault, s, sess))
 }
 
@@ -171,11 +187,16 @@ type evalState struct {
 
 	// domain classification: computed once (the classifier emits one label).
 	domainLabel string
+	domainProbs map[string]float64
 	domainDone  bool
 	domainErr   error
 	// embedding/complexity results memoized by signal name.
 	embed   map[string]mlResult
 	complex map[string]mlResult
+
+	// trace accumulates computed signal values for observability (Decision.MLTrace).
+	trace     []string
+	tracedDom map[string]bool // gate-mass traced once per domain signal
 
 	// mlErr is set when an ML leaf actually consulted for the CURRENT route
 	// errored (reset per route). A route whose match depended on an unavailable
@@ -209,7 +230,21 @@ func (st *evalState) annotate(d Decision) Decision {
 	if st.anyMLErr {
 		d.Reason += " ml-degraded"
 	}
+	d.MLTrace = strings.Join(st.trace, " ")
 	return d
+}
+
+// traceVal formats one computed signal for the trace ("off" = smart mode
+// disabled, "err" = a real sidecar failure — the reason also gets ml-degraded).
+func (st *evalState) traceVal(prefix string, val float64, err error) {
+	switch {
+	case errors.Is(err, ErrMLDisabled):
+		st.trace = append(st.trace, prefix+"=off")
+	case err != nil:
+		st.trace = append(st.trace, prefix+"=err")
+	default:
+		st.trace = append(st.trace, fmt.Sprintf("%s=%+.3f", prefix, val))
+	}
 }
 
 // mlResult memoizes one signal computation (a score/margin and its error) so a
@@ -221,7 +256,7 @@ type mlResult struct {
 
 // eval evaluates a condition tree to a boolean. Pure predicates + short-circuit
 // + cheap-first child ordering keep the classifier off requests a cheap sibling
-// already decided (docs ROUTER_DESIGN §2.3).
+// already decided (docs/ROUTER.md §5).
 func (st *evalState) eval(r *Rule) bool {
 	switch {
 	case r.All != nil:
@@ -294,16 +329,41 @@ func (st *evalState) recentLower() string {
 	return st.loweredRecent
 }
 
-// matchLiteralKeywords: case-insensitive substring OR over the inspect-window
-// text. Literal (not regex) — a coder's "c++" never explodes.
+// matchLiteralKeywords: case-insensitive WHOLE-WORD/PHRASE OR over the
+// inspect-window text. Literal (not regex) — a coder's "c++" never explodes.
+// Whole-word means the occurrence is not embedded inside a larger alphanumeric
+// run: "migration" no longer matches "immigration", "refactor" no longer matches
+// "refactored" (list the variants you want). A boundary is any non-alphanumeric
+// rune or the string edge, so "c++" still matches in "use c++ here".
 func (st *evalState) matchLiteralKeywords(kws []string) bool {
 	hay := st.recentLower()
 	for _, kw := range kws {
-		if kw != "" && strings.Contains(hay, strings.ToLower(kw)) {
+		if kw != "" && containsWord(hay, strings.ToLower(kw)) {
 			return true
 		}
 	}
 	return false
+}
+
+// containsWord reports whether needle occurs in hay with non-alphanumeric (or
+// edge) boundaries on both sides. Both inputs must already be lowercased.
+func containsWord(hay, needle string) bool {
+	for from := 0; ; {
+		i := strings.Index(hay[from:], needle)
+		if i < 0 {
+			return false
+		}
+		start := from + i
+		end := start + len(needle)
+		if (start == 0 || !isAlnum(hay[start-1])) && (end == len(hay) || !isAlnum(hay[end])) {
+			return true
+		}
+		from = start + 1
+	}
+}
+
+func isAlnum(b byte) bool {
+	return b >= 'a' && b <= 'z' || b >= 'A' && b <= 'Z' || b >= '0' && b <= '9'
 }
 
 func (st *evalState) matchRegexKeywords(pats []string) bool {
@@ -315,6 +375,20 @@ func (st *evalState) matchRegexKeywords(pats []string) bool {
 	return false
 }
 
+// mlText is what the ML signals classify: the LATEST user turn, not the joined
+// inspect window. Averaging turns dilutes the classifiers — measured live: a turn
+// scoring complexity +0.171 (hard) alone fell to +0.025 (medium) once joined with
+// two earlier trivial turns, silently suppressing mid-session escalation. Keywords
+// deliberately KEEP the window (matchLiteralKeywords) — persistence is a feature
+// there (a hard keyword two turns back keeps protecting); for a classifier it is
+// noise. Falls back to the window text when the last turn has no user text.
+func (st *evalState) mlText() string {
+	if st.s.LastUserText != "" {
+		return st.s.LastUserText
+	}
+	return st.s.RecentText
+}
+
 // matchDomain fires when the classifier's predicted label is in the named
 // domain's category set. The classification is computed once per request; on
 // ML-disabled/error the leaf is false (the route simply won't fire).
@@ -324,12 +398,47 @@ func (st *evalState) matchDomain(name string) bool {
 		return false // validation guarantees the reference resolves
 	}
 	if !st.domainDone {
-		st.domainLabel, _, st.domainErr = st.cl.Domain(st.s.RecentText)
+		var conf float64
+		st.domainLabel, conf, st.domainProbs, st.domainErr = st.cl.Domain(st.mlText())
 		st.domainDone = true
+		switch {
+		case errors.Is(st.domainErr, ErrMLDisabled):
+			st.trace = append(st.trace, "dom=off")
+		case st.domainErr != nil:
+			st.trace = append(st.trace, "dom=err")
+		default:
+			st.trace = append(st.trace, fmt.Sprintf("dom=%s@%.3f", st.domainLabel, conf))
+		}
 	}
 	if st.domainErr != nil {
 		return st.mlFailed(st.domainErr)
 	}
+	// Mass thresholding (preferred): fire iff the total probability the classifier
+	// assigns to the signal's categories clears MinMass. One scalar subsumes
+	// entropy handling — mass concentrates only on a CONFIDENT in-set
+	// classification; an ambiguous/flat distribution fails the threshold, so an
+	// uncertain classification falls to the policy default (the safe middle tier),
+	// never up. Invariant to which in-set category won (math 0.4 + physics 0.4
+	// passes 0.7 without a special top-2 case).
+	if sig.MinMass > 0 && len(st.domainProbs) > 0 {
+		mass := 0.0
+		for _, c := range sig.Categories {
+			mass += st.domainProbs[c]
+		}
+		// Trace the EVALUATED gate mass at full precision (once per signal): a
+		// mass of 0.897 against a 0.9 gate must never display as a self-
+		// contradictory "0.90 didn't fire" (caught live).
+		if !st.tracedDom[name] {
+			if st.tracedDom == nil {
+				st.tracedDom = map[string]bool{}
+			}
+			st.tracedDom[name] = true
+			st.trace = append(st.trace, fmt.Sprintf("dom:%s=%.3f/%.2f", name, mass, sig.MinMass))
+		}
+		return mass >= sig.MinMass
+	}
+	// Argmax membership fallback: MinMass unset, or the sidecar didn't return a
+	// distribution (older sidecar) — degrade gracefully rather than never firing.
 	for _, c := range sig.Categories {
 		if c == st.domainLabel {
 			return true
@@ -387,8 +496,9 @@ func (st *evalState) embedScore(name string, candidates []string) (float64, erro
 	if r, ok := st.embed[name]; ok {
 		return r.val, r.err
 	}
-	score, err := st.cl.EmbeddingScore(st.s.RecentText, candidates)
+	score, err := st.cl.EmbeddingScore(st.mlText(), candidates)
 	st.embed[name] = mlResult{score, err}
+	st.traceVal("emb:"+name, score, err)
 	return score, err
 }
 
@@ -400,8 +510,9 @@ func (st *evalState) complexMargin(name string, hard, easy []string) (float64, e
 	if r, ok := st.complex[name]; ok {
 		return r.val, r.err
 	}
-	margin, err := st.cl.ComplexityMargin(st.s.RecentText, hard, easy)
+	margin, err := st.cl.ComplexityMargin(st.mlText(), hard, easy)
 	st.complex[name] = mlResult{margin, err}
+	st.traceVal("cplx:"+name, margin, err)
 	return margin, err
 }
 
