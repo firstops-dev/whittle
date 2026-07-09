@@ -18,7 +18,7 @@ var presetFS embed.FS
 // keyed by preset name. Every embedded preset must have an entry (enforced by
 // TestPresets_AllValid).
 var presetDescriptions = map[string]string{
-	"default":   "Mixed-use (coding + writing + analysis): hard reasoning or confident quantitative → opus, clearly-trivial non-high-stakes → haiku, everything else sonnet. Empirically calibrated signal composition.",
+	"default":   "Mixed-use (coding + writing + analysis): hard reasoning or confident quantitative → opus, clearly-trivial non-high-stakes → haiku, everything else KEEPS the model you asked for (rewrites only by rule). Empirically calibrated signal composition.",
 	"coding":    "Coding workflow: hard work → opus, quick edits → haiku, else sonnet. Uses ML signals when smart mode is on; falls back to keywords/context otherwise.",
 	"heuristic": "Same tiering, heuristics only (no ML signals) — works without the model sidecar.",
 }

@@ -63,6 +63,9 @@ type Decision struct {
 // requested (compared canonicalized). The proxy uses this to byte-passthrough
 // the request unchanged — no model rewrite, no capability reconciliation (R11).
 func IsNoOp(d Decision, s Signals) bool {
+	if d.Model == "" {
+		return true // no rewrite target (e.g. default:requested with no model field)
+	}
 	return s.RequestedModel != "" && canonicalModel(d.Model) == s.RequestedModel
 }
 
@@ -121,7 +124,12 @@ func Decide(s Signals, p *Policy, cl Classifier, sess SessionStore, pin string) 
 
 	// 3. Static default. The ML now lives inside route conditions (signal leaves),
 	// not a separate "smart default" step — matching vSR, where the default is
-	// just the last rule.
+	// just the last rule. `default: "requested"` short-circuits to a guaranteed
+	// no-op: no evidence → no rewrite (stickiness and session writes are skipped —
+	// there is no tier to remember).
+	if p.Default == requestedDefault {
+		return st.annotate(Decision{Tier: "-", Model: s.RequestedModel, Reason: "default:requested"})
+	}
 	return st.annotate(p.decide(p.Default, "default", srcDefault, s, sess))
 }
 

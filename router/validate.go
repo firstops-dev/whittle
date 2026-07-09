@@ -51,8 +51,8 @@ func (v *validator) validateTiers() {
 		switch {
 		case t.Name == "":
 			v.errf("tiers[%d]: missing name", i)
-		case t.Name == keepTier:
-			v.errf("tiers[%d]: %q is a reserved keyword and cannot be a tier name", i, keepTier)
+		case t.Name == keepTier || t.Name == requestedDefault:
+			v.errf("tiers[%d]: %q is a reserved keyword and cannot be a tier name", i, t.Name)
 		case seen[t.Name]:
 			v.errf("tiers[%d]: duplicate tier name %q", i, t.Name)
 		}
@@ -69,11 +69,14 @@ func (v *validator) validateDefault() {
 		return
 	}
 	if v.p.Default == keepTier {
-		v.errf("default: cannot be %q — the terminal fallback must be a real tier", keepTier)
+		v.errf("default: cannot be %q — use %q to keep the client's model, or a real tier", keepTier, requestedDefault)
 		return
 	}
+	if v.p.Default == requestedDefault {
+		return // reserved: no route matched → keep the requested model (no-op)
+	}
 	if v.p.tierRank(v.p.Default) < 0 {
-		v.errf("default: %q is not a defined tier", v.p.Default)
+		v.errf("default: %q is not a defined tier (or %q)", v.p.Default, requestedDefault)
 	}
 }
 

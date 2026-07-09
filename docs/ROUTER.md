@@ -34,10 +34,12 @@ one log line per request never contains prompt text).
   (whittle's Go binary has zero external dependencies); the sidecar returns raw
   scores and distributions; the **policy owns every threshold**. Swapping a model
   never changes the decision logic, and the decision logic never hides in a model.
-- **Uncertainty falls to the middle, not the top.** This router optimizes cost
-  subject to a quality floor. When a signal can't tell what a request is, the
-  request rides the default tier — it is never escalated *because* we're unsure
-  (see §5.1 for how that property falls out of the math).
+- **No evidence → no rewrite.** When no rule matches — or a signal can't tell
+  what a request is — whittle leaves the request exactly as the client sent it
+  (`default: "requested"`), and an uncertain classification never *fires* a rule
+  (§5.1 shows how that falls out of the math). A request is only ever rewritten
+  because a rule you wrote affirmatively matched. Authors who prefer aggressive
+  savings can set a tier as the default and accept the trade.
 
 ## 3. Request lifecycle
 
@@ -101,7 +103,7 @@ bad edit keeps the running policy.
     {"name": "main",  "model": "claude-sonnet-4-5-20250929"},
     {"name": "smart", "model": "claude-opus-4-8"}
   ],
-  "default": "main",
+  "default": "requested",
   "inspect": {"scope": "recent_turns", "turns": 3},
   "signals": {
     "domains": [
@@ -130,8 +132,14 @@ bad edit keeps the running policy.
 - **`tiers`** — ordered cheap → capable; the order defines band rank. Use the
   full dated model ids your account accepts (`whittle policy init` auto-detects
   them from your Claude Code config; bare ids often 404).
-- **`default`** — the tier for everything no route claims. The safe, capable
-  middle is the recommended posture.
+- **`default`** — where traffic goes when no route claims it: a tier name, or
+  the reserved **`"requested"`** — keep the model the client asked for, as a
+  guaranteed no-op. `"requested"` is the shipped posture: with zero evidence
+  about a request, whittle does not rewrite it, so **every model change (up or
+  down) traces to a rule you wrote**. It also protects mixed-model clients —
+  Claude Code's cheap-model background requests are never up-routed by a fixed
+  default. Set a tier (e.g. `"main"`) instead when you want aggressive savings:
+  unmatched traffic then down-routes to that tier.
 - **`routes`** — the ordered waterfall. Each `when` is a recursive boolean tree:
   combinators `all` / `any` / `not` (one per node), leaves one-per-node:
 

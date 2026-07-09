@@ -118,6 +118,15 @@ const (
 	// model." It is rejected as a tier name so the two never collide.
 	keepTier = "keep"
 
+	// requestedDefault is the reserved `default:` value meaning "no route matched →
+	// keep the model the client asked for, untouched" (a guaranteed no-op
+	// passthrough). This is the fail-open posture applied to routing itself: with
+	// zero evidence about a request, whittle does not rewrite it — EVERY model
+	// change, up or down, must come from a rule the author wrote. It also protects
+	// mixed-model clients (Claude Code sends cheap-model background requests; a
+	// fixed-tier default would silently up-route them).
+	requestedDefault = "requested"
+
 	// Candidate-list caps for embedding/complexity signals: the cap is about
 	// prototype quality + cold-start embedding cost, not runtime.
 	candidatesSoftCap = 32
