@@ -39,7 +39,7 @@ one log line per request never contains prompt text).
   (`default: "requested"`), and an uncertain classification never *fires* a rule
   (§5.1 shows how that falls out of the math). A request is only ever rewritten
   because a rule you wrote affirmatively matched. Authors who prefer aggressive
-  savings can set a tier as the default and accept the trade.
+  savings can set a tier (e.g. `"main"`) as the default and accept the trade.
 
 ## 3. Request lifecycle
 
@@ -215,8 +215,8 @@ which is why the shipped default ORs them for escalation.
 ### 5.3 `embedding` — similarity to your own examples
 
 Bank score of the request text against a candidate phrase list, thresholded.
-Useful for one specific, high-value shape (e.g. architecture/design asks in the
-`coding` preset). Note the embedding space has a high similarity floor
+Useful for one specific, high-value shape (e.g. routing architecture/design asks
+to the strong tier). Note the embedding space has a high similarity floor
 (unrelated sentences score ~0.35–0.4), so thresholds live in a narrow band —
 probe before trusting a new candidate list.
 
@@ -301,7 +301,7 @@ All router code lives in `router/` (Go, stdlib only). The ML lives in `model/`
 | `router/proxy.go` | HTTP handler: lifecycle, modes A/B/C, streaming, log line |
 | `router/server.go` | daemon entrypoint, hot-reload, smart-mode wiring |
 | `router/ml/client.go` | HTTP client to the sidecar (fail-open) |
-| `router/policies/*.json` | built-in presets (`default`, `coding`, `heuristic`) |
+| `router/policies/` | the calibrated `default` policy + its companion doc |
 | `model/route.py` | the two models + exact scoring math (pure functions, stub-tested) |
 | `cmd/whittle/route.go`, `policy.go` | CLI: `route`, `policy init/validate/…` |
 

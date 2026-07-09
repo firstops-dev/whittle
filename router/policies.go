@@ -18,9 +18,7 @@ var presetFS embed.FS
 // keyed by preset name. Every embedded preset must have an entry (enforced by
 // TestPresets_AllValid).
 var presetDescriptions = map[string]string{
-	"default":   "Mixed-use, conservative: hard reasoning or confident quantitative → opus; confidently-casual chit-chat → haiku (easy) or sonnet (medium); EVERYTHING else keeps the model you asked for. Down-routing requires two concordant signals.",
-	"coding":    "Coding workflow: hard work → opus, quick edits → haiku, else sonnet. Uses ML signals when smart mode is on; falls back to keywords/context otherwise.",
-	"heuristic": "Same tiering, heuristics only (no ML signals) — works without the model sidecar.",
+	"default": "Mixed-use, conservative: hard reasoning or confident quantitative → opus; confidently-casual chit-chat → haiku (easy) or sonnet (medium); EVERYTHING else keeps the model you asked for. Down-routing requires two concordant signals. See policies/default.md.",
 }
 
 // PresetNames returns the built-in example-policy names, sorted.

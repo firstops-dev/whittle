@@ -39,7 +39,7 @@ func TestBetterModel(t *testing.T) {
 
 // fillModelsWith substitutes by family and leaves the result a valid policy.
 func TestFillModelsWith(t *testing.T) {
-	preset, err := router.Preset("coding")
+	preset, err := router.Preset("default")
 	if err != nil {
 		t.Fatal(err)
 	}

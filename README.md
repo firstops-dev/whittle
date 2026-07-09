@@ -162,10 +162,10 @@ whittle route                                  # proxy on 127.0.0.1:45873
 export ANTHROPIC_BASE_URL=http://127.0.0.1:45873
 ```
 
-- **Start from a built-in policy.** `whittle policy list` shows the presets
-  (`default` for mixed use, `coding`, `heuristic`); `whittle policy init [name]`
-  writes one with the model ids your account actually uses (auto-detected);
+- **Start from the built-in policy.** `whittle policy init` writes the calibrated
+  `default` policy with the model ids your account actually uses (auto-detected);
   `whittle policy validate <file>` checks your edits against the real loader.
+  What it does and how to customize it: [router/policies/default.md](router/policies/default.md).
 - **One auditable policy file.** Tiers, first-match routes over a boolean
   condition tree, and a default - you can read the file and predict every
   decision, and the per-request log names the rule that fired. The full grammar,

@@ -139,7 +139,7 @@ func cmdPolicy(args []string) {
 }
 
 func policyShow(args []string) {
-	name := "coding"
+	name := "default"
 	if len(args) > 0 {
 		name = args[0]
 	}
@@ -156,7 +156,7 @@ func policyInit(args []string) {
 	force := fs.Bool("force", false, "overwrite an existing policy file")
 	out := fs.String("o", filepath.Join(whittleHome(), "router.json"), "output path")
 	_ = fs.Parse(args)
-	name := "coding"
+	name := "default"
 	if fs.NArg() > 0 {
 		name = fs.Arg(0)
 	}
@@ -220,9 +220,10 @@ func policyValidate(args []string) {
 func policyUsage() {
 	fmt.Fprintln(os.Stderr, `whittle policy — router policy management
 
-  whittle policy list                       list the built-in example policies
-  whittle policy show [name]                print a built-in policy (default: coding)
+  whittle policy list                       list the built-in policies
+  whittle policy show [name]                print a built-in policy (default: default)
   whittle policy init [name] [-force] [-o path]
                                             write a built-in policy to ~/.whittle/router.json
+                                            (see router/policies/default.md for customization)
   whittle policy validate <file>            validate a policy file (loader errors + warnings)`)
 }
