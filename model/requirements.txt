@@ -5,5 +5,11 @@ pydantic==2.10.4
 tiktoken==0.8.0
 llmlingua==0.2.2
 huggingface_hub==0.27.0
-sentence-transformers==3.3.1  # router embedding + complexity signals (mmBERT matryoshka)
+# router embedding + complexity signals (mmBERT-embed-32k-2d-matryoshka).
+# VERIFIED working under 3.3.1 (live smoke: correct bank-score separation +
+# complexity margins). NOTE: the model was built with sentence-transformers 5.x
+# and emits a version-mismatch warning under 3.3.1 (inference is correct anyway).
+# TODO before smart mode GA: bump to >=5.0 and re-smoke on a fresh venv (deferred
+# to avoid an untested transformers-version cascade in `whittle setup`).
+sentence-transformers==3.3.1
 transformers>=4.48.0          # router domain signal: ModernBertForSequenceClassification (added in 4.48)
