@@ -111,10 +111,10 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if used == "" {
 		used = rec.requested // no-op/passthrough/mode-b-retry ran the requested model
 	}
-	p.log.Printf(`{"tier":%q,"requested":%q,"model":%q,"reason":%q,"status":%d,"latency_ms":%d,"ctx_tokens":%d,"in_tokens":%d,"out_tokens":%d,"session":%q}`,
+	p.log.Printf(`{"tier":%q,"requested":%q,"model":%q,"reason":%q,"signals":%q,"status":%d,"latency_ms":%d,"ctx_tokens":%d,"in_tokens":%d,"out_tokens":%d,"session":%q}`,
 		rec.Header().Get("X-Whittle-Route"), orDash(rec.requested), orDash(used),
-		rec.Header().Get("X-Whittle-Reason"), rec.status, time.Since(start).Milliseconds(),
-		rec.ctxTokens, rec.inTokens, rec.outTokens,
+		rec.Header().Get("X-Whittle-Reason"), rec.mlTrace, rec.status,
+		time.Since(start).Milliseconds(), rec.ctxTokens, rec.inTokens, rec.outTokens,
 		shortSession(r.Header.Get("X-Claude-Code-Session-Id")))
 }
 
@@ -160,6 +160,7 @@ func (p *Proxy) serve(rec *statusRecorder, r *http.Request) {
 	}
 
 	dec := Decide(sig, pol, p.cl, p.sess, pinFromHeader(pol, r.Header))
+	rec.mlTrace = dec.MLTrace
 
 	// No-op: the resolved model is what the client already asked for → byte
 	// passthrough, no rewrite, no reconciliation (R11).
@@ -531,6 +532,7 @@ type statusRecorder struct {
 	http.ResponseWriter
 	status    int
 	requested string // the client's requested model (canonicalized)
+	mlTrace   string // computed ML signal values (Decision.MLTrace)
 	used      string // the model that actually served the response ("" ⇒ = requested)
 	inTokens  int    // response usage.input_tokens (0 if not captured)
 	outTokens int    // response usage.output_tokens

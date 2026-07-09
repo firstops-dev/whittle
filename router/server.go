@@ -48,6 +48,11 @@ func ListenAndServe(addr, policyPath string, lg Logger) error {
 	if u := os.Getenv("WHITTLE_ROUTER_MODEL_URL"); u != "" {
 		cl = ml.New(u)
 		lg.Printf("router: smart mode ON (classifier sidecar = %s)", u)
+	} else {
+		lg.Printf("router: smart mode OFF — ML signals (domain/embedding/complexity) are inert; set WHITTLE_ROUTER_MODEL_URL=http://127.0.0.1:45872 to enable")
+		if pol != nil && policyUsesML(pol) {
+			lg.Printf("router: WARNING: the policy references ML signals, which will never fire in this mode — requests they guard fall to the default")
+		}
 	}
 
 	px := NewProxy(pol, cl, NewMemSessionStore(), lg)

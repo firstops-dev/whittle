@@ -57,6 +57,11 @@ type Decision struct {
 	Model    string
 	Reason   string
 	Stripped []string
+	// MLTrace records every ML signal actually computed for this request, with
+	// its raw value ("cplx:reasoning=-0.471 dom=other@1.00"), or "off"/"err" when
+	// unavailable — so the log shows WHY a route did or didn't fire. Empty when no
+	// ML leaf was reached (heuristics decided first).
+	MLTrace string
 }
 
 // IsNoOp reports whether the decision routes to the model the client already
@@ -189,6 +194,9 @@ type evalState struct {
 	embed   map[string]mlResult
 	complex map[string]mlResult
 
+	// trace accumulates computed signal values for observability (Decision.MLTrace).
+	trace []string
+
 	// mlErr is set when an ML leaf actually consulted for the CURRENT route
 	// errored (reset per route). A route whose match depended on an unavailable
 	// signal must NOT fire — otherwise a `not` over a failed leaf inverts fail-open
@@ -221,7 +229,21 @@ func (st *evalState) annotate(d Decision) Decision {
 	if st.anyMLErr {
 		d.Reason += " ml-degraded"
 	}
+	d.MLTrace = strings.Join(st.trace, " ")
 	return d
+}
+
+// traceVal formats one computed signal for the trace ("off" = smart mode
+// disabled, "err" = a real sidecar failure — the reason also gets ml-degraded).
+func (st *evalState) traceVal(prefix string, val float64, err error) {
+	switch {
+	case errors.Is(err, ErrMLDisabled):
+		st.trace = append(st.trace, prefix+"=off")
+	case err != nil:
+		st.trace = append(st.trace, prefix+"=err")
+	default:
+		st.trace = append(st.trace, fmt.Sprintf("%s=%+.3f", prefix, val))
+	}
 }
 
 // mlResult memoizes one signal computation (a score/margin and its error) so a
@@ -375,8 +397,17 @@ func (st *evalState) matchDomain(name string) bool {
 		return false // validation guarantees the reference resolves
 	}
 	if !st.domainDone {
-		st.domainLabel, _, st.domainProbs, st.domainErr = st.cl.Domain(st.mlText())
+		var conf float64
+		st.domainLabel, conf, st.domainProbs, st.domainErr = st.cl.Domain(st.mlText())
 		st.domainDone = true
+		switch {
+		case errors.Is(st.domainErr, ErrMLDisabled):
+			st.trace = append(st.trace, "dom=off")
+		case st.domainErr != nil:
+			st.trace = append(st.trace, "dom=err")
+		default:
+			st.trace = append(st.trace, fmt.Sprintf("dom=%s@%.2f", st.domainLabel, conf))
+		}
 	}
 	if st.domainErr != nil {
 		return st.mlFailed(st.domainErr)
@@ -456,6 +487,7 @@ func (st *evalState) embedScore(name string, candidates []string) (float64, erro
 	}
 	score, err := st.cl.EmbeddingScore(st.mlText(), candidates)
 	st.embed[name] = mlResult{score, err}
+	st.traceVal("emb:"+name, score, err)
 	return score, err
 }
 
@@ -469,6 +501,7 @@ func (st *evalState) complexMargin(name string, hard, easy []string) (float64, e
 	}
 	margin, err := st.cl.ComplexityMargin(st.mlText(), hard, easy)
 	st.complex[name] = mlResult{margin, err}
+	st.traceVal("cplx:"+name, margin, err)
 	return margin, err
 }
 

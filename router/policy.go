@@ -195,6 +195,17 @@ func (p *Policy) complexitySignal(name string) *ComplexitySignal {
 	return nil
 }
 
+// policyUsesML reports whether any route references an ML signal leaf — used to
+// warn loudly when such a policy runs with smart mode off.
+func policyUsesML(p *Policy) bool {
+	for i := range p.Routes {
+		if ruleUsesML(&p.Routes[i].When) {
+			return true
+		}
+	}
+	return false
+}
+
 // dateSuffix matches an 8-digit date snapshot suffix on a model id
 // (claude-opus-4-8-20260101). It must NOT eat the version hyphens (…-4-8), so it
 // is anchored to a trailing -YYYYMMDD only.
