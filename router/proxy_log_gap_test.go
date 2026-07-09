@@ -70,27 +70,27 @@ func TestProxy_OneLogLinePerRequestEveryPath(t *testing.T) {
 
 	cases := []pathCase{
 		{
-			name:  "routed",
-			build: func(t *testing.T) (*Proxy, *capLogger) { return newLogged(proxyPolicy, streamUpstream(t).URL) },
-			do:    func(px *Proxy) *http.Response { return post(px, "/v1/messages", msg("claude-opus-4-8")) },
+			name:       "routed",
+			build:      func(t *testing.T) (*Proxy, *capLogger) { return newLogged(proxyPolicy, streamUpstream(t).URL) },
+			do:         func(px *Proxy) *http.Response { return post(px, "/v1/messages", msg("claude-opus-4-8")) },
 			wantStatus: 200, reasonHas: "route:cheap",
 		},
 		{
-			name:  "no-op",
-			build: func(t *testing.T) (*Proxy, *capLogger) { return newLogged(proxyPolicy, streamUpstream(t).URL) },
-			do:    func(px *Proxy) *http.Response { return post(px, "/v1/messages", msg("claude-haiku-4-5")) },
+			name:       "no-op",
+			build:      func(t *testing.T) (*Proxy, *capLogger) { return newLogged(proxyPolicy, streamUpstream(t).URL) },
+			do:         func(px *Proxy) *http.Response { return post(px, "/v1/messages", msg("claude-haiku-4-5")) },
 			wantStatus: 200, reasonHas: "no-op",
 		},
 		{
-			name:  "passthrough-unroutable",
-			build: func(t *testing.T) (*Proxy, *capLogger) { return newLogged(proxyPolicy, streamUpstream(t).URL) },
-			do:    func(px *Proxy) *http.Response { return post(px, "/v1/messages/count_tokens", msg("claude-opus-4-8")) },
+			name:       "passthrough-unroutable",
+			build:      func(t *testing.T) (*Proxy, *capLogger) { return newLogged(proxyPolicy, streamUpstream(t).URL) },
+			do:         func(px *Proxy) *http.Response { return post(px, "/v1/messages/count_tokens", msg("claude-opus-4-8")) },
 			wantStatus: 200, reasonHas: "passthrough:unroutable-path",
 		},
 		{
-			name:  "no-policy",
-			build: func(t *testing.T) (*Proxy, *capLogger) { return newLogged("", streamUpstream(t).URL) },
-			do:    func(px *Proxy) *http.Response { return post(px, "/v1/messages", msg("claude-opus-4-8")) },
+			name:       "no-policy",
+			build:      func(t *testing.T) (*Proxy, *capLogger) { return newLogged("", streamUpstream(t).URL) },
+			do:         func(px *Proxy) *http.Response { return post(px, "/v1/messages", msg("claude-opus-4-8")) },
 			wantStatus: 200, reasonHas: "no-policy",
 		},
 		{

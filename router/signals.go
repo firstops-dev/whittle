@@ -15,7 +15,7 @@ type Signals struct {
 	ContextTokens  int    // whole-body bytes/4 — the cost/cache scale, ~20k floor
 	LastUserText   string // most recent user-authored text (never tool output)
 	RecentText     string // user text across the inspect window (classifier input)
-	ToolLoop       bool    // last message is role:user AND carries a tool_result block
+	ToolLoop       bool   // last message is role:user AND carries a tool_result block
 	MessageCount   int
 	HasTools       bool
 	SessionID      string // X-Claude-Code-Session-Id; "" ⇒ caller skips stickiness

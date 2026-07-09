@@ -15,10 +15,10 @@ import (
 // zero-dependency). Because the types carry only `json` tags and Load is the
 // single decode site, swapping in a YAML front-end is a one-function change.
 type Policy struct {
-	Version   int          `json:"version"`
-	Tiers     []Tier       `json:"tiers"`   // ORDERED cheap→capable; index == band rank
-	Default   string       `json:"default"` // terminal tier when nothing else resolves
-	Inspect   InspectCfg   `json:"inspect"`
+	Version   int         `json:"version"`
+	Tiers     []Tier      `json:"tiers"`   // ORDERED cheap→capable; index == band rank
+	Default   string      `json:"default"` // terminal tier when nothing else resolves
+	Inspect   InspectCfg  `json:"inspect"`
 	Routes    []Route     `json:"routes"`
 	Signals   *SignalSet  `json:"signals,omitempty"` // named ML signals referenced by route leaves
 	Session   SessionCfg  `json:"session"`

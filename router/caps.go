@@ -7,7 +7,7 @@ package router
 type Capability string
 
 const (
-	CapLongContext   Capability = "long_context"  // context-1m beta
+	CapLongContext   Capability = "long_context"   // context-1m beta
 	CapEffortParam   Capability = "effort_param"   // output_config.effort
 	CapThinking      Capability = "thinking"       // adaptive thinking config
 	CapMidConvSystem Capability = "midconv_system" // a mid-conversation role:"system" message

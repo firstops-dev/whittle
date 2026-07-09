@@ -36,8 +36,10 @@ type validator struct {
 	warns []string
 }
 
-func (v *validator) errf(format string, a ...any)  { v.errs = append(v.errs, fmt.Errorf(format, a...)) }
-func (v *validator) warnf(format string, a ...any) { v.warns = append(v.warns, fmt.Sprintf(format, a...)) }
+func (v *validator) errf(format string, a ...any) { v.errs = append(v.errs, fmt.Errorf(format, a...)) }
+func (v *validator) warnf(format string, a ...any) {
+	v.warns = append(v.warns, fmt.Sprintf(format, a...))
+}
 
 func (v *validator) validateTiers() {
 	if len(v.p.Tiers) == 0 {

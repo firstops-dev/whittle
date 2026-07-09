@@ -188,7 +188,7 @@ func TestCanonicalModel(t *testing.T) {
 		"claude-opus-4-8-20260101": "claude-opus-4-8",
 		"claude-opus-4-8":          "claude-opus-4-8",
 		"claude-3-5-sonnet-latest": "claude-3-5-sonnet",
-		"  claude-haiku-4-5  ":      "claude-haiku-4-5",
+		"  claude-haiku-4-5  ":     "claude-haiku-4-5",
 	}
 	for in, want := range cases {
 		if got := canonicalModel(in); got != want {

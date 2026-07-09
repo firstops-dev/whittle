@@ -108,7 +108,7 @@ func TestProxy_ConcurrentRequestsWithLivePolicySwap(t *testing.T) {
 		}(w)
 	}
 
-	work.Wait()     // all requests done
-	close(stop)     // stop the swapper
-	swapper.Wait()  // and join it
+	work.Wait()    // all requests done
+	close(stop)    // stop the swapper
+	swapper.Wait() // and join it
 }
