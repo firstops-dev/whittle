@@ -180,9 +180,14 @@ heuristics-only and the ML paths cleanly fall through to your default. Configure
 the upstream with `WHITTLE_ROUTER_UPSTREAM` (defaults to `api.anthropic.com`;
 point it at a corporate Anthropic gateway if you have one).
 
-> Not yet wired into `whittle setup`/`status`/launchd - run it in the foreground
-> (or your own supervisor) for now. Background-service integration is on the
-> roadmap.
+Run it in the foreground, or install it as a background service (opt-in, separate
+from the compress daemon):
+
+```
+whittle route -install     # register a launchd agent (macOS), starts at login
+whittle status             # shows model-router health alongside compress + sidecar
+whittle route -uninstall   # stop + unregister
+```
 
 ## Configuration
 

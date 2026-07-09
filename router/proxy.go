@@ -91,6 +91,16 @@ func NewProxy(pol *Policy, cl Classifier, sess SessionStore, log Logger) *Proxy 
 func (p *Proxy) SetPolicy(pol *Policy) { p.policy.Store(pol) }
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Local health endpoint for `whittle status` / launchd liveness — answered
+	// here, NEVER forwarded upstream (a GET /health would otherwise passthrough to
+	// Anthropic). Not logged as a routing verdict.
+	if r.URL.Path == "/health" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		io.WriteString(w, `{"status":"ok"}`)
+		return
+	}
+
 	rec := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
 	start := time.Now()
 	p.serve(rec, r)

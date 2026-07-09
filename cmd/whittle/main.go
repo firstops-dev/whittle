@@ -89,6 +89,8 @@ route flags:
   -addr string     listen address (default "127.0.0.1:45873")
   -policy string   policy file path (default ~/.whittle/router.json)
                    missing/invalid → transparent passthrough (never bricks Claude Code)
+  -install         register the router as a background launchd agent (opt-in), then exit
+  -uninstall       stop + unregister the router launchd agent, then exit
   env WHITTLE_ROUTER_UPSTREAM    upstream API (default api.anthropic.com)
   env WHITTLE_ROUTER_MODEL_URL   classifier sidecar URL (unset → smart mode off)
 
