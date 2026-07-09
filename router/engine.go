@@ -195,7 +195,8 @@ type evalState struct {
 	complex map[string]mlResult
 
 	// trace accumulates computed signal values for observability (Decision.MLTrace).
-	trace []string
+	trace     []string
+	tracedDom map[string]bool // gate-mass traced once per domain signal
 
 	// mlErr is set when an ML leaf actually consulted for the CURRENT route
 	// errored (reset per route). A route whose match depended on an unavailable
@@ -406,7 +407,7 @@ func (st *evalState) matchDomain(name string) bool {
 		case st.domainErr != nil:
 			st.trace = append(st.trace, "dom=err")
 		default:
-			st.trace = append(st.trace, fmt.Sprintf("dom=%s@%.2f", st.domainLabel, conf))
+			st.trace = append(st.trace, fmt.Sprintf("dom=%s@%.3f", st.domainLabel, conf))
 		}
 	}
 	if st.domainErr != nil {
@@ -423,6 +424,16 @@ func (st *evalState) matchDomain(name string) bool {
 		mass := 0.0
 		for _, c := range sig.Categories {
 			mass += st.domainProbs[c]
+		}
+		// Trace the EVALUATED gate mass at full precision (once per signal): a
+		// mass of 0.897 against a 0.9 gate must never display as a self-
+		// contradictory "0.90 didn't fire" (caught live).
+		if !st.tracedDom[name] {
+			if st.tracedDom == nil {
+				st.tracedDom = map[string]bool{}
+			}
+			st.tracedDom[name] = true
+			st.trace = append(st.trace, fmt.Sprintf("dom:%s=%.3f/%.2f", name, mass, sig.MinMass))
 		}
 		return mass >= sig.MinMass
 	}
