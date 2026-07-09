@@ -1,14 +1,17 @@
-# Whittle Router — policy schema (v3, post-review)
+# Whittle Router — policy schema (v4, vSR-aligned)
 
-Status: **proposal, no code.** The routing policy: `routes` (explicit rules) +
-`classify` (the smart default) + condition grammar. v3 renames `guards`→`routes`
-and adds the decision-precedence model (founder Q, 2026-07-09); v2 folded the
-code-review. The "Revision log" at the end maps findings to resolutions.
-Extends `ROUTER_DESIGN.md` §2.2/§2.3.
+Status: **implemented.** The routing policy: `signals` (named ML signals) +
+`routes` (explicit boolean rules referencing them) + condition grammar. v4
+(2026-07-09) replaces the invented `classify` "smart default" tier-picker with
+vLLM Semantic Router's signal model — the ML lives *inside* route conditions as
+boolean leaves, not a separate fallback stage (founder call: "use what vSR uses,
+don't invent"). v3 renamed `guards`→`routes`; v2 folded the code-review. The
+"Revision log" at the end maps findings to resolutions. Extends `ROUTER_DESIGN.md`
+§2.2/§2.3.
 
 ---
 
-## 0. Decision precedence — how `routes` and `classify` relate
+## 0. Decision precedence — how `routes` and `signals` relate
 
 There is **one ordered resolution**; each rung is the fallback for the one
 above. This is the answer to "which wins":
@@ -16,23 +19,25 @@ above. This is the answer to "which wins":
 ```
 1. pin header (overrides.pin_header)  explicit user override   → always wins
 2. routes (ordered list)              your explicit rules      → FIRST MATCH wins
-3. classify   [smart mode only]       the INTELLIGENT default  → only if NO route matched
-4. default    (static tier)           the STATIC default       → classify low-conf / smart off
-   (session stickiness then damps the fuzzy outcome of 3–4; see §8)
+3. default    (static tier)           the STATIC fallback      → when NO route matched
+   (session stickiness then damps a fuzzy default downgrade; see §8)
 ```
 
-**`classify` is not a parallel router — it is a smarter `default`.** Explicit
-`routes` you authored always beat it (a deterministic rule beats a guess).
-`classify` only decides the traffic no route claimed; when it can't (confidence
-below `min_confidence`, or `smart` mode off), the static `default` tier applies.
-So routes → classify → default is a single ladder, never two competing systems.
+**There is no separate "classify" stage.** `signals` are not a routing rung —
+they are *inputs* the routes evaluate. A `domain`/`embedding`/`complexity` leaf
+inside a route's `when` is a boolean test computed from an ML model; the route
+fires (or not) like any other condition. So the ML intelligence lives *in the
+waterfall*, composable with heuristic leaves (`context_tokens`, `tool_loop`,
+`keywords`), not bolted on as a competing fallback. This mirrors vSR exactly: its
+`decisions` (our routes) reference typed signals; the "default" is just the last
+rule. (Earlier drafts had a `classify` block that embedded per-tier examples and
+argmax-picked a tier — that conflated topic with difficulty and could not compose
+with other conditions; it was removed. See the Revision log.)
 
-**Weighted scoring lives in the `classify` slot, later — never on `routes`.** A
-route is boolean (`when X → to Y`); a boolean can only *threshold* a score, never
-route to the *highest*-scoring tier. So scoring is a `classify` *strategy*: v1
-ships few-shot-embedding classify; a future `WeightedScorer` drops into the same
-slot with the same "smart default" role. Routes stay boolean forever. Nothing is
-reserved on `Route` now (§7).
+**Weighted scoring, if ever added, is a signal too** — a scored leaf that
+thresholds inside a route (`when score(X) ≥ t → to Y`). A route stays boolean; a
+boolean can only *threshold* a score, never route to the highest-scoring tier.
+Nothing is reserved on `Route`.
 
 ---
 
@@ -96,7 +101,12 @@ type Rule struct {
     Keywords       []string `yaml:"keywords,omitempty"`        // LITERAL substring, case-insensitive
     KeywordsRegex  []string `yaml:"keywords_regex,omitempty"`  // explicit regex, when you mean it
     RequestedModel []string `yaml:"requested_model,omitempty"` // membership (canonicalized both sides)
-    Intent         []string `yaml:"intent,omitempty"`          // ML: classifier label ∈ set (lazy)
+
+    // ---- ML signal leaves: each NAMES a signal defined in Policy.Signals (§7),
+    //      evaluated lazily via the classifier, memoized once per request ----
+    Domain     string `yaml:"domain,omitempty"`     // domain signal fires: classifier label ∈ its categories
+    Embedding  string `yaml:"embedding,omitempty"`  // embedding signal fires: bank score ≥ its threshold
+    Complexity string `yaml:"complexity,omitempty"` // complexity level "name:hard|easy|medium"
 }
 
 // NumBand: a numeric predicate. Custom UnmarshalYAML accepts EITHER a bare
@@ -105,10 +115,12 @@ type Rule struct {
 type NumBand struct{ Eq, Gt, Gte, Lt, Lte *int }
 ```
 
-- **`intent` is the single classifier signal.** v1 wrongly used both `domain`
-  and `intent` as if two signals (review B1) — there is one category classifier
-  (model 1) emitting one label; `intent: [coding, debugging]` = "label is one of
-  these." No `domain` field.
+- **Three ML signal leaves, two models (vSR-aligned).** `domain` uses the intent
+  classifier (one MMLU-Pro label); `embedding` and `complexity` use the text
+  embedding model. A leaf holds the signal's *name* (defined in §7), not inline
+  data, so one signal is authored once and referenced by many routes and computed
+  at most once per request. `complexity` additionally carries the level after a
+  colon (`needs_reasoning:hard`). Replaces the old single `intent:[labels]` leaf.
 - **`keywords` is literal + case-insensitive by default** (review H6): a coder
   typing `["c++"]` or `["a.b"]` must not hit a regex-metachar explosion or a
   silent over-match. Regex is opt-in via `keywords_regex`.
@@ -156,24 +168,25 @@ type NumBand struct{ Eq, Gt, Gte, Lt, Lte *int }
 5. **Regex safety** (review C5): `keywords_regex` entries compile and are
    length/complexity-bounded (ReDoS guard) — they run per-request on user text.
    `keywords` (literal) are auto-quoted, never a ReDoS vector.
-6. **Referential integrity**: every `route` tier, `default`, and
-   `classify.examples` key exists in `tiers`. `keep` is a **reserved keyword** —
-   rejected as a tier name (review M5).
+6. **Referential integrity**: every `route` tier and `default` exists in
+   `tiers`; every `domain`/`embedding`/`complexity` leaf names a signal defined
+   in `signals`; a `complexity` leaf's level is `hard|easy|medium`. `keep` is a
+   **reserved keyword** — rejected as a tier name (review M5). Signal names are
+   unique per kind.
 7. **Depth cap = 6, hard** (review H3/L2): also serves as the recursion bound
    the parent's C5 asked for — this recursive tree **supersedes** C5's
    "single-level `Any`."
-8. **Cost lint** (restores parent C3): warn on ANY `intent` route at the top of
-   the waterfall, and on any `intent` leaf a node can reach without a
-   short-circuiting cheap sibling of the correct polarity (`any`→usually-true
-   cheap sibling; `all`→usually-false).
+8. **Cost lint** (restores parent C3): warn on ANY route whose `when` references
+   an ML signal leaf (`domain`/`embedding`/`complexity`) — it runs a model on
+   every request that reaches it; place cheap routes above it.
 9. Helpful errors for the two highest-frequency author mistakes: scalar where a
    list is expected (`keywords: architecture` → "wrap in `[ ]`"), and scalar
    where a NumBand mapping is expected.
-10. **`classify.examples` per-tier cap**: reject > **256** (hard), warn > **32**
-    (soft — usually a taxonomy smell). Examples are embedded once at load and
-    cached (see Design §2.4); the cap bounds cold-start cost and keeps the
-    nearest-example match sub-millisecond. Duplicate examples within a tier →
-    warn.
+10. **Signal candidate-list cap**: each `candidates`/`hard`/`easy` list rejects
+    > **256** (hard) and warns > **32** (soft). Candidates are embedded once and
+    cached (sidecar, by content hash); the cap bounds cold-start cost. Domain
+    `categories` warn if not in the MMLU-Pro set; complexity `threshold` must be
+    ≥ 0 (a symmetric margin band). Duplicate candidates within a list → warn.
 
 ---
 
@@ -239,7 +252,24 @@ tiers:                                        # ORDERED cheap→capable; the ord
   - { name: main,  model: claude-sonnet-5 }   # has defined meaning (was an unordered
   - { name: smart, model: claude-opus-4-8 }   # map → min_band_jump was undefined)
 default: main
-inspect: { scope: recent_turns, turns: 3 }   # keywords/intent scan THIS window
+inspect: { scope: recent_turns, turns: 3 }   # keyword/signal text scans THIS window
+
+signals:                                       # named ML signals, referenced by routes
+  domains:                                     # intent classifier → MMLU-Pro label ∈ set
+    - { name: coding, categories: [computer science, engineering] }
+    - { name: math,   categories: [math] }
+  embeddings:                                  # bank score ≥ threshold → fires
+    - name: architecture_design
+      threshold: 0.66
+      candidates:
+        - design a scalable architecture for this system
+        - plan a migration strategy for a distributed system
+        - compare tradeoffs between system designs and recommend one
+  complexity:                                  # contrastive margin → hard|easy|medium
+    - name: needs_reasoning
+      threshold: 0.15
+      hard: ["debug this race condition", "analyze the root cause of this failure", "solve this step by step"]
+      easy: ["rename this variable", "fix this typo", "answer briefly"]
 
 routes:
   - name: pinned-opus
@@ -251,20 +281,17 @@ routes:
   - name: mid-tool-loop
     when: { tool_loop: true }
     to: keep
-  - name: hard-work
+  - name: hard-work                            # ML leaves reached last, cost-linted
     when:
       any:
         - keywords: [migrate, "race condition", "root cause", architecture, refactor]
         - context_tokens: { gt: 60000 }
-        - intent: [debugging, architecture]     # ML membership; reached last, cost-linted
+        - complexity: needs_reasoning:hard     # contrastive difficulty signal
+        - embedding: architecture_design       # semantic similarity signal
     to: smart
-
-classify:                        # strategy discriminator = forward-compat insurance
-  strategy: few_shot             # v1's only strategy; a future `weighted`/`learned`
-  min_confidence: 0.55           # strategy adds fields additively, no block rename
-  examples:
-    fast:  ["add a docstring", "rename this variable", "what does this error mean"]
-    smart: ["design the migration", "why does this deadlock under load"]
+  - name: coding                               # domain (subject) signal
+    when: { any: [ { domain: coding }, { domain: math } ] }
+    to: main
 
 session:  { sticky: true, min_band_jump: 2 }
 overrides: { pin_header: x-whittle-route }
@@ -307,14 +334,43 @@ per condition; use `any` when one destination is chosen by a compound OR.
 
 ---
 
-## 7. Future: weighted scoring (NOT in v1 schema)
+## 7. The `signals` catalog (vSR-aligned)
 
-Weighted scoring is a **`classify` strategy, not a `route` leaf** (see §0):
-`decide` runs `routes` (boolean) first; if unresolved, the `classify` step picks
-the tier — v1 by few-shot embedding, a future `WeightedScorer` by summing
-weighted signals and argmax-routing. Routes stay purely boolean (they can only
-threshold a score, never route by *highest*). No field is reserved on `Route`
-now — the integration point is the `classify` block.
+Signals are named ML tests defined once and referenced by route leaves (§2).
+Two models back them (hosted in the Python sidecar; the Go engine owns the
+thresholds — *compute where the data lives*):
+
+```yaml
+signals:
+  domains:      [{ name, categories: [<MMLU-Pro labels>] }]        # intent classifier
+  embeddings:   [{ name, threshold, candidates: [<phrases>] }]     # embedding model
+  complexity:   [{ name, threshold, hard: [<phrases>], easy: [<phrases>] }]  # embedding model
+```
+
+- **`domain`** — the intent classifier (ModernBERT, 14 MMLU-Pro categories:
+  biology, business, chemistry, computer science, economics, engineering, health,
+  history, law, math, other, philosophy, physics, psychology) predicts one label;
+  the leaf fires when that label ∈ `categories`. Unknown categories warn (a
+  swapped model could differ), never error.
+- **`embedding`** — bank score of the query against `candidates`, fires when
+  `score ≥ threshold`. The bank score is vSR's exact blend:
+  `0.75·best + 0.25·mean(top-2)` over per-candidate cosine similarities. Cosine
+  lands ~0.3–0.5 for related phrasing, so a `threshold` near 0.4–0.66 is typical.
+- **`complexity`** — contrastive difficulty. `margin = bank_score(hard) −
+  bank_score(easy)`; the leaf `name:hard` fires when `margin > threshold`,
+  `name:easy` when `margin < −threshold`, `name:medium` otherwise. This isolates
+  *difficulty* from *topic* (unlike a plain nearest-example scheme), which is the
+  whole point of tier routing.
+
+Each signal is computed **at most once per request**, lazily (only if a route
+actually reaches its leaf — cheap heuristic siblings evaluate first), and the
+sidecar caches candidate embeddings across requests by content hash + model
+version, so re-embedding the static `candidates`/`hard`/`easy` is amortized.
+
+**Future — weighted scoring** stays a signal, not a route mode: a scored leaf
+that thresholds inside a route (`when score(X) ≥ t`). Routes remain boolean; a
+boolean can only threshold a score, never route by *highest*. No field is
+reserved on `Route`.
 
 ---
 

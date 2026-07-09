@@ -19,10 +19,10 @@ type Policy struct {
 	Tiers     []Tier       `json:"tiers"`   // ORDERED cheap→capable; index == band rank
 	Default   string       `json:"default"` // terminal tier when nothing else resolves
 	Inspect   InspectCfg   `json:"inspect"`
-	Routes    []Route      `json:"routes"`
-	Classify  *ClassifyCfg `json:"classify,omitempty"` // the "smart default"; nil ⇒ absent
-	Session   SessionCfg   `json:"session"`
-	Overrides OverrideCfg  `json:"overrides"`
+	Routes    []Route     `json:"routes"`
+	Signals   *SignalSet  `json:"signals,omitempty"` // named ML signals referenced by route leaves
+	Session   SessionCfg  `json:"session"`
+	Overrides OverrideCfg `json:"overrides"`
 }
 
 // Tier maps a logical name to a concrete provider model id. Order in Policy.Tiers
@@ -54,13 +54,42 @@ type InspectCfg struct {
 	Turns int    `json:"turns,omitempty"`
 }
 
-// ClassifyCfg is the intelligent default: consulted only when no route matched
-// and smart mode is on. Strategy is a discriminator so a future weighted/learned
-// scorer is an additive change, not a breaking rename (schema §7).
-type ClassifyCfg struct {
-	Strategy      string              `json:"strategy"` // v1: only "few_shot"
-	MinConfidence float64             `json:"min_confidence"`
-	Examples      map[string][]string `json:"examples"`
+// SignalSet declares the named ML signals a policy's routes reference as boolean
+// leaves. Each is computed at most once per request (memoized) and only when a
+// route actually reaches it — cheap-first evaluation keeps the models off any
+// request a heuristic sibling already decided. Mirrors vLLM Semantic Router's
+// signal model: `domain` from the intent classifier, `embedding` + `complexity`
+// from the text embedding model (docs/ROUTER_POLICY_SCHEMA.md).
+type SignalSet struct {
+	Domains    []DomainSignal     `json:"domains,omitempty"`
+	Embeddings []EmbeddingSignal  `json:"embeddings,omitempty"`
+	Complexity []ComplexitySignal `json:"complexity,omitempty"`
+}
+
+// DomainSignal fires when the intent classifier's predicted MMLU-Pro category is
+// one of Categories. It groups raw classifier labels under a policy-friendly name
+// (coding = {computer science, engineering}).
+type DomainSignal struct {
+	Name       string   `json:"name"`
+	Categories []string `json:"categories"`
+}
+
+// EmbeddingSignal fires when the query's bank score against Candidates
+// (0.75·best + 0.25·mean(top-2) cosine, computed sidecar-side) is >= Threshold.
+type EmbeddingSignal struct {
+	Name       string   `json:"name"`
+	Threshold  float64  `json:"threshold"`
+	Candidates []string `json:"candidates"`
+}
+
+// ComplexitySignal computes a contrastive margin = score(Hard) − score(Easy). A
+// leaf `name:hard` fires when margin > Threshold, `name:easy` when margin <
+// −Threshold, `name:medium` otherwise (vSR's classifyComplexityDifficulty).
+type ComplexitySignal struct {
+	Name      string   `json:"name"`
+	Threshold float64  `json:"threshold"`
+	Hard      []string `json:"hard"`
+	Easy      []string `json:"easy"`
 }
 
 // SessionCfg controls stickiness. Damping applies to the fuzzy tail
@@ -80,16 +109,73 @@ const (
 	// model." It is rejected as a tier name so the two never collide.
 	keepTier = "keep"
 
-	strategyFewShot = "few_shot"
-
-	// Example-count caps for classify (schema §4.10): the cap is about taxonomy
-	// quality + cold-start embedding cost, not runtime (nearest-example over a
-	// capped set is sub-millisecond).
-	examplesSoftCap = 32
-	examplesHardCap = 256
+	// Candidate-list caps for embedding/complexity signals: the cap is about
+	// prototype quality + cold-start embedding cost, not runtime.
+	candidatesSoftCap = 32
+	candidatesHardCap = 256
 
 	maxRuleDepth = 6 // recursion bound (schema §4.7); doubles as the ReDoS/blowup guard
 )
+
+// mmluCategories is the fixed label set the vSR intent classifier emits (its
+// config id2label — the 14 MMLU-Pro categories). Domain categories are validated
+// against it as a WARNING (a swapped/retrained classifier could emit a different
+// set, so an unknown label is inert, not fatal).
+var mmluCategories = map[string]bool{
+	"biology": true, "business": true, "chemistry": true, "computer science": true,
+	"economics": true, "engineering": true, "health": true, "history": true,
+	"law": true, "math": true, "other": true, "philosophy": true, "physics": true,
+	"psychology": true,
+}
+
+// complexityLevels are the valid levels a `complexity` leaf can request.
+var complexityLevels = map[string]bool{"hard": true, "easy": true, "medium": true}
+
+// splitComplexityRef splits a `name:level` complexity leaf into its parts. A ref
+// with no colon returns ("", "") so validation rejects it (the level is required).
+func splitComplexityRef(ref string) (name, level string) {
+	i := strings.LastIndex(ref, ":")
+	if i < 0 {
+		return "", ""
+	}
+	return ref[:i], ref[i+1:]
+}
+
+func (p *Policy) domainSignal(name string) *DomainSignal {
+	if p.Signals == nil {
+		return nil
+	}
+	for i := range p.Signals.Domains {
+		if p.Signals.Domains[i].Name == name {
+			return &p.Signals.Domains[i]
+		}
+	}
+	return nil
+}
+
+func (p *Policy) embeddingSignal(name string) *EmbeddingSignal {
+	if p.Signals == nil {
+		return nil
+	}
+	for i := range p.Signals.Embeddings {
+		if p.Signals.Embeddings[i].Name == name {
+			return &p.Signals.Embeddings[i]
+		}
+	}
+	return nil
+}
+
+func (p *Policy) complexitySignal(name string) *ComplexitySignal {
+	if p.Signals == nil {
+		return nil
+	}
+	for i := range p.Signals.Complexity {
+		if p.Signals.Complexity[i].Name == name {
+			return &p.Signals.Complexity[i]
+		}
+	}
+	return nil
+}
 
 // dateSuffix matches an 8-digit date snapshot suffix on a model id
 // (claude-opus-4-8-20260101). It must NOT eat the version hyphens (…-4-8), so it

@@ -8,56 +8,79 @@ import (
 	"testing"
 )
 
-// This file is the testing-engineer GAP pass for the decision engine (T1.3).
-// Each test pins a real invariant with a WHY comment. Where a test FAILS it is
-// documenting a bug in engine.go, not a wrong expectation — do not relax the
-// want, fix the source.
+// GAP pass for the decision engine. Each test pins a real invariant with a WHY
+// comment. Where a test FAILS it documents a bug in engine.go, not a wrong
+// expectation — do not relax the want, fix the source.
+
+// gapSignals defines a domain signal per label used by the cheap-first grid, so
+// a `domain` leaf is a boolean over the fixed classifier label. (Non-MMLU
+// category names only trigger a warning, which mustLoad tolerates.)
+const gapSignals = `"signals":{"domains":[
+  {"name":"dbg","categories":["debugging"]},
+  {"name":"cod","categories":["coding"]},
+  {"name":"cht","categories":["chat"]},
+  {"name":"sx","categories":["x"]},
+  {"name":"sy","categories":["y"]},
+  {"name":"blk","categories":["blocked"]}
+]},`
+
+// loadWhenSignals wraps a `when` fragment in a policy that defines gapSignals, so
+// its `domain` leaves resolve.
+func loadWhenSignals(t *testing.T, when string) *Policy {
+	t.Helper()
+	js := `{"version":1,"tiers":[{"name":"a","model":"m"}],"default":"a","inspect":{"scope":"full"},` +
+		gapSignals + `"routes":[{"name":"r","when":` + when + `,"to":"a"}]}`
+	p, _ := mustLoad(t, js)
+	return p
+}
 
 // ---------------------------------------------------------------------------
 // 1. Cheap-first reordering must not change RESULTS, only cost.
 //
 // WHY: evalGroup evaluates non-ML children first, then ML children, and
 // short-circuits. Boolean AND/OR are commutative, so the final truth value MUST
-// equal a naive full-tree evaluation in author order. If reordering ever flips
-// a result, routing silently misroutes. We cross-check the real evaluator
-// against an INDEPENDENT reimplementation over many trees × signal states ×
-// classifier labels.
+// equal a naive full-tree evaluation in author order. We cross-check the real
+// evaluator against an INDEPENDENT reimplementation over many trees × signal
+// states × classifier labels.
 // ---------------------------------------------------------------------------
 
-// fixedIntent is a deterministic classifier: Intent always returns `label`.
-type fixedIntent struct{ label string }
+// fixedDomain is a deterministic classifier: Domain always returns `label`.
+type fixedDomain struct{ label string }
 
-func (f fixedIntent) Intent(string) (string, float64, error) { return f.label, 1, nil }
-func (f fixedIntent) Classify(string, map[string][]string) (string, float64, error) {
-	return "", 0, nil
+func (f fixedDomain) Domain(string) (string, float64, error) { return f.label, 1, nil }
+func (f fixedDomain) EmbeddingScore(string, []string) (float64, error) {
+	return 0, nil
+}
+func (f fixedDomain) ComplexityMargin(string, []string, []string) (float64, error) {
+	return 0, nil
 }
 
-// naiveEval evaluates a rule tree fully, in author order, no cheap-first, no
-// ML deferral. Independent of engine.go's evaluator on purpose.
-func naiveEval(r *Rule, s *Signals, cl Classifier) bool {
+// naiveEval evaluates a rule tree fully, in author order, no cheap-first, no ML
+// deferral. Independent of engine.go's evaluator on purpose.
+func naiveEval(r *Rule, s *Signals, cl Classifier, pol *Policy) bool {
 	switch {
 	case r.All != nil:
 		for i := range r.All {
-			if !naiveEval(&r.All[i], s, cl) {
+			if !naiveEval(&r.All[i], s, cl, pol) {
 				return false
 			}
 		}
 		return true
 	case r.Any != nil:
 		for i := range r.Any {
-			if naiveEval(&r.Any[i], s, cl) {
+			if naiveEval(&r.Any[i], s, cl, pol) {
 				return true
 			}
 		}
 		return false
 	case r.Not != nil:
-		return !naiveEval(r.Not, s, cl)
+		return !naiveEval(r.Not, s, cl, pol)
 	default:
-		return naiveLeaf(r, s, cl)
+		return naiveLeaf(r, s, cl, pol)
 	}
 }
 
-func naiveLeaf(r *Rule, s *Signals, cl Classifier) bool {
+func naiveLeaf(r *Rule, s *Signals, cl Classifier, pol *Policy) bool {
 	switch {
 	case r.ContextTokens != nil:
 		return r.ContextTokens.match(s.ContextTokens)
@@ -89,13 +112,17 @@ func naiveLeaf(r *Rule, s *Signals, cl Classifier) bool {
 			}
 		}
 		return false
-	case r.Intent != nil:
-		label, _, err := cl.Intent(s.RecentText)
+	case r.Domain != "":
+		label, _, err := cl.Domain(s.RecentText)
 		if err != nil {
 			return false
 		}
-		for _, w := range r.Intent {
-			if w == label {
+		sig := pol.domainSignal(r.Domain)
+		if sig == nil {
+			return false
+		}
+		for _, c := range sig.Categories {
+			if c == label {
 				return true
 			}
 		}
@@ -106,22 +133,22 @@ func naiveLeaf(r *Rule, s *Signals, cl Classifier) bool {
 
 func TestEval_CheapFirstMatchesNaive(t *testing.T) {
 	trees := []string{
-		`{"any":[{"keywords":["migrate"]},{"intent":["debugging"]},{"context_tokens":{"gt":60000}}]}`,
-		`{"all":[{"has_tools":true},{"not":{"intent":["chat"]}}]}`,
-		`{"any":[{"all":[{"tool_loop":true},{"intent":["coding"]}]},{"keywords":["urgent"]}]}`,
-		`{"not":{"any":[{"intent":["debugging"]},{"message_count":{"gte":10}}]}}`,
-		`{"all":[{"any":[{"keywords":["a"]},{"intent":["x"]}]},{"any":[{"context_tokens":{"lt":5}},{"intent":["y"]}]}]}`,
-		`{"all":[{"not":{"intent":["blocked"]}},{"any":[{"keywords":["ship"]},{"context_tokens":{"gte":100}}]}]}`,
-		`{"any":[{"not":{"all":[{"has_tools":true},{"intent":["coding"]}]}},{"tool_loop":true}]}`,
+		`{"any":[{"keywords":["migrate"]},{"domain":"dbg"},{"context_tokens":{"gt":60000}}]}`,
+		`{"all":[{"has_tools":true},{"not":{"domain":"cht"}}]}`,
+		`{"any":[{"all":[{"tool_loop":true},{"domain":"cod"}]},{"keywords":["urgent"]}]}`,
+		`{"not":{"any":[{"domain":"dbg"},{"message_count":{"gte":10}}]}}`,
+		`{"all":[{"any":[{"keywords":["a"]},{"domain":"sx"}]},{"any":[{"context_tokens":{"lt":5}},{"domain":"sy"}]}]}`,
+		`{"all":[{"not":{"domain":"blk"}},{"any":[{"keywords":["ship"]},{"context_tokens":{"gte":100}}]}]}`,
+		`{"any":[{"not":{"all":[{"has_tools":true},{"domain":"cod"}]}},{"tool_loop":true}]}`,
 	}
-	// Build the parsed *Rule for each tree once.
-	var whens []Rule
-	for _, tj := range trees {
-		p := mustLoadRoute(t, tj)
-		whens = append(whens, p.Routes[0].When)
+	// Load each tree into a policy that defines the domain signals.
+	pols := make([]*Policy, len(trees))
+	whens := make([]Rule, len(trees))
+	for i, tj := range trees {
+		pols[i] = loadWhenSignals(t, tj)
+		whens[i] = pols[i].Routes[0].When
 	}
 
-	// Signal state grid.
 	sigs := []Signals{
 		{RecentText: "please migrate the schema", ContextTokens: 100, MessageCount: 3, HasTools: true, ToolLoop: false},
 		{RecentText: "hi there", ContextTokens: 200000, MessageCount: 20, HasTools: false, ToolLoop: true},
@@ -131,15 +158,15 @@ func TestEval_CheapFirstMatchesNaive(t *testing.T) {
 	}
 	labels := []string{"", "debugging", "coding", "chat", "x", "y", "blocked"}
 
-	for ti, when := range whens {
+	for ti := range whens {
 		for si := range sigs {
 			for _, lbl := range labels {
 				sig := sigs[si]
-				cl := fixedIntent{label: lbl}
-				st := &evalState{s: &sig, cl: cl}
-				got := st.eval(&when)
+				cl := fixedDomain{label: lbl}
+				st := &evalState{s: &sig, cl: cl, pol: pols[ti]}
+				got := st.eval(&whens[ti])
 				sigNaive := sigs[si]
-				want := naiveEval(&when, &sigNaive, cl)
+				want := naiveEval(&whens[ti], &sigNaive, cl, pols[ti])
 				if got != want {
 					t.Errorf("tree[%d]=%s sig[%d] label=%q: cheap-first=%v naive=%v (reordering changed the result)",
 						ti, trees[ti], si, lbl, got, want)
@@ -152,10 +179,6 @@ func TestEval_CheapFirstMatchesNaive(t *testing.T) {
 // ---------------------------------------------------------------------------
 // 2. Cheap-first is a COST optimization: an ML child must not run when a cheap
 // sibling already settled the group.
-//
-// WHY: the design's load-bearing property (DESIGN §1, §2.3) is lazy-ML. If a
-// cheap sibling short-circuits, the classifier must not be consulted, or every
-// request pays for a model call and the whole point collapses.
 // ---------------------------------------------------------------------------
 func TestEval_LazyMLCostContract(t *testing.T) {
 	cases := []struct {
@@ -165,27 +188,27 @@ func TestEval_LazyMLCostContract(t *testing.T) {
 		wantCalls  int
 		wantResult bool
 	}{
-		{"any cheap-true skips ML", `{"any":[{"has_tools":true},{"intent":["x"]}]}`,
+		{"any cheap-true skips ML", `{"any":[{"has_tools":true},{"domain":"sx"}]}`,
 			Signals{HasTools: true}, 0, true},
-		{"all cheap-false skips ML", `{"all":[{"has_tools":true},{"intent":["x"]}]}`,
+		{"all cheap-false skips ML", `{"all":[{"has_tools":true},{"domain":"sx"}]}`,
 			Signals{HasTools: false}, 0, false},
-		{"any cheap-false must reach ML", `{"any":[{"has_tools":true},{"intent":["x"]}]}`,
+		{"any cheap-false must reach ML", `{"any":[{"has_tools":true},{"domain":"sx"}]}`,
 			Signals{HasTools: false}, 1, true},
-		{"all cheap-true must reach ML", `{"all":[{"has_tools":true},{"intent":["x"]}]}`,
+		{"all cheap-true must reach ML", `{"all":[{"has_tools":true},{"domain":"sx"}]}`,
 			Signals{HasTools: true}, 1, true},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			p := mustLoadRoute(t, tc.when)
-			spy := &spyClassifier{intentLabel: "x"}
+			p := loadWhenSignals(t, tc.when)
+			spy := &spyClassifier{domainLabel: "x"}
 			sig := tc.sig
-			st := &evalState{s: &sig, cl: spy}
+			st := &evalState{s: &sig, cl: spy, pol: p}
 			got := st.eval(&p.Routes[0].When)
 			if got != tc.wantResult {
 				t.Errorf("result = %v, want %v", got, tc.wantResult)
 			}
-			if spy.intentCalls != tc.wantCalls {
-				t.Errorf("intent calls = %d, want %d", spy.intentCalls, tc.wantCalls)
+			if spy.domainCalls != tc.wantCalls {
+				t.Errorf("domain calls = %d, want %d", spy.domainCalls, tc.wantCalls)
 			}
 		})
 	}
@@ -194,36 +217,19 @@ func TestEval_LazyMLCostContract(t *testing.T) {
 // ---------------------------------------------------------------------------
 // 3. Stickiness state machine — min_band_jump boundary.
 //
-// WHY (DESIGN R15): min_band_jump damps DOWNGRADES only. jump < min_band_jump
-// holds the current tier; jump == min_band_jump switches. An off-by-one here
-// either pins sessions forever or defeats damping entirely.
+// WHY (DESIGN R15): min_band_jump damps DOWNGRADES only. With classify gone, the
+// static default is the sole fuzzy source, so we drive an arbitrary target tier
+// by setting the policy's default and hold a different session current.
 // ---------------------------------------------------------------------------
 
-// policy4 has four ordered tiers, no matching routes, and a classify block so a
-// stubbed classifier can drive an arbitrary target tier through the fuzzy path.
-const policy4 = `{
-  "version":1,
-  "tiers":[
-    {"name":"t0","model":"m0"},{"name":"t1","model":"m1"},
-    {"name":"t2","model":"m2"},{"name":"t3","model":"m3"}
-  ],
-  "default":"t0",
-  "inspect":{"scope":"full"},
-  "routes":[],
-  "classify":{"strategy":"few_shot","min_confidence":0,"examples":{
-    "t0":["a"],"t1":["b"],"t2":["c"],"t3":["d"]}},
-  "session":{"sticky":true,"min_band_jump":2}
-}`
-
-// stubClassify drives Classify to a chosen tier; Intent is unused here.
-type stubClassify struct {
-	tier string
-	conf float64
-}
-
-func (s stubClassify) Intent(string) (string, float64, error) { return "", 0, nil }
-func (s stubClassify) Classify(string, map[string][]string) (string, float64, error) {
-	return s.tier, s.conf, nil
+// policyDefault builds a 4-tier policy with no routes and the given default, so a
+// session-current downgrade to `def` exercises the damping boundary.
+func policyDefault(def string) string {
+	return `{"version":1,"tiers":[
+	    {"name":"t0","model":"m0"},{"name":"t1","model":"m1"},
+	    {"name":"t2","model":"m2"},{"name":"t3","model":"m3"}
+	  ],"default":"` + def + `","inspect":{"scope":"full"},"routes":[],
+	  "session":{"sticky":true,"min_band_jump":2}}`
 }
 
 func TestDecide_MinBandJumpBoundary(t *testing.T) {
@@ -245,9 +251,9 @@ func TestDecide_MinBandJumpBoundary(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			sess := NewMemSessionStore()
 			sess.Set("s", tc.cur)
-			d := decideJSON(t, policy4,
+			d := decideJSON(t, policyDefault(tc.target),
 				Signals{RecentText: "x", SessionID: "s"},
-				stubClassify{tier: tc.target, conf: 1}, sess, "")
+				NoopClassifier(), sess, "")
 			if d.Tier != tc.wantTier {
 				t.Errorf("tier = %s, want %s (reason %q)", d.Tier, tc.wantTier, d.Reason)
 			}
@@ -265,9 +271,9 @@ func TestDecide_DampedDecisionDoesNotDrift(t *testing.T) {
 	sess := NewMemSessionStore()
 	sess.Set("s", "t3")
 	for turn := 0; turn < 5; turn++ {
-		d := decideJSON(t, policy4,
+		d := decideJSON(t, policyDefault("t2"), // default t2: a 1-band downgrade from t3, always damped
 			Signals{RecentText: "x", SessionID: "s"},
-			stubClassify{tier: "t2", conf: 1}, sess, "") // 1-band downgrade, always damped
+			NoopClassifier(), sess, "")
 		if d.Tier != "t3" {
 			t.Fatalf("turn %d: tier drifted to %s, want t3", turn, d.Tier)
 		}
@@ -277,24 +283,23 @@ func TestDecide_DampedDecisionDoesNotDrift(t *testing.T) {
 	}
 }
 
-// WHY (DESIGN R14): a session-less request ("" id) must skip stickiness
-// entirely and never be bucketed under "". Two different session-less requests
-// must not contaminate each other's damping via a shared "" key.
+// WHY (DESIGN R14): a session-less request ("" id) must skip stickiness entirely
+// and never be bucketed under "". Two different session-less requests must not
+// contaminate each other's damping via a shared "" key.
 func TestDecide_SessionlessSkipsStickiness(t *testing.T) {
 	sess := NewMemSessionStore()
-	// First: classify picks t0.
-	d := decideJSON(t, policy4, Signals{RecentText: "x", SessionID: ""},
-		stubClassify{tier: "t0", conf: 1}, sess, "")
+	d := decideJSON(t, policyDefault("t0"), Signals{RecentText: "x", SessionID: ""},
+		NoopClassifier(), sess, "")
 	if d.Tier != "t0" {
-		t.Fatalf("session-less should take classify target t0, got %s", d.Tier)
+		t.Fatalf("session-less should take the default t0, got %s", d.Tier)
 	}
-	// Nothing may be stored under "".
 	if _, ok := sess.Current(""); ok {
 		t.Errorf("session store bucketed a request under the empty session id")
 	}
-	// A subsequent session-less downgrade must NOT be damped (no shared current).
-	d2 := decideJSON(t, policy4, Signals{RecentText: "x", SessionID: ""},
-		stubClassify{tier: "t3", conf: 1}, sess, "")
+	// A subsequent session-less request to a lower default must NOT be damped
+	// (there is no shared current to damp against).
+	d2 := decideJSON(t, policyDefault("t3"), Signals{RecentText: "x", SessionID: ""},
+		NoopClassifier(), sess, "")
 	if strings.Contains(d2.Reason, "sticky:kept") {
 		t.Errorf("session-less request was damped against a shared '' current: %q", d2.Reason)
 	}
@@ -329,12 +334,11 @@ func TestDecide_UnknownPinFallsThrough(t *testing.T) {
 	}
 }
 
-// WHY: `to: keep` holds the session current across turns and must NEVER write
-// the store (DESIGN R-keep). A keep must not itself become the stored current.
+// WHY: `to: keep` holds the session current across turns and must NEVER write the
+// store (DESIGN R-keep). A keep must not itself become the stored current.
 func TestDecide_KeepNeverWritesSession(t *testing.T) {
 	sess := NewMemSessionStore()
 	sess.Set("s", "smart")
-	// mid-tool-loop route → keep. Fire it several times.
 	for i := 0; i < 3; i++ {
 		d := decideJSON(t, fullPolicy,
 			Signals{ToolLoop: true, SessionID: "s", ContextTokens: 100},
@@ -361,8 +365,7 @@ func TestDecide_ReasonDistinguishesPaths(t *testing.T) {
 	}{
 		{"pin", Signals{RequestedModel: "claude-sonnet-5"}, NoopClassifier(), "fast", "pin:"},
 		{"route", Signals{RecentText: "migrate now", ContextTokens: 100}, NoopClassifier(), "", "route:"},
-		{"classify", Signals{RecentText: "novel task"}, stubClassify{tier: "smart", conf: 0.9}, "", "classify:smart@"},
-		{"no-ml default", Signals{RecentText: "novel task"}, NoopClassifier(), "", "skipped:no-ml"},
+		{"default", Signals{RecentText: "novel task"}, NoopClassifier(), "", "default"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -377,10 +380,6 @@ func TestDecide_ReasonDistinguishesPaths(t *testing.T) {
 // ---------------------------------------------------------------------------
 // 4. Concurrency: parallel Decide over a shared SessionStore + the global
 // regexCache must be race-free (run with -race).
-//
-// WHY: the proxy calls Decide from many goroutines. MemSessionStore and
-// regexCache are shared mutable state; a data race here corrupts routing under
-// load. This test is meaningful only under `go test -race`.
 // ---------------------------------------------------------------------------
 
 const policyRegex = `{
@@ -422,8 +421,7 @@ func TestDecide_ConcurrentSharedState(t *testing.T) {
 }
 
 // WHY: regexCache is a process-global sync.Map. Confirm a validated regex route
-// actually matches through the cache (a nil-cache defensive miss would silently
-// disable the route).
+// actually matches through the cache.
 func TestDecide_RegexRouteMatches(t *testing.T) {
 	d := decideJSON(t, policyRegex,
 		Signals{RecentText: "hit a RACE   condition today"},

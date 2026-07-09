@@ -27,7 +27,9 @@ func loadErr(t *testing.T, js, want string) {
 	}
 }
 
-// A realistic full policy (schema §5.6), as JSON (v1 loader). Reused across tests.
+// A realistic full policy (schema §5.6), as JSON (v1 loader). Reused across
+// tests. Its hard-work route ends in a `domain` signal leaf so cheap-first
+// laziness and the ML fail-open path are exercised through it.
 const fullPolicy = `{
   "version": 1,
   "tiers": [
@@ -37,6 +39,20 @@ const fullPolicy = `{
   ],
   "default": "main",
   "inspect": {"scope": "recent_turns", "turns": 3},
+  "signals": {
+    "domains": [
+      {"name": "deep-work", "categories": ["computer science", "engineering"]}
+    ],
+    "embeddings": [
+      {"name": "architecture", "threshold": 0.66,
+       "candidates": ["design a scalable architecture", "plan a migration strategy"]}
+    ],
+    "complexity": [
+      {"name": "reasoning", "threshold": 0.15,
+       "hard": ["debug this race condition", "analyze the root cause"],
+       "easy": ["fix this typo", "rename this variable"]}
+    ]
+  },
   "routes": [
     {"name": "pinned-opus", "when": {"requested_model": ["claude-opus-4-8"]}, "to": "smart"},
     {"name": "background",  "when": {"requested_model": ["claude-haiku-4-5"]}, "to": "fast"},
@@ -44,18 +60,14 @@ const fullPolicy = `{
     {"name": "hard-work", "when": {"any": [
         {"keywords": ["migrate", "race condition"]},
         {"context_tokens": {"gt": 60000}},
-        {"intent": ["debugging", "architecture"]}
+        {"domain": "deep-work"}
     ]}, "to": "smart"}
   ],
-  "classify": {"strategy": "few_shot", "min_confidence": 0.55, "examples": {
-    "fast":  ["add a docstring", "rename this variable"],
-    "smart": ["design the migration", "why does this deadlock under load"]
-  }},
   "session": {"sticky": true, "min_band_jump": 2},
   "overrides": {"pin_header": "x-whittle-route"}
 }`
 
-// AC1 + AC6 + AC7: the flagship policy loads, tiers are ordered, classify parses.
+// AC1 + AC6: the flagship policy loads, tiers are ordered, signals parse.
 func TestLoad_FullPolicy(t *testing.T) {
 	p, warns := mustLoad(t, fullPolicy)
 	if p.tierRank("fast") != 0 || p.tierRank("smart") != 2 {
@@ -64,9 +76,12 @@ func TestLoad_FullPolicy(t *testing.T) {
 	if p.tierModel("smart") != "claude-opus-4-8" {
 		t.Fatalf("tierModel(smart)=%q", p.tierModel("smart"))
 	}
-	// hard-work references intent → expect a cost-lint warning.
-	if !containsSubstr(warns, "intent classifier") {
-		t.Fatalf("expected intent cost-lint warning, got %v", warns)
+	if p.domainSignal("deep-work") == nil || p.embeddingSignal("architecture") == nil || p.complexitySignal("reasoning") == nil {
+		t.Fatal("signals did not parse into the catalog")
+	}
+	// hard-work references a domain signal → expect an ML cost-lint warning.
+	if !containsSubstr(warns, "ML signal") {
+		t.Fatalf("expected ML cost-lint warning, got %v", warns)
 	}
 }
 
@@ -127,18 +142,44 @@ func TestValidate_ReferentialIntegrity(t *testing.T) {
 		"reserved keyword")
 }
 
-// AC7: classify strategy discriminator + example caps.
-func TestClassify_StrategyAndCaps(t *testing.T) {
-	loadErr(t, classifyPolicy(`"strategy":"weighted","min_confidence":0.5,"examples":{"fast":["x"]}`),
-		"not supported in v1")
-	loadErr(t, classifyPolicy(`"strategy":"few_shot","min_confidence":1.5,"examples":{"fast":["x"]}`),
-		"min_confidence")
-	loadErr(t, classifyPolicy(`"strategy":"few_shot","min_confidence":0.5,"examples":{"ghost":["x"]}`),
-		`"ghost" is not a defined tier`)
-	// Over the hard cap rejects.
+// Signal definitions + references: undefined-name errors, candidate caps,
+// complexity level/threshold, and the non-MMLU-category warning.
+func TestSignals_Validation(t *testing.T) {
+	// A route referencing an undefined signal name is a load error.
+	loadErr(t, signalsPolicy(
+		`"embeddings":[{"name":"arch","threshold":0.5,"candidates":["x"]}]`,
+		`{"embedding":"ghost"}`),
+		"not a defined signals.embeddings entry")
+	loadErr(t, signalsPolicy(
+		`"domains":[{"name":"code","categories":["math"]}]`,
+		`{"domain":"ghost"}`),
+		"not a defined signals.domains entry")
+	// Complexity leaf must carry a valid level.
+	loadErr(t, signalsPolicy(
+		`"complexity":[{"name":"r","threshold":0.1,"hard":["h"],"easy":["e"]}]`,
+		`{"complexity":"r:spicy"}`),
+		"level must be hard|easy|medium")
+	// Negative complexity threshold is meaningless (a symmetric margin band).
+	loadErr(t, signalsPolicy(
+		`"complexity":[{"name":"r","threshold":-0.1,"hard":["h"],"easy":["e"]}]`,
+		`{"complexity":"r:hard"}`),
+		"threshold must be >= 0")
+	// Candidate list over the hard cap rejects.
 	big := "[" + strings.TrimSuffix(strings.Repeat(`"e",`, 300), ",") + "]"
-	loadErr(t, classifyPolicy(`"strategy":"few_shot","min_confidence":0.5,"examples":{"fast":`+big+`}`),
+	loadErr(t, signalsPolicy(
+		`"embeddings":[{"name":"arch","threshold":0.5,"candidates":`+big+`}]`,
+		`{"embedding":"arch"}`),
 		"hard cap")
+}
+
+// A non-MMLU domain category WARNS (a swapped model could emit it) but loads.
+func TestSignals_UnknownCategoryWarns(t *testing.T) {
+	_, warns := mustLoad(t, signalsPolicy(
+		`"domains":[{"name":"code","categories":["not-a-category"]}]`,
+		`{"domain":"code"}`))
+	if !containsSubstr(warns, "not a known MMLU-Pro category") {
+		t.Fatalf("expected unknown-category warning, got %v", warns)
+	}
 }
 
 // AC1 (canonicalization): dated + latest suffixes normalize equally.
@@ -190,7 +231,11 @@ func routeErrTo(t *testing.T, to, want string) {
 		"inspect":{"scope":"full"},"routes":[{"name":"r","when":{"tool_loop":true},"to":"`+to+`"}]}`, want)
 }
 
-func classifyPolicy(classifyInner string) string {
-	return `{"version":1,"tiers":[{"name":"fast","model":"m"}],"default":"fast",
-		"inspect":{"scope":"full"},"routes":[],"classify":{` + classifyInner + `}}`
+// signalsPolicy builds a policy with a signals block and one route whose `when`
+// references a signal, so signal validation + reference integrity can be probed.
+func signalsPolicy(signalsInner, when string) string {
+	return `{"version":1,"tiers":[{"name":"fast","model":"m"},{"name":"smart","model":"m2"}],
+		"default":"fast","inspect":{"scope":"full"},
+		"signals":{` + signalsInner + `},
+		"routes":[{"name":"r","when":` + when + `,"to":"smart"}]}`
 }

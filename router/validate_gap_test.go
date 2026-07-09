@@ -77,7 +77,7 @@ func TestValidate_UnknownKeyAtNestedNode(t *testing.T) {
 func TestValidate_AllValidScenariosLoad(t *testing.T) {
 	scenarios := map[string]string{
 		"5.1 single leaf":     `{"context_tokens":{"gt":60000}}`,
-		"5.2 explicit AND":    `{"all":[{"intent":["coding"]},{"context_tokens":{"gt":30000}}]}`,
+		"5.2 explicit AND":    `{"all":[{"keywords":["coding"]},{"context_tokens":{"gt":30000}}]}`,
 		"5.3 OR":              `{"any":[{"keywords":["race condition","deadlock","root cause"]},{"context_tokens":{"gt":80000}}]}`,
 		"5.4 nested":          `{"any":[{"requested_model":["claude-opus-4-8"]},{"all":[{"tool_loop":false},{"any":[{"keywords":["architecture","migrate"]},{"context_tokens":{"gt":100000}}]}]}]}`,
 		"5.5 not+literal":     `{"all":[{"context_tokens":{"lt":4000}},{"not":{"keywords":["` + "```" + `","def ","func ","class "]}}]}`,
@@ -129,26 +129,27 @@ func TestValidate_DepthCapBoundary(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// classify example caps — §4.10: warn > 32, reject > 256.
+// signal candidate caps — warn > 32 (candidatesSoftCap), reject > 256 (hard).
 // ---------------------------------------------------------------------------
 
-func examplesJSON(tier string, count int) string {
+func candidatesJSON(count int) string {
 	parts := make([]string, count)
 	for i := range parts {
-		parts[i] = fmt.Sprintf(`"ex-%d"`, i) // distinct → no dup warnings
+		parts[i] = fmt.Sprintf(`"cand-%d"`, i) // distinct → no dup warnings
 	}
-	return fmt.Sprintf(`{%q:[%s]}`, tier, strings.Join(parts, ","))
+	return "[" + strings.Join(parts, ",") + "]"
 }
 
-// WHY (§4.10): the caps are exact boundaries. 256 loads (with soft warn), 257
-// rejects; 32 has no warn, 33 warns. An off-by-one lets a taxonomy blow past
-// the cold-start/latency budget or nags on a legal set.
-func TestClassify_ExampleCapBoundaries(t *testing.T) {
+// WHY: the caps are exact boundaries. 256 loads (with soft warn), 257 rejects;
+// 32 has no warn, 33 warns. An off-by-one lets a signal blow past the cold-start
+// embedding budget or nags on a legal set.
+func TestSignals_CandidateCapBoundaries(t *testing.T) {
 	mk := func(count int) string {
-		return `{"version":1,"tiers":[{"name":"fast","model":"m"}],"default":"fast",
-			"inspect":{"scope":"full"},"routes":[],
-			"classify":{"strategy":"few_shot","min_confidence":0.5,"examples":` +
-			examplesJSON("fast", count) + `}}`
+		return `{"version":1,"tiers":[{"name":"fast","model":"m"},{"name":"smart","model":"m2"}],
+			"default":"fast","inspect":{"scope":"full"},
+			"signals":{"embeddings":[{"name":"arch","threshold":0.5,"candidates":` +
+			candidatesJSON(count) + `}]},
+			"routes":[{"name":"r","when":{"embedding":"arch"},"to":"smart"}]}`
 	}
 	cases := []struct {
 		count      int
@@ -167,7 +168,7 @@ func TestClassify_ExampleCapBoundaries(t *testing.T) {
 				t.Errorf("count=%d: reject=%v, err=%v", tc.count, tc.wantReject, err)
 			}
 			if err == nil {
-				gotWarn := containsSubstr(warns, "taxonomy smell")
+				gotWarn := containsSubstr(warns, "signal-design smell")
 				if gotWarn != tc.wantWarn {
 					t.Errorf("count=%d: soft-cap warn=%v, want %v (warns=%v)", tc.count, gotWarn, tc.wantWarn, warns)
 				}
@@ -176,34 +177,34 @@ func TestClassify_ExampleCapBoundaries(t *testing.T) {
 	}
 }
 
-// WHY (§4.10): a duplicated example within a tier is a taxonomy smell → warn
-// (not an error).
-func TestClassify_DuplicateExampleWarns(t *testing.T) {
-	js := `{"version":1,"tiers":[{"name":"fast","model":"m"}],"default":"fast",
-		"inspect":{"scope":"full"},"routes":[],
-		"classify":{"strategy":"few_shot","min_confidence":0.5,
-		"examples":{"fast":["dup","dup"]}}}`
+// WHY: a duplicated candidate within a signal is inert (a design smell) → warn.
+func TestSignals_DuplicateCandidateWarns(t *testing.T) {
+	js := `{"version":1,"tiers":[{"name":"fast","model":"m"},{"name":"smart","model":"m2"}],
+		"default":"fast","inspect":{"scope":"full"},
+		"signals":{"embeddings":[{"name":"arch","threshold":0.5,"candidates":["dup","dup"]}]},
+		"routes":[{"name":"r","when":{"embedding":"arch"},"to":"smart"}]}`
 	_, warns, err := Load([]byte(js))
 	if err != nil {
-		t.Fatalf("duplicate example should load with a warning, got error: %v", err)
+		t.Fatalf("duplicate candidate should load with a warning, got error: %v", err)
 	}
-	if !containsSubstr(warns, "duplicate example") {
-		t.Errorf("expected duplicate-example warning, got %v", warns)
+	if !containsSubstr(warns, "duplicate candidate") {
+		t.Errorf("expected duplicate-candidate warning, got %v", warns)
 	}
 }
 
-// WHY (§4.8): an `intent` route anywhere in the waterfall triggers the ML cost
-// lint — a routing policy that forgets this pays the model on every request.
-func TestValidate_IntentCostLint(t *testing.T) {
+// WHY (§4.8): an ML signal leaf anywhere in the waterfall triggers the ML cost
+// lint — a routing policy that forgets this pays a model on every request.
+func TestValidate_MLCostLint(t *testing.T) {
 	js := `{"version":1,"tiers":[{"name":"fast","model":"m"},{"name":"smart","model":"m2"}],
 		"default":"fast","inspect":{"scope":"full"},
-		"routes":[{"name":"top-intent","when":{"intent":["debugging"]},"to":"smart"}]}`
+		"signals":{"domains":[{"name":"code","categories":["computer science"]}]},
+		"routes":[{"name":"top-domain","when":{"domain":"code"},"to":"smart"}]}`
 	_, warns, err := Load([]byte(js))
 	if err != nil {
 		t.Fatalf("load: %v", err)
 	}
-	if !containsSubstr(warns, "intent classifier") {
-		t.Errorf("expected intent cost-lint warning, got %v", warns)
+	if !containsSubstr(warns, "ML signal") {
+		t.Errorf("expected ML cost-lint warning, got %v", warns)
 	}
 }
 
@@ -214,7 +215,6 @@ func TestValidate_ScalarWhereListExpected_Hint(t *testing.T) {
 	for _, when := range []string{
 		`{"keywords":"architecture"}`,
 		`{"requested_model":"claude-opus-4-8"}`,
-		`{"intent":"coding"}`,
 	} {
 		_, _, err := Load([]byte(wrapRoute(when)))
 		if err == nil {
@@ -265,27 +265,23 @@ func TestValidate_PerRouteStickyIsRejected(t *testing.T) {
 	}
 }
 
-// WHY: classify at EXACTLY min_confidence is accepted (>= is inclusive); an
-// empty tier from the classifier falls to default, not a crash.
-func TestDecide_ClassifyConfidenceBoundary(t *testing.T) {
-	// min_confidence in policy4 is 0; use fullPolicy (0.55).
-	atThreshold := decideJSON(t, fullPolicy,
-		Signals{RecentText: "novel", SessionID: "s"},
-		stubClassify{tier: "smart", conf: 0.55}, NewMemSessionStore(), "")
-	if atThreshold.Tier != "smart" {
-		t.Errorf("conf == min_confidence should be accepted (>=), got %s (%s)", atThreshold.Tier, atThreshold.Reason)
+// WHY: a signal referenced by more than one leaf in a request must be computed
+// exactly ONCE (memoized in evalState), else a policy pays N model calls for one
+// signal. Two leaves reference the same embedding signal; the score is below
+// threshold so both leaves actually evaluate.
+func TestDecide_SignalMemoizedOncePerRequest(t *testing.T) {
+	const pol = `{"version":1,"tiers":[{"name":"fast","model":"m1"},{"name":"smart","model":"m2"}],
+	  "default":"fast","inspect":{"scope":"full"},
+	  "signals":{"embeddings":[{"name":"arch","threshold":0.9,"candidates":["x"]}]},
+	  "routes":[{"name":"r","when":{"any":[{"embedding":"arch"},{"embedding":"arch"}]},"to":"smart"}]}`
+	spy := &spyClassifier{embedScore: 0.1} // below threshold → both leaves evaluate
+	p, _ := mustLoad(t, pol)
+	d := Decide(Signals{RecentText: "x"}, p, spy, nil, "")
+	if d.Tier != "fast" {
+		t.Fatalf("below-threshold signal must not fire: %s (%s)", d.Tier, d.Reason)
 	}
-	belowThreshold := decideJSON(t, fullPolicy,
-		Signals{RecentText: "novel", SessionID: "s2"},
-		stubClassify{tier: "smart", conf: 0.54}, NewMemSessionStore(), "")
-	if belowThreshold.Tier != "main" || !strings.Contains(belowThreshold.Reason, "low-conf") {
-		t.Errorf("conf < min_confidence should fall to default: %s (%s)", belowThreshold.Tier, belowThreshold.Reason)
-	}
-	emptyTier := decideJSON(t, fullPolicy,
-		Signals{RecentText: "novel", SessionID: "s3"},
-		stubClassify{tier: "", conf: 0.99}, NewMemSessionStore(), "")
-	if emptyTier.Tier != "main" {
-		t.Errorf("empty classifier tier should fall to default, got %s", emptyTier.Tier)
+	if spy.embedCalls != 1 {
+		t.Errorf("a signal referenced twice must be computed once (memoized), got %d calls", spy.embedCalls)
 	}
 }
 

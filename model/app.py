@@ -11,7 +11,7 @@ import logging
 import os
 import threading
 import time
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import tiktoken
 from fastapi import FastAPI, HTTPException
@@ -56,21 +56,32 @@ _lock = threading.Lock()
 _INFER_SEM = threading.Semaphore(max(1, int(os.environ.get("MAX_CONCURRENCY", "1") or "1")))
 _INFER_WAIT_S = float(os.environ.get("INFER_WAIT_S", "0.25") or "0.25")
 
-# Router smart-mode classifier (separate, lightweight embedding model). Lazy: the
-# embedding model loads on the first /v1/route/classify call, independent of the
-# compressor — a sidecar used only for compression never pays for it.
-_route_classifier = None
+# Router smart-mode signals (vSR's two mmBERT models, separate from the compressor).
+# Lazy + independent: the embedding model loads on the first /v1/route/embedding or
+# /complexity call, the classifier on the first /v1/route/domain call — a sidecar used
+# only for compression never pays for either.
+_route_scorer = None
+_route_domain = None
 _route_lock = threading.Lock()
 
 
-def _get_route_classifier():
-    global _route_classifier
-    if _route_classifier is None:
+def _get_route_scorer():
+    global _route_scorer
+    if _route_scorer is None:
         with _route_lock:
-            if _route_classifier is None:
+            if _route_scorer is None:
                 emb = route.Embedder()
-                _route_classifier = route.Classifier(emb, emb.version())
-    return _route_classifier
+                _route_scorer = route.Scorer(emb, emb.version())
+    return _route_scorer
+
+
+def _get_route_domain():
+    global _route_domain
+    if _route_domain is None:
+        with _route_lock:
+            if _route_domain is None:
+                _route_domain = route.DomainClassifier()
+    return _route_domain
 
 
 class _FidelitySkip(Exception):
@@ -186,23 +197,52 @@ def info():
             "int8": INT8, "intra_op_threads": _NUM_THREADS}
 
 
-class RouteClassifyRequest(BaseModel):
+# vSR routing signals. Errors (missing model, etc.) raise → the router's Go client
+# reads the non-200 and fails open, so a broken sidecar never blocks routing.
+class RouteDomainRequest(BaseModel):
     text: str = ""
-    examples: Dict[str, List[str]] = Field(default_factory=dict)  # tier -> example prompts
 
 
-class RouteClassifyResponse(BaseModel):
-    tier: str
+class RouteDomainResponse(BaseModel):
+    label: str
     confidence: float
 
 
-@app.post("/v1/route/classify", response_model=RouteClassifyResponse)
-def route_classify(req: RouteClassifyRequest):
-    # Few-shot nearest-example over the policy's per-tier examples. Errors (missing
-    # model, etc.) raise → the router's Go client reads the non-200 and falls open
-    # to the static default, so a broken sidecar never blocks routing.
-    tier, conf = _get_route_classifier().classify(req.text, req.examples)
-    return RouteClassifyResponse(tier=tier, confidence=conf)
+class RouteEmbeddingRequest(BaseModel):
+    text: str = ""
+    candidates: List[str] = Field(default_factory=list)
+
+
+class RouteEmbeddingResponse(BaseModel):
+    score: float
+
+
+class RouteComplexityRequest(BaseModel):
+    text: str = ""
+    hard: List[str] = Field(default_factory=list)
+    easy: List[str] = Field(default_factory=list)
+
+
+class RouteComplexityResponse(BaseModel):
+    margin: float
+
+
+@app.post("/v1/route/domain", response_model=RouteDomainResponse)
+def route_domain(req: RouteDomainRequest):
+    label, conf = _get_route_domain().classify(req.text)
+    return RouteDomainResponse(label=label, confidence=conf)
+
+
+@app.post("/v1/route/embedding", response_model=RouteEmbeddingResponse)
+def route_embedding(req: RouteEmbeddingRequest):
+    score = _get_route_scorer().score_embedding(req.text, req.candidates)
+    return RouteEmbeddingResponse(score=score)
+
+
+@app.post("/v1/route/complexity", response_model=RouteComplexityResponse)
+def route_complexity(req: RouteComplexityRequest):
+    margin = _get_route_scorer().score_complexity(req.text, req.hard, req.easy)
+    return RouteComplexityResponse(margin=margin)
 
 
 @app.post("/v1/compress", response_model=CompressResponse)

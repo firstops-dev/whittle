@@ -31,7 +31,12 @@ type Rule struct {
 	Keywords       []string `json:"keywords,omitempty"`        // LITERAL substring, case-insensitive
 	KeywordsRegex  []string `json:"keywords_regex,omitempty"`  // explicit regex, opt-in
 	RequestedModel []string `json:"requested_model,omitempty"` // membership (canonicalized both sides)
-	Intent         []string `json:"intent,omitempty"`          // ML classifier label ∈ set (lazy)
+
+	// ML signal leaves: each names a signal defined in Policy.Signals and fires
+	// per that signal's rule (lazy — computed at most once per request).
+	Domain     string `json:"domain,omitempty"`     // named domain signal (classifier label ∈ its set)
+	Embedding  string `json:"embedding,omitempty"`  // named embedding signal (bank score ≥ its threshold)
+	Complexity string `json:"complexity,omitempty"` // named complexity level, "signal:hard|easy|medium"
 }
 
 // leafKind is a stable identifier for which single leaf predicate a node holds.
@@ -48,7 +53,9 @@ const (
 	keywordsLeaf
 	keywordsRegexLeaf
 	requestedModelLeaf
-	intentLeaf
+	domainLeaf
+	embeddingLeaf
+	complexityLeaf
 )
 
 // leaves reports which leaf predicates are set on this node (order stable for
@@ -76,8 +83,14 @@ func (r *Rule) leaves() []leafKind {
 	if r.RequestedModel != nil {
 		out = append(out, requestedModelLeaf)
 	}
-	if r.Intent != nil {
-		out = append(out, intentLeaf)
+	if r.Domain != "" {
+		out = append(out, domainLeaf)
+	}
+	if r.Embedding != "" {
+		out = append(out, embeddingLeaf)
+	}
+	if r.Complexity != "" {
+		out = append(out, complexityLeaf)
 	}
 	return out
 }
@@ -99,10 +112,17 @@ func (r *Rule) combinatorCount() int {
 
 // isMLLeaf reports whether this node's single leaf needs a model call. Used by
 // the evaluator to order cheap heuristic children before ML children so an
-// already-decided node never pays for the classifier (docs ROUTER_DESIGN §2.3).
+// already-decided node never pays for a classifier (docs ROUTER_DESIGN §2.3).
 func (r *Rule) isMLLeaf() bool {
 	ls := r.leaves()
-	return len(ls) == 1 && ls[0] == intentLeaf
+	if len(ls) != 1 {
+		return false
+	}
+	switch ls[0] {
+	case domainLeaf, embeddingLeaf, complexityLeaf:
+		return true
+	}
+	return false
 }
 
 // NumBand is a numeric predicate over a signal (token count, message count).

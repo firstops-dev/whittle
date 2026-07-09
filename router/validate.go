@@ -22,8 +22,8 @@ func (p *Policy) validate() (warnings []string, errs []error) {
 	v.validateTiers()
 	v.validateDefault()
 	v.validateInspect()
+	v.validateSignals()
 	v.validateRoutes()
-	v.validateClassify()
 	v.validateSession()
 
 	return v.warns, v.errs
@@ -110,10 +110,10 @@ func (v *validator) validateRoutes() {
 		}
 		v.validateRule(&r.When, loc+".when", 1)
 
-		// Cost lint (schema §4.8 / design C3): a route that consults the intent
-		// classifier pays for the model on every request that reaches it.
-		if ruleUsesIntent(&r.When) {
-			v.warnf("%s: references the intent classifier (ML) — it runs on requests reaching this route; place cheap routes above it", loc)
+		// Cost lint (schema §4.8 / design C3): a route with an ML signal leaf
+		// (domain/embedding/complexity) pays for a model on every request reaching it.
+		if ruleUsesML(&r.When) {
+			v.warnf("%s: references an ML signal (domain/embedding/complexity) — it runs a model on requests reaching this route; place cheap routes above it", loc)
 		}
 	}
 }
@@ -199,9 +199,21 @@ func (v *validator) validateLeaf(r *Rule, kind leafKind, loc string) {
 		if len(r.RequestedModel) == 0 {
 			v.errf("%s.requested_model: empty list", loc)
 		}
-	case intentLeaf:
-		if len(r.Intent) == 0 {
-			v.errf("%s.intent: empty list", loc)
+	case domainLeaf:
+		if v.p.domainSignal(r.Domain) == nil {
+			v.errf("%s.domain: %q is not a defined signals.domains entry", loc, r.Domain)
+		}
+	case embeddingLeaf:
+		if v.p.embeddingSignal(r.Embedding) == nil {
+			v.errf("%s.embedding: %q is not a defined signals.embeddings entry", loc, r.Embedding)
+		}
+	case complexityLeaf:
+		name, level := splitComplexityRef(r.Complexity)
+		switch {
+		case v.p.complexitySignal(name) == nil:
+			v.errf("%s.complexity: %q is not a defined signals.complexity entry (use `name:hard|easy|medium`)", loc, name)
+		case !complexityLevels[level]:
+			v.errf("%s.complexity: level must be hard|easy|medium (got %q); use `name:level`", loc, level)
 		}
 	}
 }
@@ -261,42 +273,83 @@ func bandUpperInclusive(n *NumBand) (int, bool) {
 	return 0, false
 }
 
-func (v *validator) validateClassify() {
-	c := v.p.Classify
-	if c == nil {
+// validateSignals checks the named ML signal definitions: names present +
+// unique per kind, category/candidate lists non-empty and capped, thresholds
+// sane. Route leaves referencing these by name are checked in validateLeaf.
+func (v *validator) validateSignals() {
+	if v.p.Signals == nil {
 		return
 	}
-	if c.Strategy != strategyFewShot {
-		v.errf("classify.strategy: %q not supported in v1 (only %q)", c.Strategy, strategyFewShot)
-	}
-	if c.MinConfidence < 0 || c.MinConfidence > 1 {
-		v.errf("classify.min_confidence: must be in [0,1] (got %g)", c.MinConfidence)
-	}
-	// A classify block with no examples can never classify — the "smart default"
-	// would degenerate to the static default on every request. Reject it so the
-	// author either removes the block or provides examples.
-	if len(c.Examples) == 0 {
-		v.errf("classify: present but has no examples — remove the block or add per-tier examples")
-	}
-	for tier, examples := range c.Examples {
-		if v.p.tierRank(tier) < 0 {
-			v.errf("classify.examples: %q is not a defined tier", tier)
+	s := v.p.Signals
+
+	domNames := map[string]bool{}
+	for i := range s.Domains {
+		d := &s.Domains[i]
+		loc := fmt.Sprintf("signals.domains[%d]", i)
+		v.checkSignalName(d.Name, loc, domNames)
+		if len(d.Categories) == 0 {
+			v.errf("%s (%s): no categories", loc, d.Name)
 		}
-		switch {
-		case len(examples) == 0:
-			v.errf("classify.examples[%s]: empty example list", tier)
-		case len(examples) > examplesHardCap:
-			v.errf("classify.examples[%s]: %d examples exceeds hard cap %d", tier, len(examples), examplesHardCap)
-		case len(examples) > examplesSoftCap:
-			v.warnf("classify.examples[%s]: %d examples (>%d) — usually a taxonomy smell", tier, len(examples), examplesSoftCap)
-		}
-		seen := map[string]bool{}
-		for _, ex := range examples {
-			if seen[ex] {
-				v.warnf("classify.examples[%s]: duplicate example %q", tier, ex)
+		for _, c := range d.Categories {
+			if !mmluCategories[c] {
+				v.warnf("%s (%s): %q is not a known MMLU-Pro category — the classifier will never emit it, so this is inert", loc, d.Name, c)
 			}
-			seen[ex] = true
 		}
+	}
+
+	embNames := map[string]bool{}
+	for i := range s.Embeddings {
+		e := &s.Embeddings[i]
+		loc := fmt.Sprintf("signals.embeddings[%d]", i)
+		v.checkSignalName(e.Name, loc, embNames)
+		v.checkCandidates(e.Candidates, loc)
+		if e.Threshold < 0 || e.Threshold > 1 {
+			v.warnf("%s (%s): threshold %g is outside the usual cosine range [0,1]", loc, e.Name, e.Threshold)
+		}
+	}
+
+	cxNames := map[string]bool{}
+	for i := range s.Complexity {
+		c := &s.Complexity[i]
+		loc := fmt.Sprintf("signals.complexity[%d]", i)
+		v.checkSignalName(c.Name, loc, cxNames)
+		v.checkCandidates(c.Hard, loc+".hard")
+		v.checkCandidates(c.Easy, loc+".easy")
+		if c.Threshold < 0 {
+			// The threshold is a symmetric margin band; negative is meaningless.
+			v.errf("%s (%s): threshold must be >= 0 (a margin band; got %g)", loc, c.Name, c.Threshold)
+		}
+	}
+}
+
+func (v *validator) checkSignalName(name, loc string, seen map[string]bool) {
+	switch {
+	case name == "":
+		v.errf("%s: missing name", loc)
+	case seen[name]:
+		v.errf("%s: duplicate signal name %q", loc, name)
+	}
+	seen[name] = true
+}
+
+func (v *validator) checkCandidates(cands []string, loc string) {
+	switch {
+	case len(cands) == 0:
+		v.errf("%s: empty candidate list", loc)
+	case len(cands) > candidatesHardCap:
+		v.errf("%s: %d candidates exceeds hard cap %d", loc, len(cands), candidatesHardCap)
+	case len(cands) > candidatesSoftCap:
+		v.warnf("%s: %d candidates (>%d) — usually a signal-design smell", loc, len(cands), candidatesSoftCap)
+	}
+	seen := map[string]bool{}
+	for _, c := range cands {
+		if c == "" {
+			v.warnf("%s: empty candidate string is inert", loc)
+		}
+		if seen[c] {
+			v.warnf("%s: duplicate candidate %q", loc, c)
+		}
+		seen[c] = true
 	}
 }
 
@@ -312,24 +365,24 @@ func (v *validator) validateSession() {
 	}
 }
 
-// ruleUsesIntent reports whether a condition tree references the intent
-// classifier anywhere — used by the cost lint.
-func ruleUsesIntent(r *Rule) bool {
-	if r.Intent != nil {
+// ruleUsesML reports whether a condition tree references any ML signal leaf
+// (domain/embedding/complexity) anywhere — used by the cost lint.
+func ruleUsesML(r *Rule) bool {
+	if r.Domain != "" || r.Embedding != "" || r.Complexity != "" {
 		return true
 	}
 	for i := range r.All {
-		if ruleUsesIntent(&r.All[i]) {
+		if ruleUsesML(&r.All[i]) {
 			return true
 		}
 	}
 	for i := range r.Any {
-		if ruleUsesIntent(&r.Any[i]) {
+		if ruleUsesML(&r.Any[i]) {
 			return true
 		}
 	}
 	if r.Not != nil {
-		return ruleUsesIntent(r.Not)
+		return ruleUsesML(r.Not)
 	}
 	return false
 }

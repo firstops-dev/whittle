@@ -9,30 +9,37 @@ import (
 )
 
 // ErrMLDisabled is returned by a Classifier when smart mode is off / models are
-// absent. The engine treats it as "this ML signal is unavailable": intent leaves
-// evaluate false, and classify falls through to the static default — surfaced in
-// the Decision reason so it's observable, never silent.
+// absent. The engine treats it as "this ML signal is unavailable": the signal
+// leaf evaluates false (the route simply won't fire on it), never a panic and
+// never a silent misroute.
 var ErrMLDisabled = errors.New("router: ML classifier disabled")
 
-// Classifier is the opt-in ML surface. The core ships only noopClassifier; the
-// real ONNX implementation lands in the router/ml subpackage (later milestone)
-// behind this same interface, so the engine never imports the models.
+// Classifier is the opt-in ML surface — vSR's two models behind one interface.
+// The core ships only noopClassifier; the router/ml subpackage implements it over
+// the sidecar, so the engine never imports a model. The engine owns the policy
+// thresholds/membership; the classifier only computes raw scores from text +
+// candidates (compute where the data lives).
 type Classifier interface {
-	// Intent returns the classifier's category label for text and its confidence.
-	Intent(text string) (label string, conf float64, err error)
-	// Classify returns the best tier for text by few-shot nearest-example over
-	// the per-tier examples, plus the match confidence (cosine).
-	Classify(text string, examples map[string][]string) (tier string, conf float64, err error)
+	// Domain returns the intent classifier's category label for text + confidence.
+	Domain(text string) (label string, conf float64, err error)
+	// EmbeddingScore returns the bank score of text against candidates
+	// (0.75·best + 0.25·mean(top-2) cosine).
+	EmbeddingScore(text string, candidates []string) (score float64, err error)
+	// ComplexityMargin returns score(hard) − score(easy): >0 leans hard, <0 easy.
+	ComplexityMargin(text string, hard, easy []string) (margin float64, err error)
 }
 
 // noopClassifier is the smart-off implementation: every call reports disabled.
 type noopClassifier struct{}
 
-func (noopClassifier) Intent(string) (string, float64, error) {
+func (noopClassifier) Domain(string) (string, float64, error) {
 	return "", 0, ErrMLDisabled
 }
-func (noopClassifier) Classify(string, map[string][]string) (string, float64, error) {
-	return "", 0, ErrMLDisabled
+func (noopClassifier) EmbeddingScore(string, []string) (float64, error) {
+	return 0, ErrMLDisabled
+}
+func (noopClassifier) ComplexityMargin(string, []string, []string) (float64, error) {
+	return 0, ErrMLDisabled
 }
 
 // NoopClassifier returns a Classifier that is always disabled (heuristics-only).
@@ -57,29 +64,28 @@ func IsNoOp(d Decision, s Signals) bool {
 }
 
 // decisionSource tracks how a tier was chosen, so stickiness damps only the
-// fuzzy tail (classify/default) and never overrides an explicit route or pin.
+// fuzzy tail (the static default) and never overrides an explicit route or pin.
 type decisionSource int
 
 const (
 	srcPin decisionSource = iota
 	srcRoute
-	srcClassify
 	srcDefault
 )
 
 // Decide runs the precedence ladder (docs/ROUTER_POLICY_SCHEMA.md §0):
 //
-//	pin → routes (first match) → classify (smart default) → static default
-//	then session stickiness damps a fuzzy downgrade.
+//	pin → routes (first match, ML signals evaluated in-condition) → static default
+//	then session stickiness damps a fuzzy (default) downgrade.
 //
 // It is pure over the already-extracted Signals and never panics; a classifier
-// error degrades to the static default (Mode-A safety is the caller's job for
-// extraction/transport errors — this function only decides).
+// error makes the referencing signal leaf evaluate false (Mode-A safety is the
+// caller's job for extraction/transport errors — this function only decides).
 func Decide(s Signals, p *Policy, cl Classifier, sess SessionStore, pin string) Decision {
 	if cl == nil {
 		cl = noopClassifier{}
 	}
-	st := &evalState{s: &s, cl: cl}
+	st := &evalState{s: &s, cl: cl, pol: p}
 
 	// 1. Pin override — explicit, always wins, override-only (never writes session).
 	if p.Overrides.PinHeader != "" && pin != "" {
@@ -106,25 +112,9 @@ func Decide(s Signals, p *Policy, cl Classifier, sess SessionStore, pin string) 
 		}
 	}
 
-	// 3. Classify — the intelligent default, only if smart mode is on and there
-	// are examples to match against (validation rejects an empty block; the len
-	// guard is defensive).
-	if p.Classify != nil && len(p.Classify.Examples) > 0 {
-		tier, conf, err := cl.Classify(s.RecentText, p.Classify.Examples)
-		switch {
-		case errors.Is(err, ErrMLDisabled):
-			// smart off → fall to static default, observably.
-			return p.decide(p.Default, "skipped:no-ml", srcDefault, s, sess)
-		case err != nil:
-			return p.decide(p.Default, "classify:error→default", srcDefault, s, sess)
-		case tier != "" && conf >= p.Classify.MinConfidence && p.tierRank(tier) >= 0:
-			return p.decide(tier, fmt.Sprintf("classify:%s@%.2f", tier, conf), srcClassify, s, sess)
-		default:
-			return p.decide(p.Default, fmt.Sprintf("classify:low-conf(%.2f)→default", conf), srcDefault, s, sess)
-		}
-	}
-
-	// 4. Static default.
+	// 3. Static default. The ML now lives inside route conditions (signal leaves),
+	// not a separate "smart default" step — matching vSR, where the default is
+	// just the last rule.
 	return p.decide(p.Default, "default", srcDefault, s, sess)
 }
 
@@ -134,8 +124,9 @@ func Decide(s Signals, p *Policy, cl Classifier, sess SessionStore, pin string) 
 func (p *Policy) decide(tier, reason string, src decisionSource, s Signals, sess SessionStore) Decision {
 	final := tier
 	// Stickiness: damp a FUZZY downgrade only. Explicit routes and pins are the
-	// user's intent and are never overridden; keep is handled separately.
-	if p.Session.Sticky && (src == srcClassify || src == srcDefault) && sess != nil {
+	// user's intent and are never overridden; keep is handled separately. The
+	// static default is the only fuzzy source now (ML lives in route conditions).
+	if p.Session.Sticky && src == srcDefault && sess != nil {
 		if cur, ok := sess.Current(s.SessionID); ok && cur != tier {
 			curRank, newRank := p.tierRank(cur), p.tierRank(tier)
 			// Downgrade = moving to a cheaper (lower-rank) tier. Damp it unless
@@ -165,16 +156,32 @@ func (p *Policy) decideKeep(reason string, sess SessionStore, s Signals) Decisio
 	return Decision{Tier: p.Default, Model: p.tierModel(p.Default), Reason: reason + "(no-session→default)"}
 }
 
-// evalState carries per-request evaluation context: the signals, the classifier,
-// and a one-shot memo of the intent classification (lazy — computed only if an
-// intent leaf is actually reached, at most once per request).
+// evalState carries per-request evaluation context: the request signals, the
+// classifier, the policy (to resolve a leaf's signal name → its definition), and
+// per-request memos of every ML signal. Each signal is computed at most once per
+// request and only if a leaf referencing it is actually reached (lazy).
 type evalState struct {
-	s             *Signals
-	cl            Classifier
-	intentDone    bool
-	intentErr     error
+	s   *Signals
+	cl  Classifier
+	pol *Policy
+
+	// domain classification: computed once (the classifier emits one label).
+	domainLabel string
+	domainDone  bool
+	domainErr   error
+	// embedding/complexity results memoized by signal name.
+	embed   map[string]mlResult
+	complex map[string]mlResult
+
 	loweredRecent string
 	loweredOnce   bool
+}
+
+// mlResult memoizes one signal computation (a score/margin and its error) so a
+// signal referenced by several leaves in one request is computed only once.
+type mlResult struct {
+	val float64
+	err error
 }
 
 // eval evaluates a condition tree to a boolean. Pure predicates + short-circuit
@@ -199,7 +206,7 @@ func (st *evalState) eval(r *Rule) bool {
 func (st *evalState) evalGroup(children []Rule, isAny bool) bool {
 	// Pass 1: cheap (no ML anywhere in the subtree).
 	for i := range children {
-		if ruleUsesIntent(&children[i]) {
+		if ruleUsesML(&children[i]) {
 			continue
 		}
 		if st.eval(&children[i]) == isAny {
@@ -208,7 +215,7 @@ func (st *evalState) evalGroup(children []Rule, isAny bool) bool {
 	}
 	// Pass 2: ML-bearing children, only reached if pass 1 didn't decide.
 	for i := range children {
-		if !ruleUsesIntent(&children[i]) {
+		if !ruleUsesML(&children[i]) {
 			continue
 		}
 		if st.eval(&children[i]) == isAny {
@@ -234,8 +241,12 @@ func (st *evalState) evalLeaf(r *Rule) bool {
 		return st.matchRegexKeywords(r.KeywordsRegex)
 	case r.RequestedModel != nil:
 		return matchRequestedModel(st.s.RequestedModel, r.RequestedModel)
-	case r.Intent != nil:
-		return st.matchIntent(r.Intent)
+	case r.Domain != "":
+		return st.matchDomain(r.Domain)
+	case r.Embedding != "":
+		return st.matchEmbedding(r.Embedding)
+	case r.Complexity != "":
+		return st.matchComplexity(r.Complexity)
 	}
 	return false // defensive: validated policy never reaches here
 }
@@ -269,23 +280,91 @@ func (st *evalState) matchRegexKeywords(pats []string) bool {
 	return false
 }
 
-// matchIntent classifies lazily (once per request) and matches membership. On
-// ML-disabled/error the intent leaf is false (the route simply won't fire).
-func (st *evalState) matchIntent(want []string) bool {
-	if !st.intentDone {
-		label, conf, err := st.cl.Intent(st.s.RecentText)
-		st.s.Intent, st.s.IntentConf, st.intentErr = label, conf, err
-		st.intentDone = true
+// matchDomain fires when the classifier's predicted label is in the named
+// domain's category set. The classification is computed once per request; on
+// ML-disabled/error the leaf is false (the route simply won't fire).
+func (st *evalState) matchDomain(name string) bool {
+	sig := st.pol.domainSignal(name)
+	if sig == nil {
+		return false // validation guarantees the reference resolves
 	}
-	if st.intentErr != nil {
+	if !st.domainDone {
+		st.domainLabel, _, st.domainErr = st.cl.Domain(st.s.RecentText)
+		st.domainDone = true
+	}
+	if st.domainErr != nil {
 		return false
 	}
-	for _, w := range want {
-		if w == st.s.Intent {
+	for _, c := range sig.Categories {
+		if c == st.domainLabel {
 			return true
 		}
 	}
 	return false
+}
+
+// matchEmbedding fires when the named signal's bank score clears its threshold.
+func (st *evalState) matchEmbedding(name string) bool {
+	sig := st.pol.embeddingSignal(name)
+	if sig == nil {
+		return false
+	}
+	score, err := st.embedScore(name, sig.Candidates)
+	return err == nil && score >= sig.Threshold
+}
+
+// matchComplexity fires when the named signal's contrastive level equals the
+// requested one (`signal:hard|easy|medium`).
+func (st *evalState) matchComplexity(ref string) bool {
+	name, level := splitComplexityRef(ref)
+	sig := st.pol.complexitySignal(name)
+	if sig == nil {
+		return false
+	}
+	margin, err := st.complexMargin(name, sig.Hard, sig.Easy)
+	if err != nil {
+		return false
+	}
+	return complexityLevel(margin, sig.Threshold) == level
+}
+
+// complexityLevel maps a contrastive margin to a level against the symmetric
+// threshold — vSR's classifyComplexityDifficulty.
+func complexityLevel(margin, threshold float64) string {
+	switch {
+	case margin > threshold:
+		return "hard"
+	case margin < -threshold:
+		return "easy"
+	default:
+		return "medium"
+	}
+}
+
+// embedScore returns the bank score for a signal, memoized once per request.
+func (st *evalState) embedScore(name string, candidates []string) (float64, error) {
+	if st.embed == nil {
+		st.embed = map[string]mlResult{}
+	}
+	if r, ok := st.embed[name]; ok {
+		return r.val, r.err
+	}
+	score, err := st.cl.EmbeddingScore(st.s.RecentText, candidates)
+	st.embed[name] = mlResult{score, err}
+	return score, err
+}
+
+// complexMargin returns the contrastive margin for a signal, memoized once per request.
+func (st *evalState) complexMargin(name string, hard, easy []string) (float64, error) {
+	if st.complex == nil {
+		st.complex = map[string]mlResult{}
+	}
+	if r, ok := st.complex[name]; ok {
+		return r.val, r.err
+	}
+	margin, err := st.cl.ComplexityMargin(st.s.RecentText, hard, easy)
+	st.complex[name] = mlResult{margin, err}
+	return margin, err
 }
 
 // matchRequestedModel compares canonicalized model ids on both sides so a dated

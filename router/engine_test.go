@@ -5,25 +5,29 @@ import (
 	"testing"
 )
 
-// spyClassifier records whether Intent/Classify were called, so we can assert
-// cheap-first laziness (the classifier must NOT be called when a heuristic
-// sibling already decided the node).
+// spyClassifier records how often each signal was computed, so we can assert
+// cheap-first laziness (a model must NOT be called when a heuristic sibling
+// already decided the node) and per-request memoization.
 type spyClassifier struct {
-	intentLabel  string
-	intentConf   float64
-	classifyTier string
-	classifyConf float64
-	intentCalls  int
-	classCalls   int
+	domainLabel   string
+	embedScore    float64
+	complexMargin float64
+	domainCalls   int
+	embedCalls    int
+	complexCalls  int
 }
 
-func (c *spyClassifier) Intent(string) (string, float64, error) {
-	c.intentCalls++
-	return c.intentLabel, c.intentConf, nil
+func (c *spyClassifier) Domain(string) (string, float64, error) {
+	c.domainCalls++
+	return c.domainLabel, 1, nil
 }
-func (c *spyClassifier) Classify(string, map[string][]string) (string, float64, error) {
-	c.classCalls++
-	return c.classifyTier, c.classifyConf, nil
+func (c *spyClassifier) EmbeddingScore(string, []string) (float64, error) {
+	c.embedCalls++
+	return c.embedScore, nil
+}
+func (c *spyClassifier) ComplexityMargin(string, []string, []string) (float64, error) {
+	c.complexCalls++
+	return c.complexMargin, nil
 }
 
 func decideJSON(t *testing.T, policyJSON string, s Signals, cl Classifier, sess SessionStore, pin string) Decision {
@@ -54,82 +58,121 @@ func TestDecide_Precedence(t *testing.T) {
 	}
 }
 
-// AC3: with the noop classifier, an intent-referencing route never matches and
-// classify falls through to default, observably (skipped:no-ml).
+// AC3: with the noop classifier, a route's domain leaf never matches and no
+// route fires → the static default, observably (reason "default").
 func TestDecide_SmartOffFallsThrough(t *testing.T) {
-	// "trivial chat" matches no route (no keyword, small context, not opus) →
-	// classify → but noop → default(main), reason skipped:no-ml.
 	d := decideJSON(t, fullPolicy,
 		Signals{RecentText: "hi there", ContextTokens: 100},
 		NoopClassifier(), NewMemSessionStore(), "")
-	if d.Tier != "main" || d.Reason != "skipped:no-ml" {
+	if d.Tier != "main" || d.Reason != "default" {
 		t.Fatalf("smart-off should fall to default: tier=%s reason=%s", d.Tier, d.Reason)
 	}
 }
 
 // AC1: cheap-first laziness — an `any` whose cheap branch is TRUE must not call
-// the intent classifier at all.
+// the domain classifier at all.
 func TestDecide_CheapFirstShortCircuit(t *testing.T) {
-	spy := &spyClassifier{intentLabel: "debugging", classifyTier: "fast", classifyConf: 0.9}
-	// hard-work is: any[ keyword migrate/race, context>60k, intent debugging/arch ].
-	// A keyword match should short-circuit BEFORE the intent leaf runs.
+	spy := &spyClassifier{domainLabel: "computer science"}
+	// hard-work is: any[ keyword migrate/race, context>60k, domain deep-work ].
+	// A keyword match should short-circuit BEFORE the domain leaf runs.
 	d := decideJSON(t, fullPolicy,
 		Signals{RecentText: "please migrate the schema", ContextTokens: 100},
 		spy, NewMemSessionStore(), "")
 	if d.Tier != "smart" {
 		t.Fatalf("keyword should route to smart: %s", d.Tier)
 	}
-	if spy.intentCalls != 0 {
-		t.Fatalf("intent classifier called %d times; cheap keyword should have short-circuited", spy.intentCalls)
+	if spy.domainCalls != 0 {
+		t.Fatalf("domain classifier called %d times; cheap keyword should have short-circuited", spy.domainCalls)
 	}
 }
 
-// AC1: when no cheap branch matches, the intent leaf IS consulted (and matches).
-func TestDecide_IntentLeafReachedWhenNoCheapMatch(t *testing.T) {
-	spy := &spyClassifier{intentLabel: "debugging"}
+// AC1: when no cheap branch matches, the domain leaf IS consulted (and matches).
+func TestDecide_DomainLeafReachedWhenNoCheapMatch(t *testing.T) {
+	spy := &spyClassifier{domainLabel: "computer science"}
 	d := decideJSON(t, fullPolicy,
 		Signals{RecentText: "why is this flaky", ContextTokens: 100}, // no keyword, small ctx
 		spy, NewMemSessionStore(), "")
-	if spy.intentCalls != 1 {
-		t.Fatalf("intent should be consulted exactly once, got %d", spy.intentCalls)
+	if spy.domainCalls != 1 {
+		t.Fatalf("domain should be consulted exactly once, got %d", spy.domainCalls)
 	}
 	if d.Tier != "smart" {
-		t.Fatalf("intent=debugging should route hard-work→smart, got %s", d.Tier)
+		t.Fatalf("domain=computer science ∈ deep-work should route hard-work→smart, got %s", d.Tier)
 	}
 }
 
-// AC4: classify result is honored above threshold; stickiness is not triggered
-// on a first request.
-func TestDecide_ClassifyAboveThreshold(t *testing.T) {
-	spy := &spyClassifier{classifyTier: "smart", classifyConf: 0.80}
-	d := decideJSON(t, fullPolicy,
-		Signals{RecentText: "design a distributed rate limiter", ContextTokens: 100, SessionID: "s1"},
-		spy, NewMemSessionStore(), "")
-	if d.Tier != "smart" || !strings.Contains(d.Reason, "classify:smart@0.80") {
-		t.Fatalf("classify should pick smart: tier=%s reason=%s", d.Tier, d.Reason)
+// A domain leaf fires only when the classifier's label is in the signal's set.
+func TestDecide_DomainSignalMembership(t *testing.T) {
+	const pol = `{"version":1,"tiers":[{"name":"fast","model":"m1"},{"name":"smart","model":"m2"}],
+	  "default":"fast","inspect":{"scope":"full"},
+	  "signals":{"domains":[{"name":"code","categories":["computer science","engineering"]}]},
+	  "routes":[{"name":"code","when":{"domain":"code"},"to":"smart"}]}`
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{domainLabel: "engineering"}, nil, ""); d.Tier != "smart" {
+		t.Fatalf("label in category set should fire, got %s", d.Tier)
+	}
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{domainLabel: "history"}, nil, ""); d.Tier != "fast" {
+		t.Fatalf("label outside the set must not fire, got %s", d.Tier)
 	}
 }
 
-// AC4: stickiness damps a fuzzy downgrade within min_band_jump; upgrades free.
+// An embedding leaf fires only when the bank score clears the threshold.
+func TestDecide_EmbeddingSignalThreshold(t *testing.T) {
+	const pol = `{"version":1,"tiers":[{"name":"fast","model":"m1"},{"name":"smart","model":"m2"}],
+	  "default":"fast","inspect":{"scope":"full"},
+	  "signals":{"embeddings":[{"name":"arch","threshold":0.66,"candidates":["design a system"]}]},
+	  "routes":[{"name":"arch","when":{"embedding":"arch"},"to":"smart"}]}`
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{embedScore: 0.70}, nil, ""); d.Tier != "smart" {
+		t.Fatalf("score above threshold should route smart, got %s", d.Tier)
+	}
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{embedScore: 0.50}, nil, ""); d.Tier != "fast" {
+		t.Fatalf("score below threshold must not fire, got %s", d.Tier)
+	}
+	// Exactly at threshold fires (>= is inclusive).
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{embedScore: 0.66}, nil, ""); d.Tier != "smart" {
+		t.Fatalf("score exactly at threshold should fire (>=), got %s", d.Tier)
+	}
+}
+
+// A complexity leaf fires only for the requested level; the margin→level mapping
+// is symmetric around ±threshold with a medium dead-band.
+func TestDecide_ComplexitySignalLevel(t *testing.T) {
+	const pol = `{"version":1,"tiers":[{"name":"fast","model":"m1"},{"name":"smart","model":"m2"}],
+	  "default":"fast","inspect":{"scope":"full"},
+	  "signals":{"complexity":[{"name":"reason","threshold":0.15,"hard":["h"],"easy":["e"]}]},
+	  "routes":[{"name":"hard","when":{"complexity":"reason:hard"},"to":"smart"}]}`
+	// margin > 0.15 → hard → fires.
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{complexMargin: 0.30}, nil, ""); d.Tier != "smart" {
+		t.Fatalf("margin>threshold is hard → should route smart, got %s", d.Tier)
+	}
+	// margin in the [-0.15, 0.15] dead-band → medium → :hard leaf does not fire.
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{complexMargin: 0.05}, nil, ""); d.Tier != "fast" {
+		t.Fatalf("medium margin must not match :hard, got %s", d.Tier)
+	}
+	// margin < -0.15 → easy → :hard leaf does not fire.
+	if d := decideJSON(t, pol, Signals{RecentText: "x"}, &spyClassifier{complexMargin: -0.30}, nil, ""); d.Tier != "fast" {
+		t.Fatalf("easy margin must not match :hard, got %s", d.Tier)
+	}
+}
+
+// AC4: stickiness damps a fuzzy (default) downgrade within min_band_jump;
+// upgrades are free. With classify gone, the static default is the fuzzy source:
+// a session on smart whose request matches no route falls to default(main), a
+// 1-band downgrade that min_band_jump=2 damps back to smart.
 func TestDecide_StickinessDowngradeDamped(t *testing.T) {
 	sess := NewMemSessionStore()
 	sess.Set("s1", "smart") // session currently on smart (rank 2)
-	// classify wants "main" (rank 1): a 1-band downgrade, min_band_jump=2 → damped.
-	spy := &spyClassifier{classifyTier: "main", classifyConf: 0.9}
 	d := decideJSON(t, fullPolicy,
 		Signals{RecentText: "ok", ContextTokens: 100, SessionID: "s1"},
-		spy, sess, "")
+		NoopClassifier(), sess, "")
 	if d.Tier != "smart" || !strings.Contains(d.Reason, "sticky:kept") {
-		t.Fatalf("1-band downgrade should be damped to smart: tier=%s reason=%s", d.Tier, d.Reason)
+		t.Fatalf("1-band default downgrade should be damped to smart: tier=%s reason=%s", d.Tier, d.Reason)
 	}
 
-	// Upgrade (main→smart) is always free even under stickiness.
+	// Upgrade (fast→main default) is always free even under stickiness.
 	sess.Set("s2", "fast")
-	spyUp := &spyClassifier{classifyTier: "smart", classifyConf: 0.9}
 	d2 := decideJSON(t, fullPolicy,
 		Signals{RecentText: "ok", ContextTokens: 100, SessionID: "s2"},
-		spyUp, sess, "")
-	if d2.Tier != "smart" {
+		NoopClassifier(), sess, "")
+	if d2.Tier != "main" {
 		t.Fatalf("upgrade should not be damped: tier=%s", d2.Tier)
 	}
 }

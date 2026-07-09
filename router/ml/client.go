@@ -49,41 +49,58 @@ func New(baseURL string) *Client {
 }
 
 // Intent classifies text into a single category label with a confidence. On any
-// sidecar error the engine's intent leaf simply evaluates false (the route won't
+// sidecar error the engine's signal leaf simply evaluates false (the route won't
 // fire) — so the error is returned verbatim, not swallowed.
-func (c *Client) Intent(text string) (string, float64, error) {
+func (c *Client) Domain(text string) (string, float64, error) {
 	var out struct {
 		Label      string  `json:"label"`
 		Confidence float64 `json:"confidence"`
 	}
-	if err := c.post("/v1/route/intent", intentReq{Text: text}, &out); err != nil {
+	if err := c.post("/v1/route/domain", domainReq{Text: text}, &out); err != nil {
 		return "", 0, err
 	}
 	return out.Label, out.Confidence, nil
 }
 
-// Classify returns the best tier for text by few-shot nearest-example over the
-// per-tier examples, plus the cosine confidence. The examples are sent every call;
-// the sidecar caches their embeddings by content hash (compute + cache where the
-// model lives), so re-embedding is amortized across requests, not repeated here.
-func (c *Client) Classify(text string, examples map[string][]string) (string, float64, error) {
+// EmbeddingScore returns the query's bank score against candidates (the sidecar
+// computes vSR's 0.75·best + 0.25·mean(top-2) blend and caches candidate
+// embeddings by content hash, so re-embedding the static candidates is amortized
+// across requests). The engine applies the >= threshold test.
+func (c *Client) EmbeddingScore(text string, candidates []string) (float64, error) {
 	var out struct {
-		Tier       string  `json:"tier"`
-		Confidence float64 `json:"confidence"`
+		Score float64 `json:"score"`
 	}
-	if err := c.post("/v1/route/classify", classifyReq{Text: text, Examples: examples}, &out); err != nil {
-		return "", 0, err
+	if err := c.post("/v1/route/embedding", embeddingReq{Text: text, Candidates: candidates}, &out); err != nil {
+		return 0, err
 	}
-	return out.Tier, out.Confidence, nil
+	return out.Score, nil
 }
 
-type intentReq struct {
+// ComplexityMargin returns score(hard) − score(easy). The engine maps the margin
+// to a hard/easy/medium level against the signal's threshold.
+func (c *Client) ComplexityMargin(text string, hard, easy []string) (float64, error) {
+	var out struct {
+		Margin float64 `json:"margin"`
+	}
+	if err := c.post("/v1/route/complexity", complexityReq{Text: text, Hard: hard, Easy: easy}, &out); err != nil {
+		return 0, err
+	}
+	return out.Margin, nil
+}
+
+type domainReq struct {
 	Text string `json:"text"`
 }
 
-type classifyReq struct {
-	Text     string              `json:"text"`
-	Examples map[string][]string `json:"examples"`
+type embeddingReq struct {
+	Text       string   `json:"text"`
+	Candidates []string `json:"candidates"`
+}
+
+type complexityReq struct {
+	Text string   `json:"text"`
+	Hard []string `json:"hard"`
+	Easy []string `json:"easy"`
 }
 
 // post sends body as JSON to path and decodes a JSON reply into out. A non-200 is
