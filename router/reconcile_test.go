@@ -29,6 +29,21 @@ func has(ss []string, s string) bool {
 	return false
 }
 
+// When thinking is disabled on the target, EVERY thinking beta must go — not just
+// the known prefixes. A lone dependent beta (clear_thinking_…, confirmed live)
+// 400s with "requires thinking to be enabled".
+func TestReconcile_StripsOpenEndedThinkingBetas(t *testing.T) {
+	r := mkReq(t, `{"model":"claude-opus-4-8","thinking":{"type":"enabled"},"messages":[{"role":"user","content":"hi"}]}`,
+		"context-1m-2025-08-07,clear_thinking_20251015,interleaved-thinking-2025-05-14,thinking-token-count-2025-01-01")
+	Reconcile(r, "claude-sonnet-4-5-20250929") // sonnet family floor: thinking unsupported
+	if beta := r.Headers.Get("anthropic-beta"); strings.Contains(strings.ToLower(beta), "thinking") {
+		t.Errorf("every thinking beta must be stripped, got %q", beta)
+	}
+	if _, has := r.Body["thinking"]; has {
+		t.Error("thinking config must be removed")
+	}
+}
+
 // B1: an UNKNOWN model is fully capable — Reconcile strips nothing, only sets
 // the model. The zero-value trap (strip everything / unroutable) must not happen.
 func TestReconcile_UnknownModelStripsNothing(t *testing.T) {

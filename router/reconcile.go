@@ -46,17 +46,19 @@ var reconcileFeatures = []feature{
 			if _, has := r.Body["thinking"]; has {
 				return true
 			}
-			return r.hasBetaPrefix("interleaved-thinking") || r.hasBetaPrefix("thinking-token-count")
+			return r.hasBetaContaining("thinking")
 		},
 		strip: func(r *Request) {
 			// Strip the config, the thinking blocks already in history (or a
-			// non-thinking target rejects the history), AND the thinking beta
-			// tokens — a beta token alone causes a 400 on a non-supporting model
-			// (proven for context-1m; applied by analogy, validate-on-traffic).
+			// non-thinking target rejects the history), AND every thinking beta.
+			// Not just known prefixes: dependent betas are an OPEN-ENDED family
+			// (interleaved-thinking, thinking-token-count, clear_thinking_… — the
+			// last one confirmed live), and a lone thinking beta whose feature we
+			// removed 400s ("requires thinking to be enabled"). Any beta naming
+			// "thinking" must go when thinking is disabled.
 			delete(r.Body, "thinking")
 			stripThinkingFromHistory(r)
-			r.removeBetaPrefix("interleaved-thinking")
-			r.removeBetaPrefix("thinking-token-count")
+			r.removeBetaContaining("thinking")
 		},
 	},
 	{
