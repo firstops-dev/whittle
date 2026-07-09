@@ -107,9 +107,14 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p.serve(rec, r)
 	// One structured line per request — routing verdict + outcome, NEVER prompt
 	// text (review C1: the router must not persist request content to disk).
-	p.log.Printf(`{"tier":%q,"requested":%q,"reason":%q,"status":%d,"latency_ms":%d,"ctx_tokens":%d,"session":%q}`,
-		rec.Header().Get("X-Whittle-Route"), rec.requested, rec.Header().Get("X-Whittle-Reason"),
-		rec.status, time.Since(start).Milliseconds(), rec.ctxTokens,
+	used := rec.used
+	if used == "" {
+		used = rec.requested // no-op/passthrough/mode-b-retry ran the requested model
+	}
+	p.log.Printf(`{"tier":%q,"requested":%q,"model":%q,"reason":%q,"status":%d,"latency_ms":%d,"ctx_tokens":%d,"in_tokens":%d,"out_tokens":%d,"session":%q}`,
+		rec.Header().Get("X-Whittle-Route"), orDash(rec.requested), orDash(used),
+		rec.Header().Get("X-Whittle-Reason"), rec.status, time.Since(start).Milliseconds(),
+		rec.ctxTokens, rec.inTokens, rec.outTokens,
 		shortSession(r.Header.Get("X-Claude-Code-Session-Id")))
 }
 
@@ -238,6 +243,12 @@ func (p *Proxy) forward(w http.ResponseWriter, r *http.Request, originalBody, re
 		return
 	}
 	defer resp.Body.Close()
+	// The routed rewrite was accepted → the tier's model served this response.
+	// (No-op / passthrough / Mode-B-retry paths leave `used` empty, so the log
+	// falls back to the requested model — which is what actually ran there.)
+	if rec := recorderOf(w); rec != nil {
+		rec.used = dec.Model
+	}
 	p.relay(w, resp, dec.Tier, reason)
 }
 
@@ -349,7 +360,13 @@ func (p *Proxy) relay(w http.ResponseWriter, resp *http.Response, tier, reason s
 	copyDownstreamHeaders(w.Header(), resp.Header)
 	setVerdict(w.Header(), tier, reason)
 	w.WriteHeader(resp.StatusCode)
-	streamFlush(w, resp.Body)
+	// Tee the response through a usage scanner so the log line can carry the actual
+	// input/output token counts (for cost-savings math) without buffering the stream.
+	var scan usageScanner
+	streamFlush(w, resp.Body, &scan)
+	if rec := recorderOf(w); rec != nil {
+		rec.inTokens, rec.outTokens = scan.in, scan.out
+	}
 }
 
 // relayBytes relays a fully-buffered response (status + headers + body). Used
@@ -481,13 +498,17 @@ func pinFromHeader(pol *Policy, h http.Header) string {
 }
 
 // streamFlush copies src→dst flushing after every chunk so SSE events reach the
-// client immediately (the gzip/flush framing the experiment proved).
-func streamFlush(w http.ResponseWriter, src io.Reader) {
+// client immediately (the gzip/flush framing the experiment proved). It also feeds
+// each chunk to scan (if non-nil) so token usage is captured without buffering.
+func streamFlush(w http.ResponseWriter, src io.Reader, scan *usageScanner) {
 	rc := http.NewResponseController(w)
 	buf := make([]byte, 8<<10)
 	for {
 		n, err := src.Read(buf)
 		if n > 0 {
+			if scan != nil {
+				scan.feed(buf[:n])
+			}
 			if _, werr := w.Write(buf[:n]); werr != nil {
 				return
 			}
@@ -509,7 +530,10 @@ func (discardLogger) Printf(string, ...any) {}
 type statusRecorder struct {
 	http.ResponseWriter
 	status    int
-	requested string // the client's requested model (canonicalized), for the log
+	requested string // the client's requested model (canonicalized)
+	used      string // the model that actually served the response ("" ⇒ = requested)
+	inTokens  int    // response usage.input_tokens (0 if not captured)
+	outTokens int    // response usage.output_tokens
 	ctxTokens int
 	wrote     bool
 }
@@ -535,6 +559,73 @@ func orDash(s string) string {
 		return "-"
 	}
 	return s
+}
+
+// recorderOf returns the underlying *statusRecorder if w is one (always, on the
+// router's own paths) — for stashing per-request observability (used model, usage).
+func recorderOf(w http.ResponseWriter) *statusRecorder {
+	rec, _ := w.(*statusRecorder)
+	return rec
+}
+
+// usageScanner extracts input_tokens / output_tokens from a streamed Anthropic
+// response (SSE or JSON). It scans each chunk (plus a small carry, so a number
+// split across a chunk boundary is still caught) for the token fields and keeps
+// the max — output_tokens accumulates across message_delta events, input is
+// constant. Best-effort by design: a miss yields 0. It never buffers or blocks the
+// stream, and it only reads token COUNTS, never response content.
+type usageScanner struct {
+	tail    []byte
+	in, out int
+}
+
+func (s *usageScanner) feed(b []byte) {
+	data := b
+	if len(s.tail) > 0 {
+		data = append(append([]byte(nil), s.tail...), b...)
+	}
+	if v := maxIntField(data, "input_tokens"); v > s.in {
+		s.in = v
+	}
+	if v := maxIntField(data, "output_tokens"); v > s.out {
+		s.out = v
+	}
+	const carry = 64
+	if len(data) > carry {
+		s.tail = append([]byte(nil), data[len(data)-carry:]...)
+	} else {
+		s.tail = append([]byte(nil), data...)
+	}
+}
+
+// maxIntField returns the largest integer value of any `"field": <int>` occurrence
+// in b (0 if none).
+func maxIntField(b []byte, field string) int {
+	key := []byte(`"` + field + `":`)
+	best := 0
+	for i := 0; i < len(b); {
+		j := bytes.Index(b[i:], key)
+		if j < 0 {
+			break
+		}
+		k := i + j + len(key)
+		for k < len(b) && b[k] == ' ' {
+			k++
+		}
+		n, adv := 0, 0
+		for k+adv < len(b) && b[k+adv] >= '0' && b[k+adv] <= '9' {
+			n = n*10 + int(b[k+adv]-'0')
+			adv++
+		}
+		if adv > 0 && n > best {
+			best = n
+		}
+		if adv == 0 {
+			adv = 1
+		}
+		i = k + adv
+	}
+	return best
 }
 
 // shortSession returns a non-sensitive prefix of the session UUID for the log
