@@ -50,7 +50,9 @@ export ANTHROPIC_BASE_URL=http://127.0.0.1:45873
 
 ## See it
 
-![whittle compressing a noisy build log](demo/compress.gif)
+![real whittle watch output: a request routed opus to haiku, hard work kept on opus, and tool outputs carved down 31 and 99 percent](assets/watch.svg)
+
+One live feed, both surfaces: `whittle watch` streaming real routing verdicts (trivia dropped to haiku with the classifier signals inline, hard work kept on opus) and real compression carves. Captured from a live session; every line is genuine output.
 
 ```
 $ whittle compress -stats demo/build.log
