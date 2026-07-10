@@ -66,6 +66,8 @@ func main() {
 		cmdStatus(os.Args[2:])
 	case "stats":
 		cmdStats(os.Args[2:])
+	case "watch":
+		cmdWatch(os.Args[2:])
 	case "mcp":
 		cmdMCP(os.Args[2:])
 	case "hook":
@@ -86,6 +88,7 @@ usage:
                                     background service (launchd) - one command
   whittle status                    health of router, sidecar, hook
   whittle stats [-days 7]           local savings report (tokens whittled)
+  whittle watch [-n 8] [-plain]     live feed: router verdicts + compression carves
   whittle stop                      stop background services
   whittle cleanup                   stop + remove hook + unregister service
   whittle compress [flags] [file]   compress a file (or stdin) to stdout

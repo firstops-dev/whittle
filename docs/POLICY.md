@@ -505,7 +505,7 @@ routing), never a 400. A pin never writes the session's tracked tier.
    it goes to `~/.whittle/logs/router.log`; in the foreground it goes to stderr.
 
    ```sh
-   tail -f ~/.whittle/logs/router.log
+   whittle watch    # or raw: tail -f ~/.whittle/logs/router.log
    ```
 
 ## Reading the log's `signals` field
