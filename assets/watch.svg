@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 830 360" font-family="ui-monospace,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12.5">
+  <!-- Real `whittle watch` output, captured live 2026-07-10 (lines verbatim from
+       the session log; trailing signal gate tokens elided with an ellipsis).
+       Palette matches the founder's terminal: black/green/red only. -->
+  <rect x="1" y="1" width="828" height="358" rx="8" fill="#0C1210" stroke="#1C241C"/>
+
+  <text x="24" y="36">
+    <tspan fill="#6F826F">anshal@mac % </tspan><tspan fill="#E8F2E8" font-weight="bold">whittle watch</tspan>
+  </text>
+  <text x="24" y="62">
+    <tspan fill="#E8F2E8" font-weight="bold">🪓 whittle</tspan><tspan fill="#6F826F"> · watching routes + carves · ^C to stop</tspan>
+  </text>
+
+  <text x="24" y="100">
+    <tspan fill="#6F826F">13:00:10 </tspan><tspan fill="#E8F2E8">🪓 Bash</tspan><tspan fill="#6F826F">        328 → </tspan><tspan fill="#46D95F" font-weight="bold">226</tspan><tspan fill="#6F826F"> tok </tspan><tspan fill="#46D95F" font-weight="bold">−31%</tspan><tspan fill="#6F826F">  ansi_strip+log_compressor</tspan>
+  </text>
+  <text x="24" y="128">
+    <tspan fill="#6F826F">13:13:19 </tspan><tspan fill="#46D95F">▸</tspan><tspan fill="#9DB49D"> casual-easy   </tspan><tspan fill="#6F826F">opus→</tspan><tspan fill="#46D95F" font-weight="bold">haiku</tspan><tspan fill="#6F826F">  55,072 tok · 2959ms</tspan>
+  </text>
+  <text x="100" y="150">
+    <tspan fill="#6F826F">cplx:reasoning=−0.252 dom=other@0.918 dom:casual=0.918/0.85 …</tspan>
+  </text>
+  <text x="24" y="184">
+    <tspan fill="#6F826F">13:13:59 </tspan><tspan fill="#9DB49D">▸</tspan><tspan fill="#9DB49D"> no-op:default:requested </tspan><tspan fill="#E8F2E8">opus · kept</tspan><tspan fill="#6F826F">  55,173 tok · 3842ms</tspan>
+  </text>
+  <text x="100" y="206">
+    <tspan fill="#6F826F">cplx:reasoning=−0.016 dom=computer science@0.996 …</tspan>
+  </text>
+  <text x="24" y="240">
+    <tspan fill="#6F826F">13:15:09 </tspan><tspan fill="#9DB49D">▸</tspan><tspan fill="#9DB49D"> no-op:default:requested </tspan><tspan fill="#E8F2E8">opus · kept</tspan><tspan fill="#6F826F">  57,828 tok · 17308ms</tspan>
+  </text>
+  <text x="24" y="274">
+    <tspan fill="#6F826F">13:18:09 </tspan><tspan fill="#E8F2E8">🪓 Bash</tspan><tspan fill="#6F826F">        3,606 → </tspan><tspan fill="#46D95F" font-weight="bold">31</tspan><tspan fill="#6F826F"> tok </tspan><tspan fill="#46D95F" font-weight="bold">−99%</tspan><tspan fill="#6F826F">  ansi_strip+log_compressor</tspan>
+  </text>
+
+  <line x1="24" y1="300" x2="806" y2="300" stroke="#1C241C"/>
+  <text x="24" y="330">
+    <tspan fill="#6F826F">trivia dropped a tier · hard work </tspan><tspan fill="#E8F2E8">kept</tspan><tspan fill="#6F826F"> on opus · noise carved </tspan><tspan fill="#46D95F" font-weight="bold">−99%</tspan><tspan fill="#6F826F"> · errors </tspan><tspan fill="#E05B5B">kept</tspan>
+  </text>
+</svg>
