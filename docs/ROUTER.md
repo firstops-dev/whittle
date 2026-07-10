@@ -90,6 +90,10 @@ Walkthrough of one request:
 
 ## 4. The policy file
 
+*This section is the reference for the policy schema. For a task-oriented guide to
+writing one (every leaf with copy-paste JSON, tuning the signals, recipes, and a
+debugging table), see [docs/POLICY.md](POLICY.md).*
+
 Strict JSON (unknown keys are load errors, never silently ignored), validated
 with path-precise messages. A missing or invalid policy puts the router in
 transparent passthrough — it never bricks Claude Code. `SIGHUP` hot-reloads; a
@@ -277,17 +281,21 @@ Exactly one JSON line per request, never prompt text:
 
 ```json
 {"tier":"main", "requested":"claude-opus-4-8", "model":"claude-sonnet-4-5-20250929",
- "reason":"default stripped:context-1m+thinking", "status":200, "latency_ms":2060,
- "ctx_tokens":25640, "in_tokens":1974, "out_tokens":16, "session":"c2f9659c"}
+ "reason":"default stripped:context-1m+thinking", "signals":"dom=other@1.000 cplx:reasoning=-0.471",
+ "status":200, "latency_ms":2060, "ctx_tokens":25640, "in_tokens":1974, "out_tokens":16,
+ "session":"c2f9659c"}
 ```
 
 `requested` vs `model` is what routing changed; `in_tokens`/`out_tokens` are the
 response's real usage — enough to compute per-request savings offline:
 `cost(requested, in, out) − cost(model, in, out)`. `reason` names the exact rule
 that fired, every stripped feature, and any retry (`mode-b:…(rewrote→X got 400
-invalid_request_error: …)`), so misroutes and capability gaps are one-line
-diagnoses. The same verdict rides response headers (`x-whittle-route`,
-`x-whittle-reason`).
+invalid_request_error: …)`). The `signals` field carries every ML value computed
+for the request against its gate (`dom:casual=0.899/0.85`, `cplx:reasoning=+0.184`,
+or `=off`/`=err`), empty when a heuristic leaf decided first — so misroutes and
+capability gaps are one-line diagnoses (the field vocabulary is tabulated in
+[docs/POLICY.md](POLICY.md#reading-the-logs-signals-field)). The same verdict
+rides response headers (`x-whittle-route`, `x-whittle-reason`).
 
 ## 9. Codemap
 

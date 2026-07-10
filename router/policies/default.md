@@ -35,4 +35,8 @@ cause).
 After editing: `whittle policy validate ~/.whittle/router.json`, then `kill -HUP`
 the router (or restart) — a bad edit keeps the running policy.
 
+**Writing your own policy from scratch** (every leaf type, the signals and how to
+tune them, copy-paste recipes, and a debugging table): the
+[policy authoring guide](../../docs/POLICY.md).
+
 Full architecture and signal math: [docs/ROUTER.md](../../docs/ROUTER.md).
