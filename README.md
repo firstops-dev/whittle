@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml/badge.svg)](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/firstops-dev/whittle)](https://github.com/firstops-dev/whittle/releases)
+[![npm](https://img.shields.io/npm/v/%40firstops%2Fwhittle)](https://www.npmjs.com/package/@firstops/whittle)
 [![Go Reference](https://pkg.go.dev/badge/github.com/firstops-dev/whittle.svg)](https://pkg.go.dev/github.com/firstops-dev/whittle)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
@@ -33,11 +34,11 @@ Built for engineers running long Claude Code sessions who refuse to trade fideli
 ## Install
 
 ```sh
-go install github.com/firstops-dev/whittle/cmd/whittle@latest
-whittle setup      # hook + local daemon + optional ML sidecar, one command
+npm install -g @firstops/whittle   # or: go install github.com/firstops-dev/whittle/cmd/whittle@latest
+whittle setup                      # hook + local daemon + optional ML sidecar, one command
 ```
 
-Tool outputs are whittled from now on; `whittle stats` shows what you're saving. (Homebrew: `brew install firstops-dev/tap/whittle`. If `go install`'s binary isn't found, add `~/go/bin` to your PATH. Linux runs the daemon under systemd, see [notes](docs/compression.md).)
+Tool outputs are whittled from now on; `whittle stats` shows what you're saving. Try it with zero commitment: `npx -y @firstops/whittle compress build.log`. (Homebrew: `brew install firstops-dev/tap/whittle`. Linux runs the daemon under systemd, see [notes](docs/compression.md).)
 
 **Optional: turn on model routing.**
 
