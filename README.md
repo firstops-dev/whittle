@@ -77,7 +77,7 @@ The full per-type contract, ML prose path, architecture, and performance tables:
 
 Whittle's second surface: a local proxy on `ANTHROPIC_BASE_URL` that sends each request to the cheapest model tier that can still handle it, per a policy you can read in one screen.
 
-- **Calibrated out of the box**: `whittle policy init` writes a conservative default (hard reasoning → strongest tier, confident chit-chat → cheapest, *everything else untouched*) with your account's real model ids auto-detected. [What it does & how to customize](router/policies/default.md).
+- **Calibrated out of the box**: `whittle policy init` writes a conservative default (hard reasoning → strongest tier, confident chit-chat → cheapest, *everything else untouched*) with your account's real model ids auto-detected. [What the default does](router/policies/default.md) · [how to write your own policy](docs/POLICY.md).
 - **Multi-signal, not keyword-matching**: a trained 14-subject classifier (probability-mass thresholded, so an *uncertain* classification never escalates), a contrastive difficulty score, and your own keywords. Every log line shows each signal's value against its gate.
 - **Rewrites the model, never your history**: prompt-cache prefixes survive; capabilities the cheaper model rejects are stripped automatically; credentials pass through untouched.
 - **Never blocks you**: bad policy, dead classifier, or a rejected rewrite all fall back to your original request. Unset the env var and you're direct again.
