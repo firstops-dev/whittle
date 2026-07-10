@@ -14,6 +14,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"runtime/debug"
+	"strings"
 	"time"
 
 	"github.com/firstops-dev/whittle"
@@ -21,9 +23,22 @@ import (
 	"github.com/firstops-dev/whittle/server"
 )
 
-// version is injected by goreleaser (-X main.version=...); dev builds show the
-// last released baseline.
+// version is injected by goreleaser (-X main.version=...). For plain
+// `go install module@vX.Y.Z` builds (no ldflags), the module version from build
+// info is used instead — so @latest users see the real tag, not the baseline.
 var version = "0.3.0"
+
+func resolvedVersion() string {
+	if version != baselineVersion {
+		return version // goreleaser-injected
+	}
+	if bi, ok := debug.ReadBuildInfo(); ok && bi.Main.Version != "" && bi.Main.Version != "(devel)" {
+		return strings.TrimPrefix(bi.Main.Version, "v")
+	}
+	return version
+}
+
+const baselineVersion = "0.3.0"
 
 func main() {
 	if len(os.Args) < 2 {
@@ -56,7 +71,7 @@ func main() {
 	case "hook":
 		cmdHook(os.Args[2:])
 	case "version":
-		fmt.Println("whittle", version)
+		fmt.Println("whittle", resolvedVersion())
 	default:
 		usage()
 		os.Exit(2)
