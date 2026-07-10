@@ -23,7 +23,7 @@ import (
 
 // version is injected by goreleaser (-X main.version=...); dev builds show the
 // last released baseline.
-var version = "0.2.1"
+var version = "0.3.0"
 
 func main() {
 	if len(os.Args) < 2 {
