@@ -1,6 +1,29 @@
-# Why write-time compression, not read-time
+# Why whittle
 
-Whittle's core position, in full. (The [README](../README.md) carries the short version.)
+An AI agent's bill has two levers, and whittle pulls both, locally and
+fail-open. (The [README](../README.md) carries the short version; this page is
+the reasoning.)
+
+**Why compress tool outputs?** Tool outputs are the bulk of an agent's context:
+file reads, logs, JSON, terminal streams, produced by the hundreds per session
+and then re-read by the model on every later turn. Whittle compresses each one
+once, at the moment it is created, under a strict contract: lossless where
+possible, clearly marked where not, code never touched, and any anomaly fails
+open to the original bytes. Because history is never rewritten, the savings
+repeat on every subsequent call and your prompt cache stays intact.
+
+**Why route requests?** Not every request needs your strongest model. A session
+mixes hard debugging with one-line lookups and message drafts, and paying opus
+prices for trivia is pure waste. Whittle's router sends each request to the
+cheapest model that can handle it, per one auditable policy file: hard
+reasoning stays on your strongest model, confident chit-chat drops tiers, and
+anything uncertain runs untouched on the model you asked for. Every decision is
+logged with the signals that made it, so the policy is tunable from evidence.
+
+The rest of this page is the deeper argument for the choice that defines the
+compression surface: write-time, not read-time.
+
+## The write-time argument
 
 Context compressors typically integrate with coding agents as **request-path
 proxies**: your agent's base URL is redirected through a local server that

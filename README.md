@@ -17,7 +17,7 @@
   <strong><a href="docs/compression.md">Compression</a></strong> ·
   <strong><a href="docs/ROUTER.md">Model routing</a></strong> ·
   <strong><a href="bench/README.md">Benchmarks</a></strong> ·
-  <strong><a href="docs/why-write-time.md">Why whittle?</a></strong>
+  <strong><a href="docs/why-whittle.md">Why whittle?</a></strong>
 </p>
 
 Long agent sessions drown in tokens, and most compressors buy their ratio by silently destroying what agents need: array rows vanish, file reads get gutted, identifiers come back mangled. Whittle holds one line: **lossless or clearly marked, code never touched, every anomaly fails open to the original bytes.**
@@ -97,7 +97,7 @@ Most context compressors are read-time proxies: they rewrite your conversation h
 | loss model | lossless or marked | lossy by default, recover on demand |
 | cost of failure | original bytes | a broken or blocked call |
 
-The full argument: [docs/why-write-time.md](docs/why-write-time.md).
+The full argument, and why routing is a different kind of proxy: [docs/why-whittle.md](docs/why-whittle.md).
 
 ## FAQ
 
