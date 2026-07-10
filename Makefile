@@ -11,6 +11,3 @@ lint:
 
 install:
 	go install ./cmd/whittle
-
-hero: ## regenerate the README hero (demo/hero.svg) from real output
-	sh demo/make-hero.sh

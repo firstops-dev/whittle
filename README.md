@@ -9,7 +9,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/firstops-dev/whittle.svg)](https://pkg.go.dev/github.com/firstops-dev/whittle)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-![whittle carving a 144-line build log to 163 tokens, lossless-or-marked, code never touched, while routing each request to the cheapest capable model](demo/hero.svg)
+![whittle: carve your agent's context down to what matters, and route every request to the right model](assets/banner.svg)
 
 Long agent sessions drown in tokens, and most compressors buy their ratio by silently destroying what agents need: array rows vanish, file reads get gutted, identifiers come back mangled. Whittle holds one line: **lossless or clearly marked, code never touched, every anomaly fails open to the original bytes.**
 
@@ -21,7 +21,7 @@ Long agent sessions drown in tokens, and most compressors buy their ratio by sil
 - 🧭 **Opt-in model router**: hard reasoning stays on your strongest model, trivia drops to the cheapest, per one auditable policy file driven by trained-classifier signals ([how it works](docs/ROUTER.md)).
 - 🛟 **Fail-open everywhere**: whittle down means your agent runs on originals; a rejected rewrite means your original request, retried. Never blocked, never corrupted.
 - 🏠 **Runs entirely on your machine**: zero credentials leave your box; the Go binary has zero external dependencies.
-- 🧾 **Executable claims**: `make test`, `go run ./bench`, and `make hero` regenerate every number in this README, including the hero image above.
+- 🧾 **Executable claims**: `make test` and `go run ./bench` regenerate every number in this README from a clone.
 
 ## Install
 
@@ -102,7 +102,6 @@ Every claim here is checkable from a clone; that is the point.
 make test                          # guarantees as executable tests (GUARANTEES.md)
 go run ./bench                     # corpus reductions + fidelity, SHA-pinned, CI-gated
 python bench/calibrate_tokens.py   # reproduces the token-estimator MAE
-make hero                          # regenerates the hero image from real output
 ```
 
 ## Contributing

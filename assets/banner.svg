@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520" font-family="-apple-system,'Segoe UI',Inter,Helvetica,Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A0F0B"/>
+      <stop offset="1" stop-color="#0E1710"/>
+    </linearGradient>
+    <linearGradient id="fadebar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3FB950" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#3FB950" stop-opacity="0.25"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="1596" height="516" rx="18" fill="url(#bg)" stroke="#1C241C" stroke-width="2"/>
+
+  <!-- left periphery: dense incoming context -->
+  <g fill="#2A3A2C">
+    <rect x="84"  y="150" width="180" height="14" rx="7"/>
+    <rect x="104" y="184" width="150" height="14" rx="7"/>
+    <rect x="84"  y="218" width="196" height="14" rx="7"/>
+    <rect x="120" y="252" width="134" height="14" rx="7"/>
+    <rect x="84"  y="286" width="170" height="14" rx="7"/>
+    <rect x="104" y="320" width="176" height="14" rx="7"/>
+    <rect x="84"  y="354" width="144" height="14" rx="7"/>
+  </g>
+  <path d="M 292 252 C 360 252 390 244 440 238" stroke="#22301F" stroke-width="2" fill="none"/>
+
+  <!-- the wordmark, being whittled -->
+  <text x="470" y="268" font-size="150" font-weight="800" letter-spacing="-6" fill="#F2F7F2">whittle</text>
+  <!-- shavings peeling off the final letter, drifting up-right -->
+  <g fill="#3FB950">
+    <path d="M 948 176 q 18 -26 40 -30 q -14 20 -18 40 z" opacity="0.95"/>
+    <path d="M 986 150 q 14 -20 32 -24 q -10 16 -14 32 z" opacity="0.65"/>
+    <path d="M 1018 128 q 10 -15 24 -18 q -8 12 -10 24 z" opacity="0.4"/>
+    <path d="M 1044 112 q 7 -10 16 -12 q -5 8 -7 16 z" opacity="0.22"/>
+  </g>
+
+  <!-- tagline: two lines, left-aligned under the wordmark -->
+  <text x="474" y="336" font-size="30" fill="#8FA98F">Carve your agent's context.</text>
+  <text x="474" y="382" font-size="30" fill="#8FA98F">Route every request to the right model.</text>
+
+  <!-- right periphery: carved output + the three tiers -->
+  <rect x="1348" y="128" width="120" height="14" rx="7" fill="url(#fadebar)"/>
+  <rect x="1348" y="160" width="86"  height="14" rx="7" fill="url(#fadebar)" opacity="0.8"/>
+  <path d="M 1120 208 C 1230 190 1270 160 1340 144" stroke="#22301F" stroke-width="2" fill="none"/>
+  <path d="M 1120 224 C 1240 240 1280 292 1342 318" stroke="#22301F" stroke-width="2" fill="none"/>
+
+  <g font-size="20" font-weight="600">
+    <rect x="1348" y="296" width="136" height="46" rx="10" fill="#101A12" stroke="#2E4A33"/>
+    <circle cx="1372" cy="319" r="6.5" fill="#3FB950"/>
+    <text x="1390" y="326" fill="#C9DCC9">haiku</text>
+
+    <rect x="1348" y="354" width="136" height="46" rx="10" fill="#101A12" stroke="#28402C"/>
+    <circle cx="1372" cy="377" r="6.5" fill="#35A045"/>
+    <text x="1390" y="384" fill="#A9BFA9">sonnet</text>
+
+    <rect x="1348" y="412" width="136" height="46" rx="10" fill="#101A12" stroke="#233626"/>
+    <circle cx="1372" cy="435" r="6.5" fill="#2E8B3F"/>
+    <text x="1390" y="442" fill="#94A894">opus</text>
+  </g>
+</svg>
