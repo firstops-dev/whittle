@@ -1,8 +1,6 @@
 # 🪓 whittle
 
-**Carve your agent's context down to what matters. Lossless or clearly marked, code never touched.**
-
-*Optionally, route each request to the cheapest model that can handle it. Local, fail-open, and every claim in this README regenerates from a clone.*
+**Cut your AI agent's token bill. Lose nothing that matters.**
 
 [![CI](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml/badge.svg)](https://github.com/firstops-dev/whittle/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/firstops-dev/whittle)](https://github.com/firstops-dev/whittle/releases)
