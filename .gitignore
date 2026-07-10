@@ -3,3 +3,4 @@
 model/.venv/
 model/__pycache__/
 dist/
+npm/dist/

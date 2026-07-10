@@ -1,0 +1,18 @@
+{
+  "name": "@firstops/whittle",
+  "version": "0.0.0-managed-by-prepare-sh",
+  "description": "Cut your AI agent's token bill. Lose nothing that matters. Write-time tool-output compression and policy-based model routing for Claude Code, local and fail-open.",
+  "keywords": ["claude", "claude-code", "ai-agents", "context", "compression", "llm", "router", "tokens"],
+  "license": "Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/firstops-dev/whittle.git" },
+  "homepage": "https://github.com/firstops-dev/whittle#readme",
+  "bin": { "whittle": "bin/whittle.js" },
+  "files": ["bin/whittle.js", "README.md"],
+  "engines": { "node": ">=16" },
+  "optionalDependencies": {
+    "@firstops/whittle-darwin-arm64": "0.0.0-managed-by-prepare-sh",
+    "@firstops/whittle-darwin-amd64": "0.0.0-managed-by-prepare-sh",
+    "@firstops/whittle-linux-arm64": "0.0.0-managed-by-prepare-sh",
+    "@firstops/whittle-linux-amd64": "0.0.0-managed-by-prepare-sh"
+  }
+}
