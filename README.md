@@ -80,7 +80,7 @@ Whittle's second surface: a local proxy on `ANTHROPIC_BASE_URL` that sends each 
 - **Multi-signal, not keyword-matching**: a trained 14-subject classifier (probability-mass thresholded, so an *uncertain* classification never escalates), a contrastive difficulty score, and your own keywords. Every log line shows each signal's value against its gate.
 - **Rewrites the model, never your history**: prompt-cache prefixes survive; capabilities the cheaper model rejects are stripped automatically; credentials pass through untouched.
 - **Never blocks you**: bad policy, dead classifier, or a rejected rewrite all fall back to your original request. Unset the env var and you're direct again.
-- **Savings you can measure**: every request logs requested model, served model, and real token usage.
+- **Savings you can measure**: every request logs requested model, served model, and real token usage. `whittle watch` streams both feeds live (routing verdicts + compression carves) in one view.
 
 The router itself (engine, policy design, signal composition) is whittle's own; two pretrained models power its ML signals (the 14-subject `domain` classifier and the text embedder, both from [vLLM Semantic Router](https://github.com/vllm-project/semantic-router)). Architecture, signal math, and precise credits: [docs/ROUTER.md](docs/ROUTER.md).
 
